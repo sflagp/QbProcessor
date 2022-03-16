@@ -35,10 +35,16 @@
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
   </ItemGroup>
   <PropertyGroup>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\_Icons\IMS 01 256x256.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 	<Target Name="PostBuildMacros">
 	  <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
@@ -53,4 +59,10 @@
 		$(PostBuildEventDependsOn);
 		PostBuildMacros;
 	  </PostBuildEventDependsOn>
+	  <PackageProjectUrl>https://github.com/sflagp/QbProcessor</PackageProjectUrl>
+	  <PackageIcon>IMS 01 256x256.png</PackageIcon>
+	  <PackageIconUrl />
+	  <RepositoryUrl>https://github.com/sflagp/QbModels</RepositoryUrl>
+	  <RepositoryType>GitHub</RepositoryType>
+	  <PackageTags>Quickbooks RP</PackageTags>
 	</PropertyGroup></Project>
