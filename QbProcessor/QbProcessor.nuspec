@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Greg Prieto</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <!-- <icon>icon.png</icon> -->
+    <projectUrl>https://mydc.kapalua.mydc</projectUrl>
+    <description>Quickbooks RP Processor</description>
+    <releaseNotes>Quickbooks RP Processor.</releaseNotes>
+    <copyright>$copyright$</copyright>
+    <tags>Quickbooks RP QBXML</tags>
+  </metadata>
+</package>

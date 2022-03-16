@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Text;
 using System.IO;
-using System.Xml.Serialization;
 using QbHelpers;
 using QbModels;
 
@@ -51,8 +50,16 @@ namespace QBProcessor
                 try
                 {
                     var xmlCompany = GetCompany(); 
-                    QbCompany = QbFunctions.ToView<QbCompanyView>(xmlCompany);
-                    bolRequestComplete = true;
+                    if(xmlCompany != "The version of QBXML that was requested is not supported or is unknown.")
+                    {
+                        QbCompany = QbFunctions.ToView<QbCompanyView>(xmlCompany);
+                        bolRequestComplete = true;
+                    }
+                    else
+                    {
+                        NextVer();
+                        XmlHelper.SetSdkVersion(SdkVersion);
+                    }
                 }
                 catch (Exception)
                 {
@@ -83,6 +90,7 @@ namespace QBProcessor
         /// <returns>XML string</returns>
         internal string callQB(string xmlRequest)
         {
+            if (!LicenseValid) return "License expired";
             var rpResponse = rp.ProcessRequest(QbSessionTicket, xmlRequest);
 
             return rpResponse;
