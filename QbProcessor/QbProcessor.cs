@@ -6,7 +6,6 @@ using System.Text;
 using System.IO;
 using QbHelpers;
 using QbModels;
-using System.Windows.Forms;
 
 namespace QBProcessor
 {
@@ -30,7 +29,10 @@ namespace QBProcessor
         {
             if (SessionActive)
             {
-                InitQBCompany();
+                if (!InitQBCompany())
+                {
+                    throw new Exception("Quickbooks not compatible with Invoicing Made Simple");
+                }
             }
             else
             {
@@ -41,7 +43,7 @@ namespace QBProcessor
 
 #pragma warning restore S112 // General exceptions should never be thrown
 
-        private void InitQBCompany()
+        private bool InitQBCompany()
         {
             bool bolRequestComplete = false;
 
@@ -68,11 +70,7 @@ namespace QBProcessor
                 }
             } while (!(bolRequestComplete || VersionsEOF));
 
-            if (!bolRequestComplete)
-            { 
-                MessageBox.Show("Quickbooks not compatible with Invoicing Made Simple", "Error:  Incompatible version of Quickbooks", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                System.Environment.Exit(0);
-            }
+            return bolRequestComplete;
         }
         #endregion
 

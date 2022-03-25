@@ -1,6 +1,5 @@
 ﻿using QbHelpers;
 using System;
-using System.Windows.Forms;
 
 namespace QBProcessor
 {
@@ -46,7 +45,7 @@ namespace QBProcessor
                 requestResp = ex.Message;
                 if (ex.HResult != -2147220445)
                 {
-                    MessageBox.Show($"QbProcessor error: {ex.HResult}{Environment.NewLine}{ex.Message}");
+                    return $"QbProcessor error: {ex.HResult}{Environment.NewLine}{ex.Message}";
                 }
             }
 
@@ -78,7 +77,7 @@ namespace QBProcessor
                 requestResp = ex.Message;
                 if (ex.HResult != -2147220445)
                 {
-                    MessageBox.Show($"QbProcessor error: {ex.HResult}{Environment.NewLine}{ex.Message}");
+                    return $"QbProcessor error: {ex.HResult}{Environment.NewLine}{ex.Message}";
                 }
             }
 
@@ -107,7 +106,7 @@ namespace QBProcessor
             catch (Exception ex)
             {
                 requestResp = ex.Message;
-                MessageBox.Show($"QbProcessor error: {ex.HResult}{Environment.NewLine}{ex.Message}");
+                return $"QbProcessor error: {ex.HResult}{Environment.NewLine}{ex.Message}";
             }
 
             InvokeRequestEvent(this, requesterId, typeof(T2).Name, requestResp, requestXml);

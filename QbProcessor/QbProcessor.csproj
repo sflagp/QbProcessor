@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <OutputType>Library</OutputType>
     <LangVersion>latest</LangVersion>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -23,7 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="qbmodels" Version="1.1.4" />
+    <PackageReference Include="QbModels" Version="1.1.4" />
     <PackageReference Include="System.Text.Encodings.Web" Version="6.0.0" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
@@ -31,20 +31,18 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\_Icons\IMS 01 256x256.png">
+    <None Include="..\IMS 01 128x128.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
   </ItemGroup>
   <PropertyGroup>
-	<Version>2.2022.12.4</Version>
+	<Version>2.2022.12.5-preview1</Version>
+	<Description>Quickbooks Processor Integration DLL</Description>
+	<Authors>sflagp</Authors>
 	<PackageProjectUrl>https://github.com/sflagp</PackageProjectUrl>
-	<PackageIcon>IMS 01 256x256.png</PackageIcon>
-	<PackageIconUrl />
-	<RepositoryUrl>https://github.com/sflagp/QbModels</RepositoryUrl>
+	<PackageIcon>IMS 01 128x128.png</PackageIcon>
+	<RepositoryUrl>https://github.com/sflagp/QbProcessor</RepositoryUrl>
 	<RepositoryType>GitHub</RepositoryType>
 	<PackageTags>Quickbooks RP</PackageTags>
   </PropertyGroup>
