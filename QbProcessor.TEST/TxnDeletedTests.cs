@@ -23,7 +23,7 @@ namespace QbProcessor.TEST
 
                 QbTxnDeletedView qryRs;
 
-                Regex acceptableCodes = new(@"^0\b|^1\b");
+                Regex acceptableCodes = new(@"^0$|^1$");
                 string[] txnDelTypes = QbConstants.TransactionDelTypeRegEx.Replace(@"$", "").Replace("^", "").Split("|");
                 string result;
                 #endregion

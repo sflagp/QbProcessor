@@ -242,7 +242,8 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(addRq.IsEntityValid());
 
                     addRs = QB.ToView<QbBillPaymentCreditCardsView>(QB.ExecuteQbRequest(addRq));
-                    Regex responses = new(@"^0\b|^3120\b|^3250\b");
+                    if (addRs.StatusCode == "3250") Assert.Inconclusive(addRs.StatusMessage);
+                    Regex responses = new(@"^0$|^3120$|^3250$");
                     Assert.IsTrue(responses.IsMatch(addRs.StatusCode));
                 }
                 #endregion
@@ -287,11 +288,15 @@ namespace QbProcessor.TEST
                     AccountQueryRq accountsRq = new();
                     QbAccountsView accounts = QB.ToView<QbAccountsView>(QB.ExecuteQbRequest(accountsRq));
                     AccountRetDto account = accounts.Accounts.FirstOrDefault(a => a.AccountType == "AccountsReceivable");
-                    AccountRetDto card = accounts.Accounts.FirstOrDefault(a => a.AccountType == "CreditCard");
+                    AccountRetDto bank = accounts.Accounts.FirstOrDefault(a => a.AccountType == "Bank");
 
-                    InvoiceQueryRq invoicesRq = new() { MaxReturned = 50 };
+                    InvoiceQueryRq invoicesRq = new() { MaxReturned = 100, IncludeLinkedTxns = true };
                     QbInvoicesView invoices = QB.ToView<QbInvoicesView>(QB.ExecuteQbRequest(invoicesRq));
                     InvoiceRetDto invoice = invoices.Invoices?[rdm.Next(0, invoices.Invoices.Count)];
+
+                    ReceivePaymentQueryRq pmtRq = new() { MaxReturned = 50 };
+                    QbReceivePaymentsView payments = QB.ToView<QbReceivePaymentsView>(QB.ExecuteQbRequest(pmtRq));
+                    ReceivePaymentRetDto pmt = payments.ReceivePayments?[rdm.Next(0, payments.ReceivePayments.Count)];
 
                     CustomerQueryRq customerRq = new();
                     QbCustomersView customers = QB.ToView<QbCustomersView>(QB.ExecuteQbRequest(customerRq));
@@ -299,16 +304,17 @@ namespace QbProcessor.TEST
 
                     addRq.Customer = new() { ListID = customer.ListID };
                     addRq.ARAccount = new() { ListID = account.ListID };
-                    addRq.RefundFromAccount = new() { ListID = card.ListID };
+                    addRq.RefundFromAccount = new() { ListID = bank?.ListID };
                     addRq.TxnDate = DateTime.Now;
                     addRq.RefNumber = addRqName;
                     addRq.RefundAppliedToTxnAdd = new();
-                    addRq.RefundAppliedToTxnAdd.Add(new() { TxnID = invoice.TxnID, RefundAmount = invoice.AppliedAmount });
+                    addRq.RefundAppliedToTxnAdd.Add(new() { TxnID = invoice.LinkedTxn[0]?.TxnID, RefundAmount = invoice.AppliedAmount });
                     Assert.IsTrue(addRq.IsEntityValid());
 
-                    //addRs = QB.ToView<QbARRefundCreditCardsView>(QB.ExecuteQbRequest(addRq));
-                    //Regex responses = new(@"^0\b|^3120\b|^3250\b");
-                    //Assert.IsTrue(responses.IsMatch(addRs.StatusCode));
+                    addRs = QB.ToView<QbARRefundCreditCardsView>(QB.ExecuteQbRequest(addRq));
+                    if (addRs.StatusCode == "3120") Assert.Inconclusive(addRs.StatusMessage);
+                    Regex responses = new(@"^0$|^3120$|^3250$");
+                    Assert.IsTrue(responses.IsMatch(addRs.StatusCode));
                 }
                 #endregion
             }

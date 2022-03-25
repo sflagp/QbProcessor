@@ -138,7 +138,8 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(addRq.IsEntityValid());
 
                     addRs = QB.ToView<QbBillPaymentChecksView>(QB.ExecuteQbRequest(addRq));
-                    Regex responses = new(@"^0\b|^3120\b|^3250\b");
+                    if (addRs.StatusCode == "3250") Assert.Inconclusive(addRs.StatusMessage);
+                    Regex responses = new(@"^0$|^3120$|^3250$");
                     Assert.IsTrue(responses.IsMatch(addRs.StatusCode));
                 }
                 #endregion
@@ -180,7 +181,7 @@ namespace QbProcessor.TEST
                 QbSalesTaxPaymentChecksView qryRs, addRs = new(), modRs;
                 SalesTaxPaymentCheckAddRq addRq = new();
                 SalesTaxPaymentCheckModRq modRq = new();
-                Regex responses = new(@"^0\b|^3250\b");
+                Regex responses = new(@"^0$|^3250$");
                 string addRqName = $"QbProcessor";
                 #endregion
 
@@ -190,6 +191,7 @@ namespace QbProcessor.TEST
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 qryRs = QB.ToView<QbSalesTaxPaymentChecksView>(QB.ExecuteQbRequest(qryRq));
+                if (addRs.StatusCode == "3250") Assert.Inconclusive(addRs.StatusMessage);
                 Assert.IsTrue(responses.IsMatch(qryRs.StatusCode));
                 #endregion
 

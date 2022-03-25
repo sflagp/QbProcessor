@@ -23,7 +23,8 @@ namespace QbProcessor.TEST
 
                 TransactionQueryRq qryRq;
                 QbTransactionsView qryRs;
-                Regex acceptableCodes = new(@"^0\b|^1\b");
+                Regex validCodes = new(@"^0$|^1$");
+                Regex validDelCodes = new(@"^0$|^3160$");
                 #endregion
 
                 #region Query test
@@ -38,7 +39,7 @@ namespace QbProcessor.TEST
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 qryRs = QB.ToView<QbTransactionsView>(QB.ExecuteQbRequest(qryRq));
-                Assert.IsTrue(acceptableCodes.IsMatch(qryRs.StatusCode));
+                Assert.IsTrue(validCodes.IsMatch(qryRs.StatusCode));
 
                 if (qryRs.TotalTransactions == 0) return;
                 #endregion
@@ -52,7 +53,7 @@ namespace QbProcessor.TEST
 
                     string result = QB.ExecuteQbRequest(delRq);
                     QbTxnDelView delRs = QB.ToView<QbTxnDelView>(result);
-                    Assert.IsTrue(delRs.StatusCode == "0");
+                    Assert.IsTrue(validDelCodes.IsMatch(delRs.StatusCode));
                 }
                 #endregion
             }

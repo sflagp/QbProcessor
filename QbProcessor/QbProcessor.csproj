@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
     <LangVersion>latest</LangVersion>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -22,15 +22,13 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="QbModels" Version="1.1.1" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+    <PackageReference Include="qbmodels" Version="1.1.4" />
     <PackageReference Include="System.Text.Encodings.Web" Version="6.0.0" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
   <PropertyGroup>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
@@ -41,26 +39,19 @@
       <PackagePath></PackagePath>
     </None>
   </ItemGroup>
-	<Target Name="PostBuildMacros">
-	  <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
-		<Output TaskParameter="Assemblies" ItemName="Targets" />
-	  </GetAssemblyIdentity>
-	  <ItemGroup>
-		<VersionNumber Include="@(Targets->'%(Version)')" />
-	  </ItemGroup>
-	</Target>
-	<PropertyGroup>
-	  <PostBuildEventDependsOn>
-		$(PostBuildEventDependsOn);
-		PostBuildMacros;
-	  </PostBuildEventDependsOn>
-	  <PackageProjectUrl>https://github.com/sflagp</PackageProjectUrl>
-	  <PackageIcon>IMS 01 256x256.png</PackageIcon>
-	  <PackageIconUrl />
-	  <RepositoryUrl>https://github.com/sflagp/QbModels</RepositoryUrl>
-	  <RepositoryType>GitHub</RepositoryType>
-	  <PackageTags>Quickbooks RP</PackageTags>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <PlatformTarget>AnyCPU</PlatformTarget>
-	</PropertyGroup></Project>
+  <PropertyGroup>
+	<Version>2.2022.12.4</Version>
+	<PackageProjectUrl>https://github.com/sflagp</PackageProjectUrl>
+	<PackageIcon>IMS 01 256x256.png</PackageIcon>
+	<PackageIconUrl />
+	<RepositoryUrl>https://github.com/sflagp/QbModels</RepositoryUrl>
+	<RepositoryType>GitHub</RepositoryType>
+	<PackageTags>Quickbooks RP</PackageTags>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	<PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <Target Name="CopyPackage" AfterTargets="Pack">
+	<Copy SourceFiles="$(ProjectDir)bin\$(ConfigurationName)\$(PackageId).$(PackageVersion).nupkg" DestinationFolder="$(SolutionDir)NuGetPackages\" />
+  </Target>
+</Project>

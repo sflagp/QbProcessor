@@ -2,8 +2,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbHelpers;
 using QbModels;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 
 namespace QbProcessor.TEST

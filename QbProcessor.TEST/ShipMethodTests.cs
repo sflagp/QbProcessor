@@ -34,7 +34,7 @@ namespace QbProcessor.TEST
 
                 result = QB.ExecuteQbRequest(qryRq);
                 qryRs = QB.ToView<QbShipMethodsView>(result);
-                Regex statusCodes =  new(@"\b0\b|\b3250\b");
+                Regex statusCodes =  new(@"^0$|^3250$");
                 Assert.IsTrue(statusCodes.IsMatch(qryRs.StatusCode));
                 if (qryRs.StatusCode == "3250") Assert.Inconclusive(qryRs.StatusMessage);
                 #endregion

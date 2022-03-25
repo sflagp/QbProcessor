@@ -33,7 +33,7 @@ namespace QbProcessor.TEST
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 qryRs = QB.ToView<QbCurrencysView>(QB.ExecuteQbRequest(qryRq));
-                Regex statusCodes = new(@"^0\b|^3250\b");
+                Regex statusCodes = new(@"^0$|^3250$");
                 Assert.IsTrue(statusCodes.IsMatch(qryRs.StatusCode));
                 if (qryRs.StatusCode == "3250") Assert.Inconclusive(qryRs.StatusMessage);
                 #endregion

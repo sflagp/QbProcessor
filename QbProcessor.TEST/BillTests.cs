@@ -123,7 +123,7 @@ namespace QbProcessor.TEST
 
                 var result = QB.ExecuteQbRequest(qryRq);
                 QbBillingRatesView billingRates = QB.ToView<QbBillingRatesView>(result);
-                Regex statusCodes =  new(@"\b0\b|\b3250\b");
+                Regex statusCodes =  new(@"^0$|^3250$");
                 Assert.IsTrue(statusCodes.IsMatch(billingRates.StatusCode));
                 #endregion
             }
