@@ -67,8 +67,11 @@ namespace QbProcessor.TEST
                     addRq.TxnDate = DateTime.Now;
                     addRq.RefNumber = addRqName;
                     addRq.ItemLine = new();
-                    addRq.ItemLine.Item = new() { ListID = item.ListID };
-                    addRq.ItemLine.Amount = 123.45M;
+                    addRq.ItemLine.Add(new()
+                    {
+                        Item = new() { ListID = item.ListID },
+                        Amount = 123.45M
+                    });
                     Assert.IsTrue(addRq.IsEntityValid());
 
                     result = QB.ExecuteQbRequest(addRq);
@@ -156,8 +159,11 @@ namespace QbProcessor.TEST
                     addRq.TxnDate = DateTime.Now;
                     addRq.RefNumber = addRqName;
                     addRq.ItemLine = new();
-                    addRq.ItemLine.Item = new() { ListID = item.ListID };
-                    addRq.ItemLine.Amount = 123.45M;
+                    addRq.ItemLine.Add(new()
+                    {
+                        Item = new() { ListID = item.ListID },
+                        Amount = 123.45M
+                    });
                     Assert.IsTrue(addRq.IsEntityValid());
 
                     result = QB.ExecuteQbRequest(addRq);

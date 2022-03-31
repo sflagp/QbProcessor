@@ -57,7 +57,8 @@ namespace QbProcessor.TEST
                     addRq.PayeeEntity = new() { ListID = vendor.ListID };
                     addRq.TxnDate = DateTime.Now;
                     addRq.RefNumber = addRqName;
-                    addRq.ItemLineAdd = new() { Item = new() { ListID = item.ListID }, Amount = 12.34M };
+                    addRq.ItemLineAdd = new();
+                    addRq.ItemLineAdd.Add( new() { Item = new() { ListID = item.ListID }, Amount = 12.34M });
                     Assert.IsTrue(addRq.IsEntityValid());
 
                     addRs = QB.ToView<QbChecksView>(QB.ExecuteQbRequest(addRq));

@@ -60,12 +60,13 @@ namespace QbProcessor.TEST
                     addRq.TxnDate = DateTime.Now;
                     addRq.DueDate = DateTime.Today.AddDays(30);
                     addRq.RefNumber = addRqName;
-                    addRq.EstimateLine = new() 
+                    addRq.EstimateLine = new();
+                    addRq.EstimateLine.Add( new()
                     { 
                         Item = new() { ListID = item.ListID },
                         Desc = $"QbProcessor.{addRq.GetType().Name} on {DateTime.Now}", 
                         Amount = 123.45M 
-                    };
+                    });
                     Assert.IsTrue(addRq.IsEntityValid());
 
                     result = QB.ExecuteQbRequest(addRq);

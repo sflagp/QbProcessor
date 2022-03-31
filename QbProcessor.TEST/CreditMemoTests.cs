@@ -60,12 +60,13 @@ namespace QbProcessor.TEST
                     addRq.ARAccount = new() { ListID = account.ListID };
                     addRq.TxnDate = DateTime.Now;
                     addRq.RefNumber = addRqName;
-                    addRq.CreditMemoLine = new() 
+                    addRq.CreditMemoLine = new();
+                    addRq.CreditMemoLine.Add( new() 
                     { 
                         Item = new() { ListID = item.ListID },
                         Desc = $"QbProcessor.{addRq.GetType().Name} on {DateTime.Now}", 
                         Amount = 123.45M 
-                    };
+                    });
                     Assert.IsTrue(addRq.IsEntityValid());
 
                     result = QB.ExecuteQbRequest(addRq);
