@@ -23,6 +23,7 @@ namespace QbProcessor.TEST
                 AccountAddRq addRq = new();
                 AccountModRq modRq = new();
                 string addRqName = $"QbProcessor {addRq.GetType().Name}";
+                string result;
                 #endregion
 
                 #region Query Test
@@ -31,7 +32,8 @@ namespace QbProcessor.TEST
                 qryRq.ActiveStatus = "All";
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRs = QB.ToView<QbAccountsView>(QB.ExecuteQbRequest(qryRq));
+                result = QB.ExecuteQbRequest(qryRq);
+                qryRs = QB.ToView<QbAccountsView>(result);
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
 
@@ -44,7 +46,8 @@ namespace QbProcessor.TEST
                     addRq.Desc = addRq.GetType().Name;
                     Assert.IsTrue(addRq.IsEntityValid());
 
-                    addRs = QB.ToView<QbAccountsView>(QB.ExecuteQbRequest(addRq));
+                    result = QB.ExecuteQbRequest(addRq);
+                    addRs = QB.ToView<QbAccountsView>(result);
                     Assert.IsTrue(addRs.StatusCode == "0");
 
                 }
@@ -64,7 +67,7 @@ namespace QbProcessor.TEST
 
                 modRq.ListID = modRs.Accounts[0].ListID;
                 modRq.EditSequence = modRs.Accounts[0].EditSequence;
-                modRq.Desc = acct.Desc;
+                modRq.Desc = $"Modified by {modRq.GetType().Name} on {DateTime.Now}";
                 Assert.IsTrue(modRq.IsEntityValid());
 
                 modRs = QB.ToView<QbAccountsView>(QB.ExecuteQbRequest(modRq));

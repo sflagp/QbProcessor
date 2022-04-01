@@ -314,7 +314,7 @@ namespace QbProcessor.TEST
                     addRq.TxnDate = DateTime.Now;
                     addRq.RefNumber = addRqName;
                     addRq.RefundAppliedToTxnAdd = new();
-                    addRq.RefundAppliedToTxnAdd.Add(new() { TxnID = invoice.LinkedTxn[0]?.TxnID, RefundAmount = invoice.AppliedAmount });
+                    addRq.RefundAppliedToTxnAdd.Add(new() { TxnID = invoice.LinkedTxn?[0].TxnID, RefundAmount = invoice.AppliedAmount });
                     Assert.IsTrue(addRq.IsEntityValid());
 
                     addRs = QB.ToView<QbARRefundCreditCardsView>(QB.ExecuteQbRequest(addRq));

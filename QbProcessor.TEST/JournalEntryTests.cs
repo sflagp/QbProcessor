@@ -91,6 +91,7 @@ namespace QbProcessor.TEST
                 {
                     TxnLineID = journalEntry.DebitLine.TxnLineID,
                     JournalLineType = "Debit",
+                    Amount = journalEntry.DebitLine.Amount,
                     Account = journalEntry.DebitLine.Account,
                     Entity = journalEntry.DebitLine.Entity,
                     Memo = $"Debit line QbProcessor.{modRq.GetType().Name} on {DateTime.Now}"
@@ -99,6 +100,7 @@ namespace QbProcessor.TEST
                 {
                     TxnLineID = journalEntry.CreditLine.TxnLineID,
                     JournalLineType = "Credit",
+                    Amount = journalEntry.CreditLine.Amount,
                     Account = journalEntry.CreditLine.Account,
                     Entity = journalEntry.CreditLine.Entity,
                     Memo = $"Credit line QbProcessor.{modRq.GetType().Name} on {DateTime.Now}"

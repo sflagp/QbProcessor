@@ -22,7 +22,7 @@ namespace QbProcessor.TEST
                 QbClassesView qryRs, addRs = new(), modRs;
                 ClassAddRq addRq = new();
                 ClassModRq modRq = new();
-                string addRqName = $"QbProcessor {addRq.GetType().Name}";
+                string addRqName = $"QbProcessor Class";
                 #endregion
 
                 #region Query Test
