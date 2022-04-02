@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using QbHelpers;
 using QbModels;
 using System;
 using System.Linq;
@@ -109,7 +110,7 @@ namespace QbProcessor.TEST
                 qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = "StartsWith" };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRs = QB.ToView<QbBillPaymentChecksView>(QB.ExecuteQbRequest(qryRq));
+                qryRs = QbFunctions.ToView<QbBillPaymentChecksView>(QB.ExecuteQbRequest(qryRq));
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
 
@@ -119,7 +120,7 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     AccountQueryRq accountsRq = new();
-                    QbAccountsView accounts = QB.ToView<QbAccountsView>(QB.ExecuteQbRequest(accountsRq));
+                    QbAccountsView accounts = QbFunctions.ToView<QbAccountsView>(QB.ExecuteQbRequest(accountsRq));
                     AccountRetDto account = accounts.Accounts.FirstOrDefault(a => a.AccountType == "AccountsPayable");
                     AccountRetDto bank = accounts.Accounts.FirstOrDefault(a => a.AccountType == "Bank");
 

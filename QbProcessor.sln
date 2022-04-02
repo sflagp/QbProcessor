@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.32002.261
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QbProcessor", "QbProcessor\QbProcessor.csproj", "{2B9A0B1B-C27D-4FF5-B873-7907DE3C8DE4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QbProcessor.TEST", "QbProcessor.TEST\QbProcessor.TEST.csproj", "{7ABAE501-40A6-4AC2-A8E3-5D31012471D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QbProcessor.TEST", "QbProcessor.TEST\QbProcessor.TEST.csproj", "{7ABAE501-40A6-4AC2-A8E3-5D31012471D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

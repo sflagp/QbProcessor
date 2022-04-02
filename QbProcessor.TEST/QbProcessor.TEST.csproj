@@ -22,16 +22,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="QbModels" Version="1.1.7" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\QbProcessor\QbProcessor.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="QbModels">
-      <HintPath>..\..\QbModels\QbModels\bin\Release\netstandard2.1\QbModels.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>
