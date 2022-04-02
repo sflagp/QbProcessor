@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -297,8 +298,9 @@ namespace QbProcessor.TEST
                     AccountRetDto bank = accounts.Accounts.FirstOrDefault(a => a.AccountType == "Bank");
 
                     InvoiceQueryRq invoicesRq = new() { MaxReturned = 100, IncludeLinkedTxns = true };
-                    QbInvoicesView invoices = QB.ToView<QbInvoicesView>(QB.ExecuteQbRequest(invoicesRq));
-                    InvoiceRetDto invoice = invoices.Invoices?[rdm.Next(0, invoices.Invoices.Count)];
+                    QbInvoicesView invoicesRs = QB.ToView<QbInvoicesView>(QB.ExecuteQbRequest(invoicesRq));
+                    List<InvoiceRetDto> invoices = invoicesRs.Invoices.Where(i => i.LinkedTxn.Count > 0).ToList();
+                    InvoiceRetDto invoice = invoices[rdm.Next(0, invoices.Count)];
 
                     ReceivePaymentQueryRq pmtRq = new() { MaxReturned = 50 };
                     QbReceivePaymentsView payments = QB.ToView<QbReceivePaymentsView>(QB.ExecuteQbRequest(pmtRq));
@@ -314,7 +316,7 @@ namespace QbProcessor.TEST
                     addRq.TxnDate = DateTime.Now;
                     addRq.RefNumber = addRqName;
                     addRq.RefundAppliedToTxnAdd = new();
-                    addRq.RefundAppliedToTxnAdd.Add(new() { TxnID = invoice.LinkedTxn?[0].TxnID, RefundAmount = invoice.AppliedAmount });
+                    addRq.RefundAppliedToTxnAdd.Add(new() { TxnID = invoice.LinkedTxn[0].TxnID, RefundAmount = invoice.AppliedAmount });
                     Assert.IsTrue(addRq.IsEntityValid());
 
                     addRs = QB.ToView<QbARRefundCreditCardsView>(QB.ExecuteQbRequest(addRq));

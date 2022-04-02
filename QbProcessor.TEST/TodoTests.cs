@@ -19,29 +19,29 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbTodosView qryRs, addRs = new(), modRs;
-                TodoAddRq addRq = new();
-                TodoModRq modRq = new();
+                QbToDosView qryRs, addRs = new(), modRs;
+                ToDoAddRq addRq = new();
+                ToDoModRq modRq = new();
                 Random rdm = new();
                 string addRqName = $"QbProcessor";
                 string result;
                 #endregion
 
                 #region Query Test
-                TodoQueryRq qryRq = new();
+                ToDoQueryRq qryRq = new();
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 qryRq.DoneStatus = "NotDoneOnly";
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 result = QB.ExecuteQbRequest(qryRq);
-                qryRs = QB.ToView<QbTodosView>(result);
+                qryRs = QB.ToView<QbToDosView>(result);
                 if (qryRs.StatusCode == "3231") Assert.Inconclusive(qryRs.StatusMessage);
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
 
                 #region Add Test
-                if (qryRs.TotalTodos == 0)
+                if (qryRs.TotalToDos == 0)
                 {
                     CustomerQueryRq custRq = new();
                     QbCustomersView customers = QB.ToView<QbCustomersView>(QB.ExecuteQbRequest(custRq));
@@ -54,14 +54,14 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(addRq.IsEntityValid());
 
                     result = QB.ExecuteQbRequest(addRq);
-                    addRs = QB.ToView<QbTodosView>(result);
+                    addRs = QB.ToView<QbToDosView>(result);
                     if (addRs.StatusCode == "3250") Assert.Inconclusive(addRs.StatusMessage);
                     Assert.IsTrue(addRs.StatusCode == "0");
                 }
                 #endregion
 
                 #region Mod Test
-                TodoRetDto Todo = qryRs.TotalTodos == 0 ? addRs.Todos[0] : qryRs.Todos[0];
+                ToDoRetDto Todo = qryRs.TotalToDos == 0 ? addRs.ToDos[0] : qryRs.ToDos[0];
 
                 EmployeeQueryRq empRq = new();
                 QbEmployeesView employees = QB.ToView<QbEmployeesView>(QB.ExecuteQbRequest(empRq));
@@ -75,7 +75,7 @@ namespace QbProcessor.TEST
                 Assert.IsTrue(modRq.IsEntityValid());
 
                 result = QB.ExecuteQbRequest(modRq);
-                modRs = QB.ToView<QbTodosView>(result);
+                modRs = QB.ToView<QbToDosView>(result);
                 Assert.IsTrue(modRs.StatusCode == "0");
                 #endregion
             }

@@ -25,6 +25,7 @@ namespace QbProcessor.TEST
                 CheckAddRq addRq = new();
                 CheckModRq modRq = new();
                 string addRqName = $"QbProcessor";
+                string result;
                 #endregion
 
                 #region Query Test
@@ -46,7 +47,8 @@ namespace QbProcessor.TEST
                     AccountRetDto account = accounts.Accounts.FirstOrDefault(a => a.AccountType == "Bank");
 
                     ItemQueryRq itemsRq = new();
-                    QbItemsView items = QB.ToView<QbItemsView>(QB.ExecuteQbRequest(itemsRq));
+                    result = QB.ExecuteQbRequest(itemsRq);
+                    QbItemsView items = QB.ToView<QbItemsView>(result);
                     ItemOtherChargeRetDto item = items.OtherChargeItems[rdm.Next(0, items.PaymentItems.Count)];
 
                     VendorQueryRq vendorRq = new();
