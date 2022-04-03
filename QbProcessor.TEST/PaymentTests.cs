@@ -20,7 +20,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbReceivePaymentsView qryRs, addRs = new(), modRs;
+                QbReceivePaymentsView qryRs, addRs = new(""), modRs;
                 ReceivePaymentAddRq addRq = new();
                 ReceivePaymentModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -31,7 +31,7 @@ namespace QbProcessor.TEST
                 qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = "StartsWith" };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRs = QB.ToView<QbReceivePaymentsView>(QB.ExecuteQbRequest(qryRq));
+                qryRs = new(QB.ExecuteQbRequest(qryRq));
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
 
@@ -41,11 +41,11 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     AccountQueryRq bankRq = new() { AccountType = "Bank" };
-                    QbAccountsView banks = QB.ToView<QbAccountsView>(QB.ExecuteQbRequest(bankRq));
+                    QbAccountsView banks = new(QB.ExecuteQbRequest(bankRq));
                     AccountRetDto bank = banks.Accounts[rdm.Next(0, banks.Accounts.Count)];
 
                     InvoiceQueryRq invoicesRq = new() { MaxReturned = 50, PaidStatus = "NotPaidOnly" };
-                    QbInvoicesView invoices = QB.ToView<QbInvoicesView>(QB.ExecuteQbRequest(invoicesRq));
+                    QbInvoicesView invoices = new(QB.ExecuteQbRequest(invoicesRq));
                     InvoiceRetDto invoice = invoices.Invoices?[rdm.Next(0, invoices.Invoices.Count)];
 
                     addRq.RefNumber = addRqName;
@@ -61,7 +61,7 @@ namespace QbProcessor.TEST
                     });
                     Assert.IsTrue(addRq.IsEntityValid());
 
-                    addRs = QB.ToView<QbReceivePaymentsView>(QB.ExecuteQbRequest(addRq));
+                    addRs = new(QB.ExecuteQbRequest(addRq));
                     Assert.IsTrue(addRs.StatusCode == "0");
                 }
                 #endregion
@@ -75,7 +75,7 @@ namespace QbProcessor.TEST
                 modRq.Memo = $"QbProcessor.{modRq.GetType().Name} on {DateTime.Now}";
                 Assert.IsTrue(modRq.IsEntityValid());
 
-                modRs = QB.ToView<QbReceivePaymentsView>(QB.ExecuteQbRequest(modRq));
+                modRs = new(QB.ExecuteQbRequest(modRq));
                 Assert.IsTrue(modRs.StatusCode == "0");
                 #endregion
             }
@@ -106,7 +106,7 @@ namespace QbProcessor.TEST
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 result = QB.ExecuteQbRequest(qryRq);
-                qryRs = QB.ToView<QbPaymentMethodsView>(result);
+                qryRs = new(result);
                 Regex statusCodes =  new(@"^0$|^3250$");
                 Assert.IsTrue(statusCodes.IsMatch(qryRs.StatusCode));
                 if (qryRs.StatusCode == "3250") Assert.Inconclusive(qryRs.StatusMessage);
@@ -123,7 +123,7 @@ namespace QbProcessor.TEST
                     };
                     Assert.IsTrue(addRq.IsEntityValid());
 
-                    addRs = QB.ToView<QbPaymentMethodsView>(QB.ExecuteQbRequest(addRq));
+                    addRs = new(QB.ExecuteQbRequest(addRq));
                     Assert.IsTrue(addRs.StatusCode == "0");
                     Assert.IsTrue(addRs.TotalPaymentMethods > 0);
                 }

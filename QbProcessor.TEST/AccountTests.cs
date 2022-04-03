@@ -19,7 +19,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbAccountsView qryRs, addRs = new(), modRs;
+                QbAccountsView qryRs, addRs = new(""), modRs;
                 AccountAddRq addRq = new();
                 AccountModRq modRq = new();
                 string addRqName = $"QbProcessor {addRq.GetType().Name}";
@@ -33,7 +33,7 @@ namespace QbProcessor.TEST
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 result = QB.ExecuteQbRequest(qryRq);
-                qryRs = QB.ToView<QbAccountsView>(result);
+                qryRs = new(result);
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
 
@@ -47,7 +47,7 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(addRq.IsEntityValid());
 
                     result = QB.ExecuteQbRequest(addRq);
-                    addRs = QB.ToView<QbAccountsView>(result);
+                    addRs = new(result);
                     Assert.IsTrue(addRs.StatusCode == "0");
 
                 }
@@ -61,7 +61,8 @@ namespace QbProcessor.TEST
                 modRq.Desc = modRq.GetType().Name;
                 Assert.IsTrue(modRq.IsEntityValid());
 
-                modRs = QB.ToView<QbAccountsView>(QB.ExecuteQbRequest(modRq));
+                result = QB.ExecuteQbRequest(modRq);
+                modRs = new(result);
                 Assert.IsTrue(modRs.StatusCode == "0");
                 Assert.IsTrue(modRs.Accounts[0].Desc == modRq.GetType().Name);
 
@@ -70,7 +71,7 @@ namespace QbProcessor.TEST
                 modRq.Desc = $"Modified by {modRq.GetType().Name} on {DateTime.Now}";
                 Assert.IsTrue(modRq.IsEntityValid());
 
-                modRs = QB.ToView<QbAccountsView>(QB.ExecuteQbRequest(modRq));
+                modRs = new(QB.ExecuteQbRequest(modRq));
                 Assert.IsTrue(modRs.StatusCode == "0");
                 #endregion
             }

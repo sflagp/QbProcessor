@@ -33,7 +33,7 @@ namespace QbProcessor.TEST
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 result = QB.ExecuteQbRequest(qryRq);
-                qryRs = QB.ToView<QbJobTypesView>(result);
+                qryRs = new(result);
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
 
@@ -45,7 +45,7 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(addRq.IsEntityValid());
 
                     result = QB.ExecuteQbRequest(addRq);
-                    addRs = QB.ToView<QbJobTypesView>(result);
+                    addRs = new(result);
                     if (addRs.StatusCode == "3250") Assert.Inconclusive(addRs.StatusMessage);
                     Assert.IsTrue(addRs.StatusCode == "0");
                 }

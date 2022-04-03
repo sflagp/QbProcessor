@@ -19,7 +19,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbPriceLevelsView qryRs, addRs = new(), modRs;
+                QbPriceLevelsView qryRs, addRs = new(""), modRs;
                 PriceLevelAddRq addRq = new();
                 PriceLevelModRq modRq = new();
                 string addRqName = $"QbProcessor {addRq.GetType().Name}";
@@ -33,7 +33,7 @@ namespace QbProcessor.TEST
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 result = QB.ExecuteQbRequest(qryRq);
-                qryRs = QB.ToView<QbPriceLevelsView>(result);
+                qryRs = new(result);
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
 
@@ -46,7 +46,7 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(addRq.IsEntityValid());
 
                     result = QB.ExecuteQbRequest(addRq);
-                    addRs = QB.ToView<QbPriceLevelsView>(result);
+                    addRs = new(result);
                     Assert.IsTrue(addRs.StatusCode == "0");
                     Assert.IsTrue(addRs.TotalPriceLevels == 1);
                     Assert.IsTrue(addRs.PriceLevels[0].PriceLevelFixedPercentage == "10.00");
@@ -63,7 +63,7 @@ namespace QbProcessor.TEST
                 Assert.IsTrue(modRq.IsEntityValid());
 
                 result = QB.ExecuteQbRequest(modRq);
-                modRs = QB.ToView<QbPriceLevelsView>(result);
+                modRs = new(result);
                 Assert.IsTrue(modRs.StatusCode == "0");
                 Assert.IsTrue(modRs.TotalPriceLevels == 1);
                 Assert.IsTrue(modRs.PriceLevels[0].PriceLevelFixedPercentage == "15.00");

@@ -38,7 +38,7 @@ namespace QbProcessor.TEST
                 };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRs = QB.ToView<QbTransactionsView>(QB.ExecuteQbRequest(qryRq));
+                qryRs = new(QB.ExecuteQbRequest(qryRq));
                 Assert.IsTrue(validCodes.IsMatch(qryRs.StatusCode));
 
                 if (qryRs.TotalTransactions == 0) return;
@@ -52,7 +52,7 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(delRq.IsEntityValid());
 
                     string result = QB.ExecuteQbRequest(delRq);
-                    QbTxnDelView delRs = QB.ToView<QbTxnDelView>(result);
+                    QbTxnDelView delRs = new(result);
                     Assert.IsTrue(validDelCodes.IsMatch(delRs.StatusCode));
                 }
                 #endregion

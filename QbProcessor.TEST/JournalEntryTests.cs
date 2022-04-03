@@ -21,7 +21,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbJournalEntriesView qryRs, addRs = new(), modRs;
+                QbJournalEntriesView qryRs, addRs = new(""), modRs;
                 JournalEntryAddRq addRq = new();
                 JournalEntryModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -33,7 +33,7 @@ namespace QbProcessor.TEST
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 string strRs = QB.ExecuteQbRequest(qryRq);
-                qryRs = QB.ToView<QbJournalEntriesView>(strRs);
+                qryRs = new(strRs);
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
 
                 if (qryRs.TotalJournalEntries > 0) Assert.Inconclusive("Journal Entries already exist.  Cannot test.");
@@ -45,7 +45,7 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     AccountQueryRq accountsRq = new();
-                    QbAccountsView accounts = QB.ToView<QbAccountsView>(QB.ExecuteQbRequest(accountsRq));
+                    QbAccountsView accounts = new(QB.ExecuteQbRequest(accountsRq));
                     List<AccountRetDto> expenses = 
                         accounts.Accounts.Where(a => a.AccountType.Contains("Expense") && a.Balance > 0).ToList();
                     List<AccountRetDto> assets = accounts.Accounts.Where(a => a.AccountType.Contains("Asset")).ToList();
@@ -53,11 +53,11 @@ namespace QbProcessor.TEST
                     AccountRetDto asset = assets[rdm.Next(0, assets.Count)];
 
                     CustomerQueryRq customerRq = new();
-                    QbCustomersView customers = QB.ToView<QbCustomersView>(QB.ExecuteQbRequest(customerRq));
+                    QbCustomersView customers = new(QB.ExecuteQbRequest(customerRq));
                     CustomerRetDto customer = customers.Customers[rdm.Next(0, customers.Customers.Count)];
 
                     VendorQueryRq vendorRq = new();
-                    QbVendorsView vendors = QB.ToView<QbVendorsView>(QB.ExecuteQbRequest(vendorRq));
+                    QbVendorsView vendors = new(QB.ExecuteQbRequest(vendorRq));
                     VendorRetDto vendor = vendors.Vendors[rdm.Next(0, vendors.Vendors.Count)];
 
                     addRq.TxnDate = DateTime.Now;
@@ -76,7 +76,7 @@ namespace QbProcessor.TEST
                     };
                     Assert.IsTrue(addRq.IsEntityValid());
 
-                    addRs = QB.ToView<QbJournalEntriesView>(QB.ExecuteQbRequest(addRq));
+                    addRs = new(QB.ExecuteQbRequest(addRq));
                     Assert.IsTrue(addRs.StatusCode == "0");
                     Assert.IsTrue(addRs.TotalJournalEntries > 0);
                 }
@@ -107,7 +107,7 @@ namespace QbProcessor.TEST
                 });
                 Assert.IsTrue(modRq.IsEntityValid());
 
-                modRs = QB.ToView<QbJournalEntriesView>(QB.ExecuteQbRequest(modRq));
+                modRs = new(QB.ExecuteQbRequest(modRq));
                 Assert.IsTrue(modRs.StatusCode == "0");
                 #endregion
             }

@@ -20,7 +20,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbCurrencysView qryRs, addRs = new(), modRs;
+                QbCurrencysView qryRs, addRs = new(""), modRs;
                 CurrencyAddRq addRq = new();
                 CurrencyModRq modRq = new();
                 string addRqName = $"QPD";
@@ -32,7 +32,7 @@ namespace QbProcessor.TEST
                 qryRq.ActiveStatus = "All";
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRs = QB.ToView<QbCurrencysView>(QB.ExecuteQbRequest(qryRq));
+                qryRs = new(QB.ExecuteQbRequest(qryRq));
                 Regex statusCodes = new(@"^0$|^3250$");
                 Assert.IsTrue(statusCodes.IsMatch(qryRs.StatusCode));
                 if (qryRs.StatusCode == "3250") Assert.Inconclusive(qryRs.StatusMessage);
@@ -46,7 +46,7 @@ namespace QbProcessor.TEST
                     addRq.CurrencyCode = addRqName;
                     Assert.IsTrue(addRq.IsEntityValid());
 
-                    addRs = QB.ToView<QbCurrencysView>(QB.ExecuteQbRequest(addRq));
+                    addRs = new(QB.ExecuteQbRequest(addRq));
                     Assert.IsTrue(addRs.StatusCode == "0");
 
                 }
@@ -60,7 +60,7 @@ namespace QbProcessor.TEST
                 modRq.CurrencyFormat = new() { ThousandSeparator = "Comma" };
                 Assert.IsTrue(modRq.IsEntityValid());
 
-                modRs = QB.ToView<QbCurrencysView>(QB.ExecuteQbRequest(modRq));
+                modRs = new(QB.ExecuteQbRequest(modRq));
                 Assert.IsTrue(modRs.StatusCode == "0");
                 #endregion
             }

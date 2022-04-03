@@ -20,7 +20,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbItemInventoryView qryRs, addRs = new(), modRs;
+                QbItemInventoryView qryRs, addRs = new(""), modRs;
                 ItemInventoryAddRq addRq = new();
                 ItemInventoryModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -35,7 +35,7 @@ namespace QbProcessor.TEST
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 result = QB.ExecuteQbRequest(qryRq);
-                qryRs = QB.ToView<QbItemInventoryView>(result);
+                qryRs = new(result);
                 if (qryRs.StatusCode == "3231") Assert.Inconclusive(qryRs.StatusMessage);
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
@@ -44,15 +44,15 @@ namespace QbProcessor.TEST
                 Random rdm = new();
 
                 AccountQueryRq accountsRq = new() { AccountType = "Income" };
-                QbAccountsView accounts = QB.ToView<QbAccountsView>(QB.ExecuteQbRequest(accountsRq));
+                QbAccountsView accounts = new(QB.ExecuteQbRequest(accountsRq));
                 AccountRetDto account = accounts.Accounts[rdm.Next(0, accounts.Accounts.Count)];
 
                 AccountQueryRq assetsRq = new() { AccountType = "OtherCurrentAsset" };
-                QbAccountsView assets = QB.ToView<QbAccountsView>(QB.ExecuteQbRequest(assetsRq));
+                QbAccountsView assets = new(QB.ExecuteQbRequest(assetsRq));
                 AccountRetDto asset = assets.Accounts[rdm.Next(0, assets.Accounts.Count)];
 
                 AccountQueryRq cogsRq = new() { FullName = new() { "Company COGS" } };
-                QbAccountsView cogss = QB.ToView<QbAccountsView>(QB.ExecuteQbRequest(cogsRq));
+                QbAccountsView cogss = new(QB.ExecuteQbRequest(cogsRq));
                 AccountRetDto cogs = cogss.Accounts.FirstOrDefault();
 
                 for (int i = 1; i <= 5; i++)
@@ -74,7 +74,7 @@ namespace QbProcessor.TEST
                         Assert.IsTrue(addRq.IsEntityValid());
 
                         result = QB.ExecuteQbRequest(addRq);
-                        addRs = QB.ToView<QbItemInventoryView>(result);
+                        addRs = new(result);
                         if (addRs.StatusCode == "3250") Assert.Inconclusive(addRs.StatusMessage);
                         Assert.IsTrue(addRs.StatusCode == "0");
                     }
@@ -83,7 +83,7 @@ namespace QbProcessor.TEST
 
                 #region Mod Test
                 result = QB.ExecuteQbRequest(qryRq);
-                qryRs = QB.ToView<QbItemInventoryView>(result);
+                qryRs = new(result);
                 foreach(ItemInventoryRetDto item in qryRs.ItemInventory)
                 {
                     modRq = new();
@@ -96,7 +96,7 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(modRq.IsEntityValid());
 
                     result = QB.ExecuteQbRequest(modRq);
-                    modRs = QB.ToView<QbItemInventoryView>(result);
+                    modRs = new(result);
                     if (modRs.StatusCode == "3250") Assert.Inconclusive(modRs.StatusMessage);
                     Assert.IsTrue(modRs.StatusCode == "0");
                 }

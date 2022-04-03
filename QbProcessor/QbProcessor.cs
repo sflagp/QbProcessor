@@ -54,7 +54,7 @@ namespace QBProcessor
                     var xmlCompany = GetCompany(); 
                     if(xmlCompany != "The version of QBXML that was requested is not supported or is unknown.")
                     {
-                        QbCompany = QbFunctions.ToView<QbCompanyView>(xmlCompany);
+                        QbCompany = new(xmlCompany);
                         bolRequestComplete = true;
                     }
                     else

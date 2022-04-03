@@ -22,7 +22,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="QbModels" Version="1.1.7" />
+    <PackageReference Include="QbModels" Version="1.1.10" />
   </ItemGroup>
 
   <ItemGroup>

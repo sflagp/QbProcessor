@@ -20,7 +20,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbTimeTrackingView qryRs, addRs = new(), modRs;
+                QbTimeTrackingView qryRs, addRs = new(""), modRs;
                 TimeTrackingAddRq addRq = new();
                 TimeTrackingModRq modRq = new();
                 EmployeeRetDto emp;
@@ -29,7 +29,7 @@ namespace QbProcessor.TEST
 
                 #region Query Test
                 EmployeeQueryRq empRq = new() { NameFilter = new() { Name = "QbProcessor", MatchCriterion = "StartsWith" } };
-                QbEmployeesView emps = QB.ToView<QbEmployeesView>(QB.ExecuteQbRequest(empRq));
+                QbEmployeesView emps = new(QB.ExecuteQbRequest(empRq));
                 if (emps.Employees.Count == 0) Assert.Inconclusive("QbProcessor employee not found.");
                 emp = emps.Employees[0];
 
@@ -39,7 +39,7 @@ namespace QbProcessor.TEST
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 string strRs = QB.ExecuteQbRequest(qryRq);
-                qryRs = QB.ToView<QbTimeTrackingView>(strRs);
+                qryRs = new(strRs);
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
 
@@ -49,11 +49,11 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     CustomerQueryRq customerRq = new();
-                    QbCustomersView customers = QB.ToView<QbCustomersView>(QB.ExecuteQbRequest(customerRq));
+                    QbCustomersView customers = new(QB.ExecuteQbRequest(customerRq));
                     CustomerRetDto customer = customers.Customers[rdm.Next(0, customers.Customers.Count)];
 
                     ItemNonInventoryQueryRq itemRq = new();
-                    QbItemNonInventoryView items = QB.ToView<QbItemNonInventoryView>(QB.ExecuteQbRequest(itemRq));
+                    QbItemNonInventoryView items = new(QB.ExecuteQbRequest(itemRq));
                     ItemNonInventoryRetDto item = items.ItemsNonInventory[rdm.Next(0, items.ItemsNonInventory.Count)];
 
                     addRq.TxnDate = DateTime.Now;
@@ -63,7 +63,7 @@ namespace QbProcessor.TEST
                     addRq.Duration = 1.11M;
                     Assert.IsTrue(addRq.IsEntityValid());
 
-                    addRs = QB.ToView<QbTimeTrackingView>(QB.ExecuteQbRequest(addRq));
+                    addRs = new(QB.ExecuteQbRequest(addRq));
                     Assert.IsTrue(addRs.StatusCode == "0");
                     Assert.IsTrue(addRs.TotalTimeTracking > 0);
                 }
@@ -80,7 +80,7 @@ namespace QbProcessor.TEST
                 modRq.BillableStatus = "Billable";
                 Assert.IsTrue(modRq.IsEntityValid());
 
-                modRs = QB.ToView<QbTimeTrackingView>(QB.ExecuteQbRequest(modRq));
+                modRs = new(QB.ExecuteQbRequest(modRq));
                 Assert.IsTrue(modRs.StatusCode == "0");
                 #endregion
             }

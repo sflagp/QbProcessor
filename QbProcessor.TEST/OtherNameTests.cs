@@ -19,7 +19,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbOtherNamesView qryRs, addRs = new(), modRs;
+                QbOtherNamesView qryRs, addRs = new(""), modRs;
                 OtherNameAddRq addRq = new();
                 OtherNameModRq modRq = new();
                 string addRqName = $"QbProcessor {addRq.GetType().Name}";
@@ -31,7 +31,7 @@ namespace QbProcessor.TEST
                 qryRq.ActiveStatus = "All";
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRs = QB.ToView<QbOtherNamesView>(QB.ExecuteQbRequest(qryRq));
+                qryRs = new(QB.ExecuteQbRequest(qryRq));
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
 
@@ -44,7 +44,7 @@ namespace QbProcessor.TEST
                     addRq.LastName = "Prieto";
                     Assert.IsTrue(addRq.IsEntityValid());
 
-                    addRs = QB.ToView<QbOtherNamesView>(QB.ExecuteQbRequest(addRq));
+                    addRs = new(QB.ExecuteQbRequest(addRq));
                     Assert.IsTrue(addRs.StatusCode == "0");
 
                 }
@@ -59,7 +59,7 @@ namespace QbProcessor.TEST
                 modRq.Notes = Note;
                 Assert.IsTrue(modRq.IsEntityValid());
 
-                modRs = QB.ToView<QbOtherNamesView>(QB.ExecuteQbRequest(modRq));
+                modRs = new(QB.ExecuteQbRequest(modRq));
                 Assert.IsTrue(modRs.StatusCode == "0");
                 Assert.IsTrue(modRs.OtherNames[0].Notes == Note);
 
@@ -68,7 +68,7 @@ namespace QbProcessor.TEST
                 modRq.Email = "greg.prieto@ncsecu.org";
                 Assert.IsTrue(modRq.IsEntityValid());
 
-                modRs = QB.ToView<QbOtherNamesView>(QB.ExecuteQbRequest(modRq));
+                modRs = new(QB.ExecuteQbRequest(modRq));
                 Assert.IsTrue(modRs.StatusCode == "0");
                 #endregion
             }

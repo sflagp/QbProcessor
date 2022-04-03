@@ -19,7 +19,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbCustomersView qryRs, addRs = new(), modRs;
+                QbCustomersView qryRs, addRs = new(""), modRs;
                 CustomerAddRq addRq = new();
                 CustomerModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -31,7 +31,7 @@ namespace QbProcessor.TEST
                 qryRq.ActiveStatus = "All";
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRs = QB.ToView<QbCustomersView>(QB.ExecuteQbRequest(qryRq));
+                qryRs = new(QB.ExecuteQbRequest(qryRq));
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
 
@@ -51,7 +51,7 @@ namespace QbProcessor.TEST
                     addRq.Notes = addRq.GetType().Name;
                     Assert.IsTrue(addRq.IsEntityValid());
 
-                    addRs = QB.ToView<QbCustomersView>(QB.ExecuteQbRequest(addRq));
+                    addRs = new(QB.ExecuteQbRequest(addRq));
                     Assert.IsTrue(addRs.StatusCode == "0");
 
                 }
@@ -77,7 +77,7 @@ namespace QbProcessor.TEST
                 modRq.CreditLimit = 10000M;
                 Assert.IsTrue(modRq.IsEntityValid());
 
-                modRs = QB.ToView<QbCustomersView>(QB.ExecuteQbRequest(modRq));
+                modRs = new(QB.ExecuteQbRequest(modRq));
                 Assert.IsTrue(modRs.StatusCode == "0");
                 #endregion
             }
@@ -106,7 +106,7 @@ namespace QbProcessor.TEST
                 qryRq.ActiveStatus = "All";
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRs = QB.ToView<QbCustomerTypesView>(QB.ExecuteQbRequest(qryRq));
+                qryRs = new(QB.ExecuteQbRequest(qryRq));
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
 
@@ -117,7 +117,7 @@ namespace QbProcessor.TEST
                     addRq.IsActive = true;
                     Assert.IsTrue(addRq.IsEntityValid());
 
-                    addRs = QB.ToView<QbCustomerTypesView>(QB.ExecuteQbRequest(addRq));
+                    addRs = new(QB.ExecuteQbRequest(addRq));
                     Assert.IsTrue(addRs.StatusCode == "0");
                 }
                 #endregion
@@ -147,7 +147,7 @@ namespace QbProcessor.TEST
                 qryRq.ActiveStatus = "All";
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRs = QB.ToView<QbCustomerMsgsView>(QB.ExecuteQbRequest(qryRq));
+                qryRs = new(QB.ExecuteQbRequest(qryRq));
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
 
@@ -158,7 +158,7 @@ namespace QbProcessor.TEST
                     addRq.IsActive = true;
                     Assert.IsTrue(addRq.IsEntityValid());
 
-                    addRs = QB.ToView<QbCustomerMsgsView>(QB.ExecuteQbRequest(addRq));
+                    addRs = new(QB.ExecuteQbRequest(addRq));
                     Assert.IsTrue(addRs.StatusCode == "0");
                 }
                 #endregion

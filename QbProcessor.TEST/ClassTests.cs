@@ -19,7 +19,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbClassesView qryRs, addRs = new(), modRs;
+                QbClassesView qryRs, addRs = new(""), modRs;
                 ClassAddRq addRq = new();
                 ClassModRq modRq = new();
                 string addRqName = $"QbProcessor Class";
@@ -31,7 +31,7 @@ namespace QbProcessor.TEST
                 qryRq.ActiveStatus = "All";
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRs = QB.ToView<QbClassesView>(QB.ExecuteQbRequest(qryRq));
+                qryRs = new(QB.ExecuteQbRequest(qryRq));
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
 
@@ -41,7 +41,7 @@ namespace QbProcessor.TEST
                     addRq.Name = addRqName;
                     addRq.IsActive = true;
 
-                    addRs = QB.ToView<QbClassesView>(QB.ExecuteQbRequest(addRq));
+                    addRs = new(QB.ExecuteQbRequest(addRq));
                     Assert.IsTrue(addRs.StatusCode == "0");
                 }
                 #endregion
@@ -53,7 +53,7 @@ namespace QbProcessor.TEST
                 modRq.Name = acct.Name;
                 Assert.IsTrue(modRq.IsEntityValid());
 
-                modRs = QB.ToView<QbClassesView>(QB.ExecuteQbRequest(modRq));
+                modRs = new(QB.ExecuteQbRequest(modRq));
                 Assert.IsTrue(modRs.StatusCode == "0");
                 #endregion
             }

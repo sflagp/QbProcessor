@@ -7,11 +7,11 @@ namespace QBProcessor
     {
         #region Processor Helpers
 
-        /// <summary>Converts to view.</summary>
+        /// <summary>DEPRECATED:  Do not use.  Converts to view.</summary>
         /// <typeparam name="T">Object of type T to convert XML string into.</typeparam>
         /// <param name="xml">The XML.</param>
         /// <returns>Object of type T</returns>
-        public T ToView<T>(string xml) => QbFunctions.ToView<T>(xml);
+        public T ToView<T>(string xml) => default; // QbFunctions.ToView<T>(xml);
 
         /// <summary>Executes the qb request and returns XML string from Quickbooks processor.</summary>
         /// <typeparam name="T">Source request object to read from</typeparam>

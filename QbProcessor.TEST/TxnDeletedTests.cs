@@ -39,7 +39,7 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(qryRq.IsEntityValid());
 
                     result = QB.ExecuteQbRequest(qryRq);
-                    qryRs = QB.ToView<QbTxnDeletedView>(result);
+                    qryRs = new(result);
                     Assert.IsTrue(acceptableCodes.IsMatch(qryRs.StatusCode));
 
                     if(qryRs.StatusCode == "0")

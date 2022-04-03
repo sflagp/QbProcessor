@@ -19,7 +19,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbWorkersCompCodesView qryRs, addRs = new(), modRs;
+                QbWorkersCompCodesView qryRs, addRs = new(""), modRs;
                 WorkersCompCodeAddRq addRq = new();
                 WorkersCompCodeModRq modRq = new();
                 string addRqName = $"QbProcessor.WorkersCompCode";
@@ -31,7 +31,7 @@ namespace QbProcessor.TEST
                 qryRq.ActiveStatus = "All";
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRs = QB.ToView<QbWorkersCompCodesView>(QB.ExecuteQbRequest(qryRq));
+                qryRs = new(QB.ExecuteQbRequest(qryRq));
                 if (qryRs.StatusCode == "3250") Assert.Inconclusive(qryRs.StatusMessage);
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
@@ -45,7 +45,7 @@ namespace QbProcessor.TEST
                     addRq.RateEntry.Add(new() { Rate = "100.00", EffectiveDate = DateTime.Today.AddDays(-7) });
                     Assert.IsTrue(addRq.IsEntityValid());
 
-                    addRs = QB.ToView<QbWorkersCompCodesView>(QB.ExecuteQbRequest(addRq));
+                    addRs = new(QB.ExecuteQbRequest(addRq));
                     Assert.IsTrue(addRs.StatusCode == "0");
                 }
                 #endregion
@@ -58,7 +58,7 @@ namespace QbProcessor.TEST
                 modRq.Desc = $"{addRqName} modified by {modRq.GetType().Name} on {DateTime.Now}";
                 Assert.IsTrue(modRq.IsEntityValid());
 
-                modRs = QB.ToView<QbWorkersCompCodesView>(QB.ExecuteQbRequest(modRq));
+                modRs = new(QB.ExecuteQbRequest(modRq));
                 Assert.IsTrue(modRs.StatusCode == "0");
                 #endregion
             }

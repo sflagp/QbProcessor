@@ -19,7 +19,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbChargesView qryRs, addRs = new(), modRs;
+                QbChargesView qryRs, addRs = new(""), modRs;
                 ChargeAddRq addRq = new();
                 ChargeModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -34,7 +34,7 @@ namespace QbProcessor.TEST
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 result = QB.ExecuteQbRequest(qryRq);
-                qryRs = QB.ToView<QbChargesView>(result);
+                qryRs = new(result);
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
 
@@ -44,11 +44,11 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     ItemNonInventoryQueryRq itemRq = new();
-                    QbItemNonInventoryView items = QB.ToView<QbItemNonInventoryView>(QB.ExecuteQbRequest(itemRq));
+                    QbItemNonInventoryView items = new(QB.ExecuteQbRequest(itemRq));
                     ItemNonInventoryRetDto item = items.ItemsNonInventory[rdm.Next(0, items.ItemsNonInventory.Count)];
 
                     CustomerQueryRq customerRq = new();
-                    QbCustomersView customers = QB.ToView<QbCustomersView>(QB.ExecuteQbRequest(customerRq));
+                    QbCustomersView customers = new(QB.ExecuteQbRequest(customerRq));
                     CustomerRetDto customer = customers.Customers[rdm.Next(0, customers.Customers.Count)];
 
                     addRq.Customer = new() { ListID = customer.ListID };
@@ -59,7 +59,7 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(addRq.IsEntityValid());
 
                     result = QB.ExecuteQbRequest(addRq);
-                    addRs = QB.ToView<QbChargesView>(result);
+                    addRs = new(result);
                     Assert.IsTrue(addRs.StatusCode == "0");
                 }
                 #endregion
@@ -77,7 +77,7 @@ namespace QbProcessor.TEST
 
                 modRq.TxnDate = default;
                 result = QB.ExecuteQbRequest(modRq);
-                modRs = QB.ToView<QbChargesView>(result);
+                modRs = new(result);
                 Assert.IsTrue(modRs.StatusCode == "0");
                 #endregion
             }

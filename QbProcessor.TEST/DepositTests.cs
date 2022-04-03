@@ -19,7 +19,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbDepositsView qryRs, addRs = new(), modRs;
+                QbDepositsView qryRs, addRs = new(""), modRs;
                 DepositAddRq addRq = new();
                 DepositModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -34,7 +34,7 @@ namespace QbProcessor.TEST
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 result = QB.ExecuteQbRequest(qryRq);
-                qryRs = QB.ToView<QbDepositsView>(result);
+                qryRs = new(result);
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
                 
@@ -44,15 +44,15 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     AccountQueryRq bankRq = new() { AccountType = "Bank" };
-                    QbAccountsView banks = QB.ToView<QbAccountsView>(QB.ExecuteQbRequest(bankRq));
+                    QbAccountsView banks = new(QB.ExecuteQbRequest(bankRq));
                     AccountRetDto bank = banks.Accounts[rdm.Next(0, banks.Accounts.Count)];
 
                     AccountQueryRq acctRq = new() { AccountType = "AccountsReceivable" };
-                    QbAccountsView accts = QB.ToView<QbAccountsView>(QB.ExecuteQbRequest(acctRq));
+                    QbAccountsView accts = new(QB.ExecuteQbRequest(acctRq));
                     AccountRetDto acct = accts.Accounts[rdm.Next(0, accts.Accounts.Count)];
 
                     CustomerQueryRq custRq = new();
-                    QbCustomersView customers = QB.ToView<QbCustomersView>(QB.ExecuteQbRequest(custRq));
+                    QbCustomersView customers = new(QB.ExecuteQbRequest(custRq));
                     CustomerRetDto customer = customers.Customers[rdm.Next(0, customers.Customers.Count)];
 
                     addRq.DepositToAccount = new() { ListID = bank.ListID };
@@ -66,7 +66,7 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(addRq.IsEntityValid());
 
                     result = QB.ExecuteQbRequest(addRq);
-                    addRs = QB.ToView<QbDepositsView>(result);
+                    addRs = new(result);
                     Assert.IsTrue(addRs.StatusCode == "0");
                 }
                 #endregion
@@ -79,7 +79,7 @@ namespace QbProcessor.TEST
                 modRq.Memo = $"{addRqName}.{modRq.GetType().Name} on {DateTime.Now}";
                 Assert.IsTrue(modRq.IsEntityValid());
 
-                modRs = QB.ToView<QbDepositsView>(QB.ExecuteQbRequest(modRq));
+                modRs = new(QB.ExecuteQbRequest(modRq));
                 Assert.IsTrue(modRs.StatusCode == "0");
                 #endregion
             }

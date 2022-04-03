@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using QbHelpers;
 using QbModels;
 using System;
 using System.Linq;
@@ -22,7 +21,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbChecksView qryRs, addRs = new(), modRs;
+                QbChecksView qryRs, addRs = new(""), modRs;
                 CheckAddRq addRq = new();
                 CheckModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -34,7 +33,7 @@ namespace QbProcessor.TEST
                 qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = "StartsWith" };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRs = QB.ToView<QbChecksView>(QB.ExecuteQbRequest(qryRq));
+                qryRs = new(QB.ExecuteQbRequest(qryRq));
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
 
@@ -44,16 +43,16 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     AccountQueryRq accountsRq = new();
-                    QbAccountsView accounts = QB.ToView<QbAccountsView>(QB.ExecuteQbRequest(accountsRq));
+                    QbAccountsView accounts = new(QB.ExecuteQbRequest(accountsRq));
                     AccountRetDto account = accounts.Accounts.FirstOrDefault(a => a.AccountType == "Bank");
 
                     ItemQueryRq itemsRq = new();
                     result = QB.ExecuteQbRequest(itemsRq);
-                    QbItemsView items = QB.ToView<QbItemsView>(result);
+                    QbItemsView items = new(result);
                     ItemOtherChargeRetDto item = items.OtherChargeItems[rdm.Next(0, items.PaymentItems.Count)];
 
                     VendorQueryRq vendorRq = new();
-                    QbVendorsView vendors = QB.ToView<QbVendorsView>(QB.ExecuteQbRequest(vendorRq));
+                    QbVendorsView vendors = new(QB.ExecuteQbRequest(vendorRq));
                     VendorRetDto vendor = vendors.Vendors[rdm.Next(0, vendors.Vendors.Count)];
 
                     addRq.Account = new() { ListID = account.ListID };
@@ -64,7 +63,7 @@ namespace QbProcessor.TEST
                     addRq.ItemLineAdd.Add( new() { Item = new() { ListID = item.ListID }, Amount = 12.34M });
                     Assert.IsTrue(addRq.IsEntityValid());
 
-                    addRs = QB.ToView<QbChecksView>(QB.ExecuteQbRequest(addRq));
+                    addRs = new(QB.ExecuteQbRequest(addRq));
                     Assert.IsTrue(addRs.StatusCode == "0");
                 }
                 #endregion
@@ -77,7 +76,7 @@ namespace QbProcessor.TEST
                 modRq.Memo = $"QbProcessor.{modRq.GetType().Name} on {DateTime.Now}";
                 Assert.IsTrue(modRq.IsEntityValid());
 
-                modRs = QB.ToView<QbChecksView>(QB.ExecuteQbRequest(modRq));
+                modRs = new(QB.ExecuteQbRequest(modRq));
                 Assert.IsTrue(modRs.StatusCode == "0");
                 #endregion
             }
@@ -99,7 +98,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbBillPaymentChecksView qryRs, addRs = new(), modRs;
+                QbBillPaymentChecksView qryRs, addRs = new(""), modRs;
                 BillPaymentCheckAddRq addRq = new();
                 BillPaymentCheckModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -110,7 +109,7 @@ namespace QbProcessor.TEST
                 qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = "StartsWith" };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRs = QbFunctions.ToView<QbBillPaymentChecksView>(QB.ExecuteQbRequest(qryRq));
+                qryRs = new(QB.ExecuteQbRequest(qryRq));
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
 
@@ -120,16 +119,16 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     AccountQueryRq accountsRq = new();
-                    QbAccountsView accounts = QbFunctions.ToView<QbAccountsView>(QB.ExecuteQbRequest(accountsRq));
+                    QbAccountsView accounts = new(QB.ExecuteQbRequest(accountsRq));
                     AccountRetDto account = accounts.Accounts.FirstOrDefault(a => a.AccountType == "AccountsPayable");
                     AccountRetDto bank = accounts.Accounts.FirstOrDefault(a => a.AccountType == "Bank");
 
                     BillQueryRq billsRq = new() { PaidStatus = "NotPaidOnly" };
-                    QbBillsView bills = QB.ToView<QbBillsView>(QB.ExecuteQbRequest(billsRq));
+                    QbBillsView bills = new(QB.ExecuteQbRequest(billsRq));
                     BillRetDto bill = bills.Bills[rdm.Next(0, bills.Bills.Count)];
 
                     VendorQueryRq vendorRq = new();
-                    QbVendorsView vendors = QB.ToView<QbVendorsView>(QB.ExecuteQbRequest(vendorRq));
+                    QbVendorsView vendors = new(QB.ExecuteQbRequest(vendorRq));
                     VendorRetDto vendor = vendors.Vendors[rdm.Next(0, vendors.Vendors.Count)];
 
                     addRq.PayeeEntity = new() { ListID = vendor.ListID };
@@ -141,7 +140,7 @@ namespace QbProcessor.TEST
                     addRq.AppliedToTxn.Add(new AppliedToTxnAddDto(){ TxnID = bill.TxnID, PaymentAmount = bill.AmountDue });
                     Assert.IsTrue(addRq.IsEntityValid());
 
-                    addRs = QB.ToView<QbBillPaymentChecksView>(QB.ExecuteQbRequest(addRq));
+                    addRs = new(QB.ExecuteQbRequest(addRq));
                     if (addRs.StatusCode == "3250") Assert.Inconclusive(addRs.StatusMessage);
                     Regex responses = new(@"^0$|^3120$|^3250$");
                     Assert.IsTrue(responses.IsMatch(addRs.StatusCode));
@@ -158,7 +157,7 @@ namespace QbProcessor.TEST
                     modRq.Memo = $"QbProcessor.{modRq.GetType().Name} on {DateTime.Now}";
                     Assert.IsTrue(modRq.IsEntityValid());
 
-                    modRs = QB.ToView<QbBillPaymentChecksView>(QB.ExecuteQbRequest(modRq));
+                    modRs = new(QB.ExecuteQbRequest(modRq));
                     Assert.IsTrue(modRs.StatusCode == "0");
                 }
                 #endregion
@@ -182,7 +181,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbSalesTaxPaymentChecksView qryRs, addRs = new(), modRs;
+                QbSalesTaxPaymentChecksView qryRs, addRs = new(""), modRs;
                 SalesTaxPaymentCheckAddRq addRq = new();
                 SalesTaxPaymentCheckModRq modRq = new();
                 Regex responses = new(@"^0$|^3250$");
@@ -194,7 +193,7 @@ namespace QbProcessor.TEST
                 qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = "StartsWith" };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRs = QB.ToView<QbSalesTaxPaymentChecksView>(QB.ExecuteQbRequest(qryRq));
+                qryRs = new(QB.ExecuteQbRequest(qryRq));
                 if (addRs.StatusCode == "3250") Assert.Inconclusive(addRs.StatusMessage);
                 Assert.IsTrue(responses.IsMatch(qryRs.StatusCode));
                 #endregion
@@ -205,11 +204,11 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     AccountQueryRq accountsRq = new();
-                    QbAccountsView accounts = QB.ToView<QbAccountsView>(QB.ExecuteQbRequest(accountsRq));
+                    QbAccountsView accounts = new(QB.ExecuteQbRequest(accountsRq));
                     AccountRetDto bank = accounts.Accounts.FirstOrDefault(a => a.AccountType == "Bank");
 
                     VendorQueryRq vendorRq = new();
-                    QbVendorsView vendors = QB.ToView<QbVendorsView>(QB.ExecuteQbRequest(vendorRq));
+                    QbVendorsView vendors = new(QB.ExecuteQbRequest(vendorRq));
                     VendorRetDto vendor = vendors.Vendors[rdm.Next(0, vendors.Vendors.Count)];
 
                     addRq.PayeeEntity = new() { ListID = vendor.ListID };
@@ -218,7 +217,7 @@ namespace QbProcessor.TEST
                     addRq.RefNumber = addRqName;
                     Assert.IsTrue(addRq.IsEntityValid());
 
-                    addRs = QB.ToView<QbSalesTaxPaymentChecksView>(QB.ExecuteQbRequest(addRq));
+                    addRs = new(QB.ExecuteQbRequest(addRq));
                     Assert.IsTrue(responses.IsMatch(addRs.StatusCode));
                 }
                 #endregion
@@ -233,7 +232,7 @@ namespace QbProcessor.TEST
                     modRq.Memo = $"QbProcessor.{modRq.GetType().Name} on {DateTime.Now}";
                     Assert.IsTrue(modRq.IsEntityValid());
 
-                    modRs = QB.ToView<QbSalesTaxPaymentChecksView>(QB.ExecuteQbRequest(modRq));
+                    modRs = new(QB.ExecuteQbRequest(modRq));
                     Assert.IsTrue(modRs.StatusCode == "0");
                 }
                 #endregion

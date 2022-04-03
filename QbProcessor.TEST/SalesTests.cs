@@ -19,7 +19,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbSalesOrdersView qryRs, addRs = new(), modRs;
+                QbSalesOrdersView qryRs, addRs = new(""), modRs;
                 SalesOrderAddRq addRq = new();
                 SalesOrderModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -34,7 +34,7 @@ namespace QbProcessor.TEST
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 result = QB.ExecuteQbRequest(qryRq);
-                qryRs = QB.ToView<QbSalesOrdersView>(result);
+                qryRs = new(result);
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
 
@@ -44,11 +44,11 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     CustomerQueryRq customerRq = new();
-                    QbCustomersView customers = QB.ToView<QbCustomersView>(QB.ExecuteQbRequest(customerRq));
+                    QbCustomersView customers = new(QB.ExecuteQbRequest(customerRq));
                     CustomerRetDto customer = customers.Customers[rdm.Next(0, customers.Customers.Count)];
 
                     ItemInventoryQueryRq itemsRq = new() { NameFilter = new() { Name = "QbProcessor", MatchCriterion="StartsWith" } };
-                    QbItemInventoryView items = QB.ToView<QbItemInventoryView>(QB.ExecuteQbRequest(itemsRq));
+                    QbItemInventoryView items = new(QB.ExecuteQbRequest(itemsRq));
 
                     addRq.Customer = new() { ListID = customer.ListID };
                     addRq.TxnDate = DateTime.Now;
@@ -89,7 +89,7 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(addRq.IsEntityValid());
 
                     result = QB.ExecuteQbRequest(addRq);
-                    addRs = QB.ToView<QbSalesOrdersView>(result);
+                    addRs = new(result);
                     if (addRs.StatusCode == "3250") Assert.Inconclusive(addRs.StatusMessage);
                     Assert.IsTrue(addRs.StatusCode == "0");
                 }
@@ -113,7 +113,7 @@ namespace QbProcessor.TEST
 
                 modRq.TxnDate = default;
                 result = QB.ExecuteQbRequest(modRq);
-                modRs = QB.ToView<QbSalesOrdersView>(result);
+                modRs = new(result);
                 Assert.IsTrue(modRs.StatusCode == "0");
                 #endregion
             }
@@ -135,7 +135,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbSalesReceiptsView qryRs, addRs = new(), modRs;
+                QbSalesReceiptsView qryRs, addRs = new(""), modRs;
                 SalesReceiptAddRq addRq = new();
                 SalesReceiptModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -150,7 +150,7 @@ namespace QbProcessor.TEST
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 result = QB.ExecuteQbRequest(qryRq);
-                qryRs = QB.ToView<QbSalesReceiptsView>(result);
+                qryRs = new(result);
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
 
@@ -160,11 +160,11 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     CustomerQueryRq customerRq = new();
-                    QbCustomersView customers = QB.ToView<QbCustomersView>(QB.ExecuteQbRequest(customerRq));
+                    QbCustomersView customers = new(QB.ExecuteQbRequest(customerRq));
                     CustomerRetDto customer = customers.Customers[rdm.Next(0, customers.Customers.Count)];
 
                     ItemInventoryQueryRq itemsRq = new() { NameFilter = new() { Name = "QbProcessor", MatchCriterion = "StartsWith" } };
-                    QbItemInventoryView items = QB.ToView<QbItemInventoryView>(QB.ExecuteQbRequest(itemsRq));
+                    QbItemInventoryView items = new(QB.ExecuteQbRequest(itemsRq));
 
                     addRq.Customer = new() { ListID = customer.ListID };
                     addRq.TxnDate = DateTime.Now;
@@ -205,7 +205,7 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(addRq.IsEntityValid());
 
                     result = QB.ExecuteQbRequest(addRq);
-                    addRs = QB.ToView<QbSalesReceiptsView>(result);
+                    addRs = new(result);
                     if (addRs.StatusCode == "3250") Assert.Inconclusive(addRs.StatusMessage);
                     Assert.IsTrue(addRs.StatusCode == "0");
                 }
@@ -229,7 +229,7 @@ namespace QbProcessor.TEST
 
                 modRq.TxnDate = default;
                 result = QB.ExecuteQbRequest(modRq);
-                modRs = QB.ToView<QbSalesReceiptsView>(result);
+                modRs = new(result);
                 Assert.IsTrue(modRs.StatusCode == "0");
                 #endregion
             }
@@ -251,7 +251,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbSalesRepsView qryRs, addRs = new(), modRs;
+                QbSalesRepsView qryRs, addRs = new(""), modRs;
                 SalesRepAddRq addRq = new();
                 SalesRepModRq modRq = new();
                 string addRqName = $"QbP";
@@ -263,7 +263,7 @@ namespace QbProcessor.TEST
                 qryRq.ActiveStatus = "All";
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRs = QB.ToView<QbSalesRepsView>(QB.ExecuteQbRequest(qryRq));
+                qryRs = new(QB.ExecuteQbRequest(qryRq));
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
 
@@ -275,7 +275,7 @@ namespace QbProcessor.TEST
                     addRq.SalesRepEntity = new() { FullName = "Test Employee" };
                     Assert.IsTrue(addRq.IsEntityValid());
 
-                    addRs = QB.ToView<QbSalesRepsView>(QB.ExecuteQbRequest(addRq));
+                    addRs = new(QB.ExecuteQbRequest(addRq));
                     Assert.IsTrue(addRs.StatusCode == "0");
                     Assert.IsTrue(!addRs.SalesReps[0].IsActive);
                 }
@@ -289,7 +289,7 @@ namespace QbProcessor.TEST
                 modRq.IsActive = true;
                 Assert.IsTrue(modRq.IsEntityValid());
 
-                modRs = QB.ToView<QbSalesRepsView>(QB.ExecuteQbRequest(modRq));
+                modRs = new(QB.ExecuteQbRequest(modRq));
                 Assert.IsTrue(modRs.StatusCode == "0");
                 Assert.IsTrue(modRs.SalesReps[0].IsActive);
                 #endregion
@@ -312,7 +312,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbSalesTaxCodesView qryRs, addRs = new(), modRs;
+                QbSalesTaxCodesView qryRs, addRs = new(""), modRs;
                 SalesTaxCodeAddRq addRq = new();
                 SalesTaxCodeModRq modRq = new();
                 string addRqName = $"QbP";
@@ -324,7 +324,7 @@ namespace QbProcessor.TEST
                 qryRq.ActiveStatus = "All";
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRs = QB.ToView<QbSalesTaxCodesView>(QB.ExecuteQbRequest(qryRq));
+                qryRs = new(QB.ExecuteQbRequest(qryRq));
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
                 #endregion
 
@@ -336,7 +336,7 @@ namespace QbProcessor.TEST
                     addRq.IsTaxable = true;
                     Assert.IsTrue(addRq.IsEntityValid());
 
-                    addRs = QB.ToView<QbSalesTaxCodesView>(QB.ExecuteQbRequest(addRq));
+                    addRs = new(QB.ExecuteQbRequest(addRq));
                     Assert.IsTrue(addRs.StatusCode == "0");
                     Assert.IsTrue(!addRs.SalesTaxCodes[0].IsActive);
                 }
@@ -351,7 +351,7 @@ namespace QbProcessor.TEST
                 modRq.Desc = $"{acct.Name} mod {DateTime.Now}.";
                 Assert.IsTrue(modRq.IsEntityValid());
 
-                modRs = QB.ToView<QbSalesTaxCodesView>(QB.ExecuteQbRequest(modRq));
+                modRs = new(QB.ExecuteQbRequest(modRq));
                 Assert.IsTrue(modRs.StatusCode == "0");
                 Assert.IsTrue(modRs.SalesTaxCodes[0].IsActive);
                 #endregion

@@ -33,7 +33,7 @@ namespace QbProcessor.TEST
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 result = QB.ExecuteQbRequest(qryRq);
-                qryRs = QB.ToView<QbShipMethodsView>(result);
+                qryRs = new(result);
                 Regex statusCodes =  new(@"^0$|^3250$");
                 Assert.IsTrue(statusCodes.IsMatch(qryRs.StatusCode));
                 if (qryRs.StatusCode == "3250") Assert.Inconclusive(qryRs.StatusMessage);
@@ -49,7 +49,7 @@ namespace QbProcessor.TEST
                     };
                     Assert.IsTrue(addRq.IsEntityValid());
 
-                    addRs = QB.ToView<QbShipMethodsView>(QB.ExecuteQbRequest(addRq));
+                    addRs = new(QB.ExecuteQbRequest(addRq));
                     Assert.IsTrue(addRs.StatusCode == "0");
                     Assert.IsTrue(addRs.TotalShipMethods > 0);
                 }
