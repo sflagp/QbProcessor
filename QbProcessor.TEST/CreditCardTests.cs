@@ -307,7 +307,9 @@ namespace QbProcessor.TEST
                     ReceivePaymentRetDto pmt = payments.ReceivePayments?[rdm.Next(0, payments.ReceivePayments.Count)];
 
                     CustomerQueryRq customerRq = new();
+                    customerRq.ListID = new() { pmt.Customer.ListID };
                     QbCustomersView customers = new(QB.ExecuteQbRequest(customerRq));
+                    if (customers.Customers.Count == 0) Assert.Inconclusive("Customer not found.");
                     CustomerRetDto customer = customers.Customers[rdm.Next(0, customers.Customers.Count)];
 
                     addRq.Customer = new() { ListID = customer.ListID };

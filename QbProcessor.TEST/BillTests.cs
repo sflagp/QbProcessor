@@ -51,8 +51,8 @@ namespace QbProcessor.TEST
                     addRq.Vendor = new() { ListID = vendor.ListID };
                     addRq.TxnDate = DateTime.Now;
                     addRq.RefNumber = addRqName;
-                    addRq.ItemLines = new();
-                    addRq.ItemLines.Add(new() { Item = new() { ListID = item.ListID }, Amount = 12.34M });
+                    addRq.ItemLine = new();
+                    addRq.ItemLine.Add(new() { Item = new() { ListID = item.ListID }, Amount = 12.34M });
                     Assert.IsTrue(addRq.IsEntityValid());
 
                     addRs = new(QB.ExecuteQbRequest(addRq));
@@ -94,7 +94,7 @@ namespace QbProcessor.TEST
 
                 #region Query Test
                 BillToPayQueryRq qryRq = new();
-                qryRq.PayeeEntityRef = new() { ListID = vendor.ListID };
+                qryRq.PayeeEntity = new() { ListID = vendor.ListID };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 var result = QB.ExecuteQbRequest(qryRq);

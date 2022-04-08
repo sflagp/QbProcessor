@@ -31,7 +31,7 @@ namespace QbProcessor.TEST
                 qryRq = new();
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRq.TransactionModifiedDateRangeFilter = new() 
+                qryRq.TxnModifiedDateRangeFilter = new() 
                 { 
                     FromModifiedDate = DateTime.Today.AddDays(-7), 
                     ToModifiedDate = DateTime.Today 

@@ -24,7 +24,8 @@ namespace QbProcessor.TEST
                 QbTxnDeletedView qryRs;
 
                 Regex acceptableCodes = new(@"^0$|^1$");
-                string[] txnDelTypes = QbConstants.TransactionDelTypeRegEx.Replace(@"$", "").Replace("^", "").Split("|");
+                string delTypes = @"^ARRefundCreditCard$|^Bill$|^BillPaymentCheck$|^BillPaymentCreditCard$|^BuildAssembly$|^Charge$|^Check$|^CreditCardCharge$|^CreditCardCredit$|^CreditMemo$|^Deposit$|^Estimate$|^InventoryAdjustment$|^Invoice$|^ItemReceipt$|^JournalEntry$|^PayrollLiabilityAdjustment$|^PayrollPriorPayment$|^PayrollYearToDateAdjustment$|^PurchaseOrder$|^ReceivePayment$|^SalesOrder$|^SalesReceipt$|^SalesTaxPaymentCheck$|^TimeTracking$|^TransferInventory$|^VehicleMileage$|^VendorCredit$";
+                string[] txnDelTypes = delTypes.Replace(@"$", "").Replace("^", "").Split("|");
                 string result;
                 #endregion
 
