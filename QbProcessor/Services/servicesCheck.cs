@@ -6,11 +6,11 @@ namespace QBProcessor
     public partial class QbProcessor
     {
         #region Public Methods
-        public string GetChecks(CheckQueryRq query) => QbObjectProcessor(query, Guid.NewGuid());
-        public string GetChecks(CheckQueryRq query, Guid requesterId) => QbObjectProcessor(query, requesterId);
+        internal string GetChecks(CheckQueryRq query) => QbObjectProcessor(query, Guid.NewGuid());
+        internal string GetChecks(CheckQueryRq query, Guid requesterId) => QbObjectProcessor(query, requesterId);
 
-        public string AddCheck(CheckAddRq check) => QbObjectProcessor(check, Guid.NewGuid());
-        public string AddCheck(CheckAddRq check, Guid requesterId) => QbObjectProcessor(check, requesterId);
+        internal string AddCheck(CheckAddRq check) => QbObjectProcessor(check, Guid.NewGuid());
+        internal string AddCheck(CheckAddRq check, Guid requesterId) => QbObjectProcessor(check, requesterId);
         #endregion Public Methods
     }
 }

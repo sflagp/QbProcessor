@@ -86,7 +86,7 @@ namespace QBProcessor
         /// <summary>Execute QB request and return result</summary>
         /// <param name="xmlRequest"></param>
         /// <returns>XML string</returns>
-        internal string callQB(string xmlRequest)
+        internal string CallQB(string xmlRequest)
         {
             if (!LicenseValid) return "License expired";
             var rpResponse = rp.ProcessRequest(QbSessionTicket, xmlRequest);
@@ -97,7 +97,7 @@ namespace QBProcessor
         /// <summary>Execute QB request and return result asyncronously</summary>
         /// <param name="xmlRequest"></param>
         /// <returns>XML string</returns>
-        internal async Task<string> callQBAsync(string xmlRequest)
+        internal async Task<string> CallQBAsync(string xmlRequest)
         {
             var rpResponse = default(string);
             rpResponse = await Task<string>.Run(() =>
@@ -160,7 +160,7 @@ namespace QBProcessor
         #endregion
 
         #region Test Methods for creating XSD files
-        public void testFunction(string strFunction)
+        internal void TestFunction(string strFunction)
         {
             XmlDocument requestXmlDoc = new XmlDocument();
             string xmlTest = null;
@@ -171,7 +171,7 @@ namespace QBProcessor
             
             //xmlTest = qbTest.functionXML(requestXmlDoc);
 
-            xmlResponse = callQB(xmlTest);
+            xmlResponse = CallQB(xmlTest);
             //qbTest.readResponse(xmlResponse);
 
             var tmp = new DataSet();
@@ -195,9 +195,9 @@ namespace QBProcessor
 
             requestXmlDoc.BuildQbRequest(strFunction);
 
-            xmlTest = callQB(requestXmlDoc.OuterXml);
+            xmlTest = CallQB(requestXmlDoc.OuterXml);
 
-            xmlResponse = callQB(xmlTest);
+            xmlResponse = CallQB(xmlTest);
             //qbTest.readResponse(xmlResponse);
         }
         #endregion
