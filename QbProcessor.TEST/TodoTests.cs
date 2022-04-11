@@ -38,6 +38,7 @@ namespace QbProcessor.TEST
                 qryRs = new(result);
                 if (qryRs.StatusCode == "3231") Assert.Inconclusive(qryRs.StatusMessage);
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
+                Assert.IsTrue(string.IsNullOrEmpty(qryRs.ParseError));
                 #endregion
 
                 #region Add Test
@@ -57,6 +58,7 @@ namespace QbProcessor.TEST
                     addRs = new(result);
                     if (addRs.StatusCode == "3250") Assert.Inconclusive(addRs.StatusMessage);
                     Assert.IsTrue(addRs.StatusCode == "0");
+                    Assert.IsTrue(string.IsNullOrEmpty(addRs.ParseError));
                 }
                 #endregion
 
@@ -77,6 +79,7 @@ namespace QbProcessor.TEST
                 result = QB.ExecuteQbRequest(modRq);
                 modRs = new(result);
                 Assert.IsTrue(modRs.StatusCode == "0");
+                Assert.IsTrue(string.IsNullOrEmpty(modRs.ParseError));
                 #endregion
             }
             Thread.Sleep(2000);

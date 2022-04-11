@@ -39,6 +39,7 @@ namespace QbProcessor.TEST
                 result = QB.ExecuteQbRequest(qryRq);
                 qryRs = new(result);
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
+                Assert.IsTrue(string.IsNullOrEmpty(qryRs.ParseError));
                 #endregion
 
                 #region Add Test
@@ -78,6 +79,7 @@ namespace QbProcessor.TEST
                     result = QB.ExecuteQbRequest(addRq);
                     addRs = new(result);
                     Assert.IsTrue(addRs.StatusCode == "0");
+                    Assert.IsTrue(string.IsNullOrEmpty(addRs.ParseError));
                 }
                 #endregion
 
@@ -94,6 +96,7 @@ namespace QbProcessor.TEST
                 result = QB.ExecuteQbRequest(modRq);
                 modRs = new(result);
                 Assert.IsTrue(modRs.StatusCode == "0");
+                Assert.IsTrue(string.IsNullOrEmpty(modRs.ParseError));
                 #endregion
             }
             Thread.Sleep(2000);
@@ -131,6 +134,7 @@ namespace QbProcessor.TEST
                 result = QB.ExecuteQbRequest(qryRq);
                 qryRs = new(result);
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
+                Assert.IsTrue(string.IsNullOrEmpty(qryRs.ParseError));
                 #endregion
 
                 #region Add Test
@@ -170,6 +174,7 @@ namespace QbProcessor.TEST
                     result = QB.ExecuteQbRequest(addRq);
                     addRs = new(result);
                     Assert.IsTrue(addRs.StatusCode == "0");
+                    Assert.IsTrue(string.IsNullOrEmpty(addRs.ParseError));
                 }
                 #endregion
 
@@ -187,6 +192,7 @@ namespace QbProcessor.TEST
                 result = QB.ExecuteQbRequest(modRq);
                 modRs = new(result);
                 Assert.IsTrue(modRs.StatusCode == "0");
+                Assert.IsTrue(string.IsNullOrEmpty(modRs.ParseError));
                 #endregion
             }
             Thread.Sleep(2000);
@@ -219,6 +225,7 @@ namespace QbProcessor.TEST
 
                 qryRs = new(QB.ExecuteQbRequest(qryRq));
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
+                Assert.IsTrue(string.IsNullOrEmpty(qryRs.ParseError));
                 #endregion
 
                 #region Add Test
@@ -249,6 +256,7 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(addRq.IsEntityValid());
 
                     addRs = new(QB.ExecuteQbRequest(addRq));
+                    Assert.IsTrue(string.IsNullOrEmpty(addRs.ParseError));
                     if (addRs.StatusCode == "3250") Assert.Inconclusive(addRs.StatusMessage);
                     Regex responses = new(@"^0$|^3120$|^3250$");
                     Assert.IsTrue(responses.IsMatch(addRs.StatusCode));
@@ -285,6 +293,7 @@ namespace QbProcessor.TEST
 
                 qryRs = new(QB.ExecuteQbRequest(qryRq));
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
+                Assert.IsTrue(string.IsNullOrEmpty(qryRs.ParseError));
                 #endregion
 
                 #region Add Test
@@ -322,6 +331,7 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(addRq.IsEntityValid());
 
                     addRs = new(QB.ExecuteQbRequest(addRq));
+                    Assert.IsTrue(string.IsNullOrEmpty(addRs.ParseError));
                     if (addRs.StatusCode == "3120") Assert.Inconclusive(addRs.StatusMessage);
                     Regex responses = new(@"^0$|^3120$|^3250$");
                     Assert.IsTrue(responses.IsMatch(addRs.StatusCode));

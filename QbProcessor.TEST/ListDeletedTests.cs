@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using QbHelpers;
 using QbModels;
 using System;
 using System.Text.RegularExpressions;
@@ -8,10 +7,10 @@ using System.Threading;
 namespace QbProcessor.TEST
 {
     [TestClass]
-    public class TxnDeletedQueryTests
+    public class ListDeletedQueryTests
     {
         [TestMethod]
-        public void TestTxnDeletedModel()
+        public void TestListDeletedModel()
         {
             using (QBProcessor.QbProcessor QB = new())
             {
@@ -21,22 +20,22 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbTxnDeletedView qryRs;
+                QbListDeletedView qryRs;
 
                 Regex acceptableCodes = new(@"^0$|^1$");
-                string delTypes = @"^ARRefundCreditCard$|^Bill$|^BillPaymentCheck$|^BillPaymentCreditCard$|^BuildAssembly$|^Charge$|^Check$|^CreditCardCharge$|^CreditCardCredit$|^CreditMemo$|^Deposit$|^Estimate$|^InventoryAdjustment$|^Invoice$|^ItemReceipt$|^JournalEntry$|^PayrollLiabilityAdjustment$|^PayrollPriorPayment$|^PayrollYearToDateAdjustment$|^PurchaseOrder$|^ReceivePayment$|^SalesOrder$|^SalesReceipt$|^SalesTaxPaymentCheck$|^TimeTracking$|^TransferInventory$|^VehicleMileage$|^VendorCredit$";
-                string[] txnDelTypes = delTypes.Replace(@"$", "").Replace("^", "").Split("|");
+                string delTypes = @"^Account$|^BillingRate$|^Class$|^Currency$|^Customer$|^CustomerMsg$|^CustomerType$|^DateDrivenTerms$|^Employee$|^InventorySite$|^ItemDiscount$|^ItemFixedAsset$|^ItemGroup$|^ItemInventory$|^ItemInventoryAssembly$|^ItemNonInventory$|^ItemOtherCharge$|^ItemPayment$|^ItemSalesTax$|^ItemSalesTaxGroup$|^ItemService$|^ItemSubtotal$|^JobType$|^OtherName$|^PaymentMethod$|^PayrollItemNonWage$|^PayrollItemWage$|^PriceLevel$|^SalesRep$|^SalesTaxCode$|^ShipMethod$|^StandardTerms$|^ToDo$|^UnitOfMeasureSet$|^Vehicle$|^Vendor$|^VendorType$|^WorkersCompCode$";
+                string[] ListDelTypes = delTypes.Replace(@"$", "").Replace("^", "").Split("|");
                 string result;
                 #endregion
 
                 #region Cycle through Transaction Types
-                TxnDeletedQueryRq qryRq = new();
+                ListDeletedQueryRq qryRq = new();
                 qryRq.DeletedDateRangeFilter = new() { FromDeletedDate = DateTime.Today.AddDays(-7), ToDeletedDate = DateTime.Today };
                 Assert.IsFalse(qryRq.IsEntityValid());
 
-                foreach(string delType in txnDelTypes)
+                foreach(string delType in ListDelTypes)
                 {
-                    qryRq.TxnDelType = delType;
+                    qryRq.ListDelType = delType;
                     Assert.IsTrue(qryRq.IsEntityValid());
 
                     result = QB.ExecuteQbRequest(qryRq);
@@ -46,11 +45,11 @@ namespace QbProcessor.TEST
 
                     if (qryRs.StatusCode == "0")
                     {
-                        Assert.IsTrue(qryRs.TotalTxnsDeleted > 0);
+                        Assert.IsTrue(qryRs.TotalListsDeleted > 0);
                     }
                     else
                     {
-                        Assert.IsTrue(qryRs.TotalTxnsDeleted == 0);
+                        Assert.IsTrue(qryRs.TotalListsDeleted == 0);
                     }
                 }
                 #endregion

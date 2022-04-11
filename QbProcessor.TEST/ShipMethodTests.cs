@@ -36,6 +36,7 @@ namespace QbProcessor.TEST
                 qryRs = new(result);
                 Regex statusCodes =  new(@"^0$|^3250$");
                 Assert.IsTrue(statusCodes.IsMatch(qryRs.StatusCode));
+                Assert.IsTrue(string.IsNullOrEmpty(qryRs.ParseError));
                 if (qryRs.StatusCode == "3250") Assert.Inconclusive(qryRs.StatusMessage);
                 #endregion
 
@@ -51,6 +52,7 @@ namespace QbProcessor.TEST
 
                     addRs = new(QB.ExecuteQbRequest(addRq));
                     Assert.IsTrue(addRs.StatusCode == "0");
+                    Assert.IsTrue(string.IsNullOrEmpty(addRs.ParseError));
                     Assert.IsTrue(addRs.TotalShipMethods > 0);
                 }
                 #endregion

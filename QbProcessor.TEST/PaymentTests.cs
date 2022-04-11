@@ -33,6 +33,7 @@ namespace QbProcessor.TEST
 
                 qryRs = new(QB.ExecuteQbRequest(qryRq));
                 Assert.IsTrue(qryRs.StatusSeverity == "Info");
+                Assert.IsTrue(string.IsNullOrEmpty(qryRs.ParseError));
                 #endregion
 
                 #region Add Test
@@ -63,6 +64,7 @@ namespace QbProcessor.TEST
 
                     addRs = new(QB.ExecuteQbRequest(addRq));
                     Assert.IsTrue(addRs.StatusCode == "0");
+                    Assert.IsTrue(string.IsNullOrEmpty(addRs.ParseError));
                 }
                 #endregion
 
@@ -77,6 +79,7 @@ namespace QbProcessor.TEST
 
                 modRs = new(QB.ExecuteQbRequest(modRq));
                 Assert.IsTrue(modRs.StatusCode == "0");
+                Assert.IsTrue(string.IsNullOrEmpty(modRs.ParseError));
                 #endregion
             }
             Thread.Sleep(2000);
@@ -109,6 +112,7 @@ namespace QbProcessor.TEST
                 qryRs = new(result);
                 Regex statusCodes =  new(@"^0$|^3250$");
                 Assert.IsTrue(statusCodes.IsMatch(qryRs.StatusCode));
+                Assert.IsTrue(string.IsNullOrEmpty(qryRs.ParseError));
                 if (qryRs.StatusCode == "3250") Assert.Inconclusive(qryRs.StatusMessage);
                 #endregion
 
@@ -125,6 +129,7 @@ namespace QbProcessor.TEST
 
                     addRs = new(QB.ExecuteQbRequest(addRq));
                     Assert.IsTrue(addRs.StatusCode == "0");
+                    Assert.IsTrue(string.IsNullOrEmpty(addRs.ParseError));
                     Assert.IsTrue(addRs.TotalPaymentMethods > 0);
                 }
                 #endregion
