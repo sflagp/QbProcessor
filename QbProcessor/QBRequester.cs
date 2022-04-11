@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Xml;
 using QBXMLRP2Lib;
 
 namespace QBProcessor
@@ -16,12 +15,13 @@ namespace QBProcessor
         readonly private AuthPreferences rpPrefs;
         readonly private bool sessionBegun = false;
         readonly private string sessionStartStatus;
+        private bool disposedValue;
         #endregion
 
         #region Internal Properties
         internal RequestProcessor2 rp;
         internal bool SessionActive => sessionBegun;
-        internal string StartStatus => this.sessionStartStatus;
+        internal string StartStatus => sessionStartStatus;
         public string ApiVersion => $"v{SdkVersion}";
         internal static string SdkVersion => sdkVers[useVersion];
         internal bool VersionsEOF => useVersion > sdkVers.Length - 1;
@@ -70,12 +70,6 @@ namespace QBProcessor
             }
         }
 
-        public virtual void Dispose()
-        {
-            DisconnectQB();
-            GC.SuppressFinalize(this);
-        }
-
         public void DisconnectQB()
         {
             if (SessionActive && !string.IsNullOrEmpty(QbSessionTicket))
@@ -95,5 +89,35 @@ namespace QBProcessor
             QbSessionTicket = null;
             rp = null;
         }
+
+        #region IDisposable
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // dispose managed state (managed objects)
+                }
+
+                // free unmanaged resources (unmanaged objects) and override finalizer
+                DisconnectQB();
+                disposedValue = true;
+            }
+        }
+
+        ~QBRequester()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: false);
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }

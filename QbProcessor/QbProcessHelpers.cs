@@ -26,7 +26,7 @@ namespace QBProcessor
         /// <returns>String result from Quickbooks processor</returns>
         internal string QbObjectProcessor<T>(T qbRequest, Guid requesterId) where T : class
         {
-            var requestXml = qbRequest.ToString();
+            string requestXml = qbRequest.ToString();
             string requestResp;
 
             try
@@ -54,7 +54,7 @@ namespace QBProcessor
         /// <returns>String result from Quickbooks processor</returns>
         internal string QbObjectProcessor<T, T2>(T qbDto, Guid requesterId) where T2 : new()
         {
-            var requestXml = default(string);
+            string requestXml = default;
             string requestResp;
 
             try
@@ -87,7 +87,7 @@ namespace QBProcessor
         /// <returns>String result from Quickbooks processor</returns>
         internal string QbObjectProcessor<T, T2, T3>(T qbDto, Guid requesterId) where T2 : new() where T3 : new()
         {
-            var requestXml = default(string);
+            string requestXml;
             string requestResp;
 
             try
@@ -98,7 +98,6 @@ namespace QBProcessor
             }
             catch (Exception ex)
             {
-                requestResp = ex.Message;
                 return $"QbProcessor error: {ex.HResult}{Environment.NewLine}{ex.Message}";
             }
 
