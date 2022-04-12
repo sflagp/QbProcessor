@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels;
 using System;
+using System.Linq;
 using System.Threading;
 
 namespace QbProcessor.TEST
@@ -277,9 +278,14 @@ namespace QbProcessor.TEST
                 #region Add Test
                 if (qryRs.TotalSalesReps == 0)
                 {
+                    Random rdm = new();
+                    VendorQueryRq vendRq = new();
+                    QbVendorsView vendVw = new(QB.ExecuteQbRequest(vendRq));
+                    VendorRetDto vend = vendVw.Vendors[rdm.Next(0, vendVw.Vendors.Count)];
+
                     addRq.Initial = addRqName;
                     addRq.IsActive = false;
-                    addRq.SalesRepEntity = new() { FullName = "Test Employee" };
+                    addRq.SalesRepEntity = new() { ListID = vend.ListID };
                     Assert.IsTrue(addRq.IsEntityValid());
 
                     addRs = new(QB.ExecuteQbRequest(addRq));

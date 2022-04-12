@@ -14,15 +14,28 @@ namespace QBProcessor
         #endregion Private Variables and Properties
 
         #region Public Variables and Properties
+        /// <summary>Occurs when [on request event].</summary>
         public event EventHandler<string> OnRequestEvent;
 
+        /// <summary>Gets the date the license expires.</summary>
+        /// <value>The license expiration date.</value>
         public DateTime LicenseExpires => new DateTime(2022, 12, 31);
+
+        /// <summary>Gets a value indicating whether [license valid].</summary>
+        /// <value>
+        ///   <c>true</c> if [license valid]; otherwise, <c>false</c>.</value>
         public bool LicenseValid => DateTime.Today <= LicenseExpires;
+
+        /// <summary>Gets the name of the Quickbooks company.</summary>
+        /// <value>The name of the Quickbooks company.</value>
         public string CompanyName => QbCompany?.Company?.CompanyName;
         #endregion Public Variables and Properties
 
         #region Constructors and QB Connection
 #pragma warning disable S112 // General exceptions should never be thrown
+        /// <summary>Initializes a new instance of the <see cref="QbProcessor" /> class.</summary>
+        /// <exception cref="System.Exception">Quickbooks not compatible with Invoicing Made Simple
+        /// or</exception>
         public QbProcessor()
         {
             if (SessionActive)
@@ -73,6 +86,7 @@ namespace QBProcessor
 
         #region Cleanup
 
+        /// <summary>Finalizes an instance of the <see cref="QBRequester" /> class.</summary>
         ~QbProcessor()
         {
             DisconnectQB();
@@ -81,7 +95,6 @@ namespace QBProcessor
         #endregion Cleanup
 
         #region QB Requests Methods
-
         /// <summary>Execute QB request and return result</summary>
         /// <param name="xmlRequest"></param>
         /// <returns>XML string</returns>
@@ -116,7 +129,6 @@ namespace QBProcessor
         {
             OnRequestEvent?.Invoke(new RequestEventReplySender(sender, requesterId, requestType, qbRequest, eventResponse), eventResponse);
         }
-
         #endregion QB Requests Methods
     }
 }

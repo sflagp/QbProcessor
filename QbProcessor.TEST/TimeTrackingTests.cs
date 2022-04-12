@@ -25,13 +25,13 @@ namespace QbProcessor.TEST
                 TimeTrackingModRq modRq = new();
                 EmployeeRetDto emp;
                 string addRqName = $"QbProcessor";
+                Random rdm = new();
                 #endregion
 
                 #region Query Test
-                EmployeeQueryRq empRq = new() { NameFilter = new() { Name = "QbProcessor", MatchCriterion = "StartsWith" } };
+                EmployeeQueryRq empRq = new();
                 QbEmployeesView emps = new(QB.ExecuteQbRequest(empRq));
-                if (emps.Employees.Count == 0) Assert.Inconclusive("QbProcessor employee not found.");
-                emp = emps.Employees[0];
+                emp = emps.Employees[rdm.Next(0, emps.Employees.Count)];
 
                 TimeTrackingQueryRq qryRq = new();
                 qryRq.TimeTrackingEntityFilter = new() { ListID = emp.ListID };
@@ -47,8 +47,6 @@ namespace QbProcessor.TEST
                 #region Add Test
                 if (qryRs.TotalTimeTracking == 0)
                 {
-                    Random rdm = new();
-
                     CustomerQueryRq customerRq = new();
                     QbCustomersView customers = new(QB.ExecuteQbRequest(customerRq));
                     CustomerRetDto customer = customers.Customers[rdm.Next(0, customers.Customers.Count)];
@@ -73,9 +71,13 @@ namespace QbProcessor.TEST
 
                 #region Mod Test
                 TimeTrackingRetDto timeTracking = qryRs.TotalTimeTracking > 0 ? qryRs.TimeTracking[0] : addRs.TimeTracking[0];
+                VendorQueryRq vendRq = new();
+                QbVendorsView vendors = new(QB.ExecuteQbRequest(vendRq));
+                VendorRetDto vendor = vendors.Vendors[rdm.Next(0, vendors.TotalVendors)];
+
                 modRq.TxnID = timeTracking.TxnID;
                 modRq.EditSequence = timeTracking.EditSequence;
-                modRq.Entity = timeTracking.Entity;
+                modRq.Entity = new() { ListID = vendor.ListID };
                 modRq.Duration = timeTracking.Duration.FromQbTime() + 0.05M;
                 modRq.TxnDate = DateTime.Now;
                 modRq.Notes = $"{addRqName} modified on {DateTime.Now} by {modRq.GetType().Name}";

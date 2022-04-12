@@ -3,6 +3,7 @@ using QBXMLRP2Lib;
 
 namespace QBProcessor
 {
+    /// <summary>QBRequester Class</summary>
     public abstract partial class QBRequester : IDisposable
     {
         #region Private properties
@@ -22,17 +23,25 @@ namespace QBProcessor
         internal RequestProcessor2 rp;
         internal bool SessionActive => sessionBegun;
         internal string StartStatus => sessionStartStatus;
-        public string ApiVersion => $"v{SdkVersion}";
         internal static string SdkVersion => sdkVers[useVersion];
         internal bool VersionsEOF => useVersion > sdkVers.Length - 1;
         internal static int useVersion { get; set; } = 0;
         #endregion
 
         #region Public properties
+        /// <summary>The application identifier</summary>
         readonly public string AppID = "Invoicing Made Simple";
+
+        /// <summary>Gets the API version that is currently being used for the QBXML request.</summary>
+        /// <value>The API version.</value>
+        public string ApiVersion => $"v{SdkVersion}";
+
+        /// <summary>Gets the qb session ticket.</summary>
+        /// <value>The qb session ticket.</value>
         public string QbSessionTicket { get; private set; }
         #endregion
 
+        /// <summary>Initializes a new instance of the <see cref="QBRequester" /> class.</summary>
         protected QBRequester()
         {
             int authFlags = 0;
@@ -62,6 +71,7 @@ namespace QBProcessor
             }
         }
 
+        /// <summary>Increment the list position of the SdkVers to use as the QBXML version.</summary>
         public void NextVer()
         {
             if (useVersion < sdkVers.Length)
@@ -70,6 +80,7 @@ namespace QBProcessor
             }
         }
 
+        /// <summary>Disconnects the request processor from Quickbooks.</summary>
         public void DisconnectQB()
         {
             if (SessionActive && !string.IsNullOrEmpty(QbSessionTicket))
@@ -91,6 +102,9 @@ namespace QBProcessor
         }
 
         #region IDisposable
+        /// <summary>Releases unmanaged and - optionally - managed resources.</summary>
+        /// <param name="disposing">
+        ///   <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -106,12 +120,14 @@ namespace QBProcessor
             }
         }
 
+        /// <summary>Finalizes an instance of the <see cref="QBRequester" /> class.</summary>
         ~QBRequester()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);
         }
 
+        /// <summary>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</summary>
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
