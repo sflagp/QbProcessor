@@ -20,7 +20,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbTimeTrackingView qryRs, addRs = new(""), modRs;
+                TimeTrackingRs qryRs, addRs = new(""), modRs;
                 TimeTrackingAddRq addRq = new();
                 TimeTrackingModRq modRq = new();
                 EmployeeRetDto emp;
@@ -30,7 +30,7 @@ namespace QbProcessor.TEST
 
                 #region Query Test
                 EmployeeQueryRq empRq = new();
-                QbEmployeesView emps = new(QB.ExecuteQbRequest(empRq));
+                EmployeeRs emps = new(QB.ExecuteQbRequest(empRq));
                 emp = emps.Employees[rdm.Next(0, emps.Employees.Count)];
 
                 TimeTrackingQueryRq qryRq = new();
@@ -48,11 +48,11 @@ namespace QbProcessor.TEST
                 if (qryRs.TotalTimeTracking == 0)
                 {
                     CustomerQueryRq customerRq = new();
-                    QbCustomersView customers = new(QB.ExecuteQbRequest(customerRq));
+                    CustomerRs customers = new(QB.ExecuteQbRequest(customerRq));
                     CustomerRetDto customer = customers.Customers[rdm.Next(0, customers.Customers.Count)];
 
                     ItemNonInventoryQueryRq itemRq = new();
-                    QbItemNonInventoryView items = new(QB.ExecuteQbRequest(itemRq));
+                    ItemNonInventoryRs items = new(QB.ExecuteQbRequest(itemRq));
                     ItemNonInventoryRetDto item = items.ItemsNonInventory[rdm.Next(0, items.ItemsNonInventory.Count)];
 
                     addRq.TxnDate = DateTime.Now;
@@ -72,7 +72,7 @@ namespace QbProcessor.TEST
                 #region Mod Test
                 TimeTrackingRetDto timeTracking = qryRs.TotalTimeTracking > 0 ? qryRs.TimeTracking[0] : addRs.TimeTracking[0];
                 VendorQueryRq vendRq = new();
-                QbVendorsView vendors = new(QB.ExecuteQbRequest(vendRq));
+                VendorRs vendors = new(QB.ExecuteQbRequest(vendRq));
                 VendorRetDto vendor = vendors.Vendors[rdm.Next(0, vendors.TotalVendors)];
 
                 modRq.TxnID = timeTracking.TxnID;

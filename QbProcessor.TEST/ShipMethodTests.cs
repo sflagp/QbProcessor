@@ -20,7 +20,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbShipMethodsView qryRs, addRs;
+                ShipMethodRs qryRs, addRs;
                 ShipMethodQueryRq qryRq;
                 ShipMethodAddRq addRq;
 

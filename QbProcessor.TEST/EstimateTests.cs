@@ -19,7 +19,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbEstimatesView qryRs, addRs = new(""), modRs;
+                EstimateRs qryRs, addRs = new(""), modRs;
                 EstimateAddRq addRq = new();
                 EstimateModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -46,15 +46,15 @@ namespace QbProcessor.TEST
 
                     AccountQueryRq accountsRq = new();
                     accountsRq.AccountType = "AccountsReceivable";
-                    QbAccountsView accounts = new(QB.ExecuteQbRequest(accountsRq));
+                    AccountRs accounts = new(QB.ExecuteQbRequest(accountsRq));
                     AccountRetDto account = accounts.Accounts[rdm.Next(0, accounts.Accounts.Count)];
 
                     CustomerQueryRq customerRq = new();
-                    QbCustomersView customers = new(QB.ExecuteQbRequest(customerRq));
+                    CustomerRs customers = new(QB.ExecuteQbRequest(customerRq));
                     CustomerRetDto customer = customers.Customers[rdm.Next(0, customers.Customers.Count)];
 
                     ItemNonInventoryQueryRq itemsRq = new();
-                    QbItemNonInventoryView items = new(QB.ExecuteQbRequest(itemsRq));
+                    ItemNonInventoryRs items = new(QB.ExecuteQbRequest(itemsRq));
                     ItemNonInventoryRetDto item = items.ItemsNonInventory[rdm.Next(0, items.ItemsNonInventory.Count)];
 
                     addRq.Customer = new() { ListID = customer.ListID };

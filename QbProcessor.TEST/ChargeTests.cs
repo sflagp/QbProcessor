@@ -19,7 +19,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbChargesView qryRs, addRs = new(""), modRs;
+                ChargeRs qryRs, addRs = new(""), modRs;
                 ChargeAddRq addRq = new();
                 ChargeModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -28,6 +28,7 @@ namespace QbProcessor.TEST
 
                 #region Query Test
                 ChargeQueryRq qryRq = new();
+                qryRq.IncludeLinkedTxns = true;
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = "StartsWith" };
@@ -45,11 +46,12 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     ItemNonInventoryQueryRq itemRq = new();
-                    QbItemNonInventoryView items = new(QB.ExecuteQbRequest(itemRq));
+                    ItemNonInventoryRs items = new(QB.ExecuteQbRequest(itemRq));
                     ItemNonInventoryRetDto item = items.ItemsNonInventory[rdm.Next(0, items.ItemsNonInventory.Count)];
 
-                    CustomerQueryRq customerRq = new();
-                    QbCustomersView customers = new(QB.ExecuteQbRequest(customerRq));
+                    CustomerQueryRq customerRq = new() { MaxReturned = 100 };
+                    string customerRs = QB.ExecuteQbRequest(customerRq);
+                    CustomerRs customers = new(customerRs);
                     CustomerRetDto customer = customers.Customers[rdm.Next(0, customers.Customers.Count)];
 
                     addRq.Customer = new() { ListID = customer.ListID };
@@ -72,7 +74,7 @@ namespace QbProcessor.TEST
                 modRq.EditSequence = charge.EditSequence;
                 modRq.TxnDate = charge.TxnDate;
                 modRq.Customer = charge.Customer;
-                modRq.Quantity = "1";
+                modRq.Quantity = 1;
                 modRq.Rate = 123.45M;
                 modRq.Amount = 123.45M;
                 Assert.IsTrue(modRq.IsEntityValid());

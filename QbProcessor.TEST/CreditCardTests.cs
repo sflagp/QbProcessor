@@ -22,7 +22,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbCreditCardChargesView qryRs, addRs = new(""), modRs;
+                CreditCardChargeRs qryRs, addRs = new(""), modRs;
                 CreditCardChargeAddRq addRq = new();
                 CreditCardChargeModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -49,19 +49,19 @@ namespace QbProcessor.TEST
 
                     AccountQueryRq accountsRq = new();
                     accountsRq.AccountType = "CreditCard";
-                    QbAccountsView accounts = new(QB.ExecuteQbRequest(accountsRq));
+                    AccountRs accounts = new(QB.ExecuteQbRequest(accountsRq));
                     AccountRetDto account = accounts.Accounts[rdm.Next(0, accounts.Accounts.Count)];
 
                     ItemQueryRq itemsRq = new();
-                    QbItemsView items = new(QB.ExecuteQbRequest(itemsRq));
+                    ItemRs items = new(QB.ExecuteQbRequest(itemsRq));
                     ItemOtherChargeRetDto item = items.OtherChargeItems[rdm.Next(0, items.PaymentItems.Count)];
 
                     VendorQueryRq vendorRq = new();
-                    QbVendorsView vendors = new(QB.ExecuteQbRequest(vendorRq));
+                    VendorRs vendors = new(QB.ExecuteQbRequest(vendorRq));
                     VendorRetDto vendor = vendors.Vendors[rdm.Next(0, vendors.Vendors.Count)];
 
                     CustomerQueryRq customerRq = new();
-                    QbCustomersView customers = new(QB.ExecuteQbRequest(customerRq));
+                    CustomerRs customers = new(QB.ExecuteQbRequest(customerRq));
                     CustomerRetDto customer = customers.Customers[rdm.Next(0, customers.Customers.Count)];
 
                     addRq.Account = new() { ListID = account.ListID };
@@ -117,7 +117,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbCreditCardCreditsView qryRs, addRs = new(""), modRs;
+                CreditCardCreditRs qryRs, addRs = new(""), modRs;
                 CreditCardCreditAddRq addRq = new();
                 CreditCardCreditModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -144,19 +144,19 @@ namespace QbProcessor.TEST
 
                     AccountQueryRq accountsRq = new();
                     accountsRq.AccountType = "CreditCard";
-                    QbAccountsView accounts = new(QB.ExecuteQbRequest(accountsRq));
+                    AccountRs accounts = new(QB.ExecuteQbRequest(accountsRq));
                     AccountRetDto account = accounts.Accounts[rdm.Next(0, accounts.Accounts.Count)];
 
                     ItemQueryRq itemsRq = new();
-                    QbItemsView items = new(QB.ExecuteQbRequest(itemsRq));
+                    ItemRs items = new(QB.ExecuteQbRequest(itemsRq));
                     ItemOtherChargeRetDto item = items.OtherChargeItems[rdm.Next(0, items.PaymentItems.Count)];
 
                     VendorQueryRq vendorRq = new();
-                    QbVendorsView vendors = new(QB.ExecuteQbRequest(vendorRq));
+                    VendorRs vendors = new(QB.ExecuteQbRequest(vendorRq));
                     VendorRetDto vendor = vendors.Vendors[rdm.Next(0, vendors.Vendors.Count)];
 
                     CustomerQueryRq customerRq = new();
-                    QbCustomersView customers = new(QB.ExecuteQbRequest(customerRq));
+                    CustomerRs customers = new(QB.ExecuteQbRequest(customerRq));
                     CustomerRetDto customer = customers.Customers[rdm.Next(0, customers.Customers.Count)];
 
                     addRq.Account = new() { ListID = account.ListID };
@@ -213,7 +213,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbBillPaymentCreditCardsView qryRs, addRs;
+                BillPaymentCreditCardRs qryRs, addRs;
                 BillPaymentCreditCardAddRq addRq = new();
                 string addRqName = $"QbProcessor";
                 #endregion
@@ -234,16 +234,16 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     AccountQueryRq accountsRq = new();
-                    QbAccountsView accounts = new(QB.ExecuteQbRequest(accountsRq));
+                    AccountRs accounts = new(QB.ExecuteQbRequest(accountsRq));
                     AccountRetDto account = accounts.Accounts.FirstOrDefault(a => a.AccountType == "AccountsPayable");
                     AccountRetDto card = accounts.Accounts.FirstOrDefault(a => a.AccountType == "CreditCard");
 
                     BillQueryRq billsRq = new();
-                    QbBillsView bills = new(QB.ExecuteQbRequest(billsRq));
+                    BillRs bills = new(QB.ExecuteQbRequest(billsRq));
                     BillRetDto bill = bills.Bills[rdm.Next(0, bills.Bills.Count)];
 
                     VendorQueryRq vendorRq = new();
-                    QbVendorsView vendors = new(QB.ExecuteQbRequest(vendorRq));
+                    VendorRs vendors = new(QB.ExecuteQbRequest(vendorRq));
                     VendorRetDto vendor = vendors.Vendors[rdm.Next(0, vendors.Vendors.Count)];
 
                     addRq.PayeeEntity = new() { ListID = vendor.ListID };
@@ -281,7 +281,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbARRefundCreditCardsView qryRs, addRs;
+                ARRefundCreditCardRs qryRs, addRs;
                 ARRefundCreditCardAddRq addRq = new();
                 string addRqName = $"QbProcessor";
                 #endregion
@@ -302,22 +302,23 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     AccountQueryRq accountsRq = new();
-                    QbAccountsView accounts = new(QB.ExecuteQbRequest(accountsRq));
+                    AccountRs accounts = new(QB.ExecuteQbRequest(accountsRq));
                     AccountRetDto account = accounts.Accounts.FirstOrDefault(a => a.AccountType == "AccountsReceivable");
                     AccountRetDto bank = accounts.Accounts.FirstOrDefault(a => a.AccountType == "Bank");
 
                     InvoiceQueryRq invoicesRq = new() { MaxReturned = 100, IncludeLinkedTxns = true };
-                    QbInvoicesView invoicesRs = new(QB.ExecuteQbRequest(invoicesRq));
+                    InvoiceRs invoicesRs = new(QB.ExecuteQbRequest(invoicesRq));
                     List<InvoiceRetDto> invoices = invoicesRs.Invoices.Where(i => i.LinkedTxn.Count > 0).ToList();
                     InvoiceRetDto invoice = invoices[rdm.Next(0, invoices.Count)];
 
                     ReceivePaymentQueryRq pmtRq = new() { MaxReturned = 50 };
-                    QbReceivePaymentsView payments = new(QB.ExecuteQbRequest(pmtRq));
+                    ReceivePaymentRs payments = new(QB.ExecuteQbRequest(pmtRq));
                     ReceivePaymentRetDto pmt = payments.ReceivePayments?[rdm.Next(0, payments.ReceivePayments.Count)];
 
                     CustomerQueryRq customerRq = new();
                     customerRq.ListID = new() { pmt.Customer.ListID };
-                    QbCustomersView customers = new(QB.ExecuteQbRequest(customerRq));
+                    string custRs = QB.ExecuteQbRequest(customerRq);
+                    CustomerRs customers = new(custRs);
                     if (customers.Customers.Count == 0) Assert.Inconclusive("Customer not found.");
                     CustomerRetDto customer = customers.Customers[rdm.Next(0, customers.Customers.Count)];
 

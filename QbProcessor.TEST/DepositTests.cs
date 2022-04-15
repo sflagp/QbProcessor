@@ -19,7 +19,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbDepositsView qryRs, addRs = new(""), modRs;
+                DepositRs qryRs, addRs = new(""), modRs;
                 DepositAddRq addRq = new();
                 DepositModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -45,15 +45,15 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     AccountQueryRq bankRq = new() { AccountType = "Bank" };
-                    QbAccountsView banks = new(QB.ExecuteQbRequest(bankRq));
+                    AccountRs banks = new(QB.ExecuteQbRequest(bankRq));
                     AccountRetDto bank = banks.Accounts[rdm.Next(0, banks.Accounts.Count)];
 
                     AccountQueryRq acctRq = new() { AccountType = "AccountsReceivable" };
-                    QbAccountsView accts = new(QB.ExecuteQbRequest(acctRq));
+                    AccountRs accts = new(QB.ExecuteQbRequest(acctRq));
                     AccountRetDto acct = accts.Accounts[rdm.Next(0, accts.Accounts.Count)];
 
                     CustomerQueryRq custRq = new();
-                    QbCustomersView customers = new(QB.ExecuteQbRequest(custRq));
+                    CustomerRs customers = new(QB.ExecuteQbRequest(custRq));
                     CustomerRetDto customer = customers.Customers[rdm.Next(0, customers.Customers.Count)];
 
                     addRq.DepositToAccount = new() { ListID = bank.ListID };

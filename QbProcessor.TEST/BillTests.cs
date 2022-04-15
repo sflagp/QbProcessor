@@ -20,7 +20,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbBillsView qryRs, addRs = new(""), modRs;
+                BillRs qryRs, addRs = new(""), modRs;
                 BillAddRq addRq = new();
                 BillModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -42,11 +42,11 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     ItemOtherChargeQueryRq chargesRq = new();
-                    QbItemOtherChargesView charges = new(QB.ExecuteQbRequest(chargesRq));
+                    ItemOtherChargeRs charges = new(QB.ExecuteQbRequest(chargesRq));
                     ItemOtherChargeRetDto item = charges.ItemOtherCharges[rdm.Next(0, charges.ItemOtherCharges.Count)];
 
                     VendorQueryRq vendorRq = new();
-                    QbVendorsView vendors = new(QB.ExecuteQbRequest(vendorRq));
+                    VendorRs vendors = new(QB.ExecuteQbRequest(vendorRq));
                     VendorRetDto vendor = vendors.Vendors[rdm.Next(0, vendors.Vendors.Count)];
 
                     addRq.Vendor = new() { ListID = vendor.ListID };
@@ -91,7 +91,7 @@ namespace QbProcessor.TEST
 
                 Random rdm = new();
                 VendorQueryRq vendorRq = new();
-                QbVendorsView vendors = new(QB.ExecuteQbRequest(vendorRq));
+                VendorRs vendors = new(QB.ExecuteQbRequest(vendorRq));
                 VendorRetDto vendor = vendors.Vendors[rdm.Next(0, vendors.Vendors.Count)];
                 #endregion
 
@@ -101,7 +101,7 @@ namespace QbProcessor.TEST
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 var result = QB.ExecuteQbRequest(qryRq);
-                QbBillToPaysView billsToPay = new(result);
+                BillToPayRs billsToPay = new(result);
                 Assert.IsTrue(billsToPay.StatusSeverity == "Info");
                 Assert.IsTrue(string.IsNullOrEmpty(billsToPay.ParseError));
                 #endregion
@@ -126,7 +126,7 @@ namespace QbProcessor.TEST
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 var result = QB.ExecuteQbRequest(qryRq);
-                QbBillingRatesView billingRates = new(result);
+                BillingRateRs billingRates = new(result);
                 Regex statusCodes =  new(@"^0$|^3250$");
                 Assert.IsTrue(statusCodes.IsMatch(billingRates.StatusCode));
                 Assert.IsTrue(string.IsNullOrEmpty(billingRates.ParseError));

@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using QbHelpers;
 using QbModels;
 using System;
 using System.Text.RegularExpressions;
@@ -21,7 +20,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbTxnDeletedView qryRs;
+                TxnDeletedRs qryRs;
 
                 Regex acceptableCodes = new(@"^0$|^1$");
                 string delTypes = @"^ARRefundCreditCard$|^Bill$|^BillPaymentCheck$|^BillPaymentCreditCard$|^BuildAssembly$|^Charge$|^Check$|^CreditCardCharge$|^CreditCardCredit$|^CreditMemo$|^Deposit$|^Estimate$|^InventoryAdjustment$|^Invoice$|^ItemReceipt$|^JournalEntry$|^PayrollLiabilityAdjustment$|^PayrollPriorPayment$|^PayrollYearToDateAdjustment$|^PurchaseOrder$|^ReceivePayment$|^SalesOrder$|^SalesReceipt$|^SalesTaxPaymentCheck$|^TimeTracking$|^TransferInventory$|^VehicleMileage$|^VendorCredit$";

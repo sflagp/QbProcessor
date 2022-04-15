@@ -21,7 +21,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbJournalEntriesView qryRs, addRs = new(""), modRs;
+                JournalEntryRs qryRs, addRs = new(""), modRs;
                 JournalEntryAddRq addRq = new();
                 JournalEntryModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -46,7 +46,7 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     AccountQueryRq accountsRq = new();
-                    QbAccountsView accounts = new(QB.ExecuteQbRequest(accountsRq));
+                    AccountRs accounts = new(QB.ExecuteQbRequest(accountsRq));
                     List<AccountRetDto> expenses = 
                         accounts.Accounts.Where(a => a.AccountType.Contains("Expense") && a.Balance > 0).ToList();
                     List<AccountRetDto> assets = accounts.Accounts.Where(a => a.AccountType.Contains("Asset")).ToList();
@@ -54,11 +54,11 @@ namespace QbProcessor.TEST
                     AccountRetDto asset = assets[rdm.Next(0, assets.Count)];
 
                     CustomerQueryRq customerRq = new();
-                    QbCustomersView customers = new(QB.ExecuteQbRequest(customerRq));
+                    CustomerRs customers = new(QB.ExecuteQbRequest(customerRq));
                     CustomerRetDto customer = customers.Customers[rdm.Next(0, customers.Customers.Count)];
 
                     VendorQueryRq vendorRq = new();
-                    QbVendorsView vendors = new(QB.ExecuteQbRequest(vendorRq));
+                    VendorRs vendors = new(QB.ExecuteQbRequest(vendorRq));
                     VendorRetDto vendor = vendors.Vendors[rdm.Next(0, vendors.Vendors.Count)];
 
                     addRq.TxnDate = DateTime.Now;
@@ -77,7 +77,8 @@ namespace QbProcessor.TEST
                     };
                     Assert.IsTrue(addRq.IsEntityValid());
 
-                    addRs = new(QB.ExecuteQbRequest(addRq));
+                    string result = QB.ExecuteQbRequest(addRq);
+                    addRs = new(result);
                     Assert.IsTrue(addRs.StatusCode == "0");
                     Assert.IsTrue(string.IsNullOrEmpty(addRs.ParseError));
                     Assert.IsTrue(addRs.TotalJournalEntries > 0);

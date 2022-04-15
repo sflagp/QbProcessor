@@ -20,7 +20,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbItemInventoryView qryRs, addRs = new(""), modRs;
+                ItemInventoryRs qryRs, addRs = new(""), modRs;
                 ItemInventoryAddRq addRq = new();
                 ItemInventoryModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -45,15 +45,15 @@ namespace QbProcessor.TEST
                 Random rdm = new();
 
                 AccountQueryRq accountsRq = new() { AccountType = "Income" };
-                QbAccountsView accounts = new(QB.ExecuteQbRequest(accountsRq));
+                AccountRs accounts = new(QB.ExecuteQbRequest(accountsRq));
                 AccountRetDto account = accounts.Accounts[rdm.Next(0, accounts.Accounts.Count)];
 
                 AccountQueryRq assetsRq = new() { AccountType = "OtherCurrentAsset" };
-                QbAccountsView assets = new(QB.ExecuteQbRequest(assetsRq));
+                AccountRs assets = new(QB.ExecuteQbRequest(assetsRq));
                 AccountRetDto asset = assets.Accounts[rdm.Next(0, assets.Accounts.Count)];
 
-                AccountQueryRq cogsRq = new() { FullName = new() { "Company COGS" } };
-                QbAccountsView cogss = new(QB.ExecuteQbRequest(cogsRq));
+                AccountQueryRq cogsRq = new() { FullName = new() { "Company COGS" }, MaxReturned = null };
+                AccountRs cogss = new(QB.ExecuteQbRequest(cogsRq));
                 AccountRetDto cogs = cogss.Accounts.FirstOrDefault();
 
                 for (int i = 1; i <= 5; i++)

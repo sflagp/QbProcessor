@@ -19,7 +19,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbVendorsView qryRs, addRs = new(""), modRs;
+                VendorRs qryRs, addRs = new(""), modRs;
                 VendorAddRq addRq = new();
                 VendorModRq modRq = new();
                 string addRqName = $"QbProcessor.Vendor";
@@ -89,7 +89,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbVendorCreditsView qryRs, addRs = new(""), modRs;
+                VendorCreditRs qryRs, addRs = new(""), modRs;
                 VendorCreditAddRq addRq = new();
                 VendorCreditModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -113,11 +113,11 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     VendorQueryRq vendorRq = new();
-                    QbVendorsView vendors = new(QB.ExecuteQbRequest(vendorRq));
+                    VendorRs vendors = new(QB.ExecuteQbRequest(vendorRq));
                     VendorRetDto vendor = vendors.Vendors[rdm.Next(0, vendors.Vendors.Count)];
 
                     ItemInventoryQueryRq itemsRq = new() { NameFilter = new() { Name = "QbProcessor", MatchCriterion = "StartsWith" } };
-                    QbItemInventoryView items = new(QB.ExecuteQbRequest(itemsRq));
+                    ItemInventoryRs items = new(QB.ExecuteQbRequest(itemsRq));
                     ItemInventoryRetDto item = items.ItemInventory[rdm.Next(0, items.ItemInventory.Count)];
 
                     addRq.RefNumber = addRqName;
@@ -168,7 +168,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbVendorTypesView qryRs, addRs;
+                VendorTypeRs qryRs, addRs;
                 VendorTypeAddRq addRq = new();
                 string addRqName = $"QbProcessor";
                 #endregion

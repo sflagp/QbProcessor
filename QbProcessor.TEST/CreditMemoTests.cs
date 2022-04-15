@@ -19,7 +19,7 @@ namespace QbProcessor.TEST
                 }
 
                 #region Properties
-                QbCreditMemosView qryRs, addRs = new(""), modRs;
+                CreditMemoRs qryRs, addRs = new(""), modRs;
                 CreditMemoAddRq addRq = new();
                 CreditMemoModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -46,15 +46,15 @@ namespace QbProcessor.TEST
 
                     AccountQueryRq accountsRq = new();
                     accountsRq.AccountType = "AccountsReceivable";
-                    QbAccountsView accounts = new(QB.ExecuteQbRequest(accountsRq));
+                    AccountRs accounts = new(QB.ExecuteQbRequest(accountsRq));
                     AccountRetDto account = accounts.Accounts[rdm.Next(0, accounts.Accounts.Count)];
 
                     CustomerQueryRq customerRq = new();
-                    QbCustomersView customers = new(QB.ExecuteQbRequest(customerRq));
+                    CustomerRs customers = new(QB.ExecuteQbRequest(customerRq));
                     CustomerRetDto customer = customers.Customers[rdm.Next(0, customers.Customers.Count)];
 
                     ItemNonInventoryQueryRq itemsRq = new();
-                    QbItemNonInventoryView items = new(QB.ExecuteQbRequest(itemsRq));
+                    ItemNonInventoryRs items = new(QB.ExecuteQbRequest(itemsRq));
                     ItemNonInventoryRetDto item = items.ItemsNonInventory[rdm.Next(0, items.ItemsNonInventory.Count)];
 
                     addRq.Customer = new() { ListID = customer.ListID };

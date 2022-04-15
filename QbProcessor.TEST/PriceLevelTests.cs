@@ -19,7 +19,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbPriceLevelsView qryRs, addRs = new(""), modRs;
+                PriceLevelRs qryRs, addRs = new(""), modRs;
                 PriceLevelAddRq addRq = new();
                 PriceLevelModRq modRq = new();
                 string addRqName = $"QbProcessor {addRq.GetType().Name}";

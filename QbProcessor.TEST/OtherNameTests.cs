@@ -19,7 +19,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbOtherNamesView qryRs, addRs = new(""), modRs;
+                OtherNameRs qryRs, addRs = new(""), modRs;
                 OtherNameAddRq addRq = new();
                 OtherNameModRq modRq = new();
                 string addRqName = $"QbProcessor {addRq.GetType().Name}";
@@ -45,7 +45,8 @@ namespace QbProcessor.TEST
                     addRq.LastName = "Prieto";
                     Assert.IsTrue(addRq.IsEntityValid());
 
-                    addRs = new(QB.ExecuteQbRequest(addRq));
+                    string result = QB.ExecuteQbRequest(addRq);
+                    addRs = new(result);
                     Assert.IsTrue(addRs.StatusCode == "0");
                     Assert.IsTrue(string.IsNullOrEmpty(addRs.ParseError));
                 }

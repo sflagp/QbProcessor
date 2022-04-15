@@ -23,7 +23,7 @@ namespace QbProcessor.TEST
                 }
 
                 TransactionQueryRq qryRq;
-                QbTransactionsView qryRs;
+                TransactionRs qryRs;
                 Regex validCodes = new(@"^0$|^1$");
                 Regex validDelCodes = new(@"^0$|^3160$");
                 #endregion
@@ -51,7 +51,7 @@ namespace QbProcessor.TEST
                         Assert.IsTrue(delTxnRq.IsEntityValid());
 
                         string result = QB.ExecuteQbRequest(delTxnRq);
-                        QbTxnDelView delTxnRs = new(result);
+                        TxnDelRs delTxnRs = new(result);
                         Assert.IsTrue(validDelCodes.IsMatch(delTxnRs.StatusCode));
                         Assert.IsTrue(string.IsNullOrEmpty(delTxnRs.ParseError));
                     }
@@ -63,7 +63,7 @@ namespace QbProcessor.TEST
 
                 #region Account List
                 AccountQueryRq acctRq = new() { NameFilter = new() { Name = "Qb", MatchCriterion = "StartsWith" } };
-                QbAccountsView acctVw = new(QB.ExecuteQbRequest(acctRq));
+                AccountRs acctVw = new(QB.ExecuteQbRequest(acctRq));
                 if (acctVw.TotalAccounts > 0)
                 {
                     AccountRetDto acct = acctVw.Accounts.FirstOrDefault();
@@ -71,14 +71,14 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(delListRq.IsEntityValid());
 
                     string result = QB.ExecuteQbRequest(delListRq);
-                    QbListDelView delListRs = new(result);
+                    ListDelRs delListRs = new(result);
                     Assert.IsTrue(validDelCodes.IsMatch(delListRs.StatusCode));
                     Assert.IsTrue(string.IsNullOrEmpty(delListRs.ParseError));
                 }
                 #endregion
                 #region BillingRate List
                 BillingRateQueryRq billingRateRq = new() { NameFilter = new() { Name = "Qb", MatchCriterion = "StartsWith" } };
-                QbBillingRatesView billingRateVw = new(QB.ExecuteQbRequest(billingRateRq));
+                BillingRateRs billingRateVw = new(QB.ExecuteQbRequest(billingRateRq));
                 if (billingRateVw.TotalBillingRates > 0)
                 {
                     BillingRateRetDto billingRate = billingRateVw.BillingRates.FirstOrDefault();
@@ -86,14 +86,14 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(delListRq.IsEntityValid());
 
                     string result = QB.ExecuteQbRequest(delListRq);
-                    QbListDelView delListRs = new(result);
+                    ListDelRs delListRs = new(result);
                     Assert.IsTrue(validDelCodes.IsMatch(delListRs.StatusCode));
                     Assert.IsTrue(string.IsNullOrEmpty(delListRs.ParseError));
                 }
                 #endregion
                 #region Class lists
                 ClassQueryRq clsRq = new() { NameFilter = new() { Name = "Qb", MatchCriterion = "StartsWith" } };
-                QbClassesView clsVw = new(QB.ExecuteQbRequest(clsRq));
+                ClassRs clsVw = new(QB.ExecuteQbRequest(clsRq));
                 if (clsVw.TotalClasses > 0)
                 {
                     ClassRetDto cls = clsVw.Classes.FirstOrDefault();
@@ -101,14 +101,14 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(delListRq.IsEntityValid());
 
                     string result = QB.ExecuteQbRequest(delListRq);
-                    QbListDelView delListRs = new(result);
+                    ListDelRs delListRs = new(result);
                     Assert.IsTrue(validDelCodes.IsMatch(delListRs.StatusCode));
                     Assert.IsTrue(string.IsNullOrEmpty(delListRs.ParseError));
                 }
                 #endregion
                 #region Currency List
                 CurrencyQueryRq currencyRq = new() { NameFilter = new() { Name = "Qb", MatchCriterion = "StartsWith" } };
-                QbCurrencysView currencyVw = new(QB.ExecuteQbRequest(currencyRq));
+                CurrencyRs currencyVw = new(QB.ExecuteQbRequest(currencyRq));
                 if (currencyVw.TotalCurrencys > 0)
                 {
                     CurrencyRetDto currency = currencyVw.Currencys.FirstOrDefault();
@@ -116,14 +116,14 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(delListRq.IsEntityValid());
 
                     string result = QB.ExecuteQbRequest(delListRq);
-                    QbListDelView delListRs = new(result);
+                    ListDelRs delListRs = new(result);
                     Assert.IsTrue(validDelCodes.IsMatch(delListRs.StatusCode));
                     Assert.IsTrue(string.IsNullOrEmpty(delListRs.ParseError));
                 }
                 #endregion
                 #region Customer List
                 CustomerQueryRq customerRq = new() { NameFilter = new() { Name = "Qb", MatchCriterion = "StartsWith" } };
-                QbCustomersView customerVw = new(QB.ExecuteQbRequest(customerRq));
+                CustomerRs customerVw = new(QB.ExecuteQbRequest(customerRq));
                 if (customerVw.TotalCustomers > 0)
                 {
                     CustomerRetDto customer = customerVw.Customers.FirstOrDefault();
@@ -131,14 +131,14 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(delListRq.IsEntityValid());
 
                     string result = QB.ExecuteQbRequest(delListRq);
-                    QbListDelView delListRs = new(result);
+                    ListDelRs delListRs = new(result);
                     Assert.IsTrue(validDelCodes.IsMatch(delListRs.StatusCode));
                     Assert.IsTrue(string.IsNullOrEmpty(delListRs.ParseError));
                 }
                 #endregion
                 #region CustomerMsg List
                 CustomerMsgQueryRq customerMsgRq = new() { NameFilter = new() { Name = "Qb", MatchCriterion = "StartsWith" } };
-                QbCustomerMsgsView customerMsgVw = new(QB.ExecuteQbRequest(customerMsgRq));
+                CustomerMsgRs customerMsgVw = new(QB.ExecuteQbRequest(customerMsgRq));
                 if (customerMsgVw.TotalCustomerMsgs > 0)
                 {
                     CustomerMsgRetDto customerMsg = customerMsgVw.CustomerMsgs.FirstOrDefault();
@@ -146,14 +146,14 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(delListRq.IsEntityValid());
 
                     string result = QB.ExecuteQbRequest(delListRq);
-                    QbListDelView delListRs = new(result);
+                    ListDelRs delListRs = new(result);
                     Assert.IsTrue(validDelCodes.IsMatch(delListRs.StatusCode));
                     Assert.IsTrue(string.IsNullOrEmpty(delListRs.ParseError));
                 }
                 #endregion
                 #region CustomerType List
                 CustomerTypeQueryRq customerTypeRq = new() { NameFilter = new() { Name = "Qb", MatchCriterion = "StartsWith" } };
-                QbCustomerTypesView customerTypeVw = new(QB.ExecuteQbRequest(customerTypeRq));
+                CustomerTypeRs customerTypeVw = new(QB.ExecuteQbRequest(customerTypeRq));
                 if (customerTypeVw.TotalCustomerTypes > 0)
                 {
                     CustomerTypeRetDto customerType = customerTypeVw.CustomerTypes.FirstOrDefault();
@@ -161,14 +161,14 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(delListRq.IsEntityValid());
 
                     string result = QB.ExecuteQbRequest(delListRq);
-                    QbListDelView delListRs = new(result);
+                    ListDelRs delListRs = new(result);
                     Assert.IsTrue(validDelCodes.IsMatch(delListRs.StatusCode));
                     Assert.IsTrue(string.IsNullOrEmpty(delListRs.ParseError));
                 }
                 #endregion
                 #region Employee List
                 EmployeeQueryRq EmployeeRq = new() { NameFilter = new() { Name = "Qb", MatchCriterion = "StartsWith" } };
-                QbEmployeesView EmployeeVw = new(QB.ExecuteQbRequest(EmployeeRq));
+                EmployeeRs EmployeeVw = new(QB.ExecuteQbRequest(EmployeeRq));
                 if (EmployeeVw.TotalEmployees > 0)
                 {
                     EmployeeRetDto employee = EmployeeVw.Employees.FirstOrDefault();
@@ -176,14 +176,14 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(delListRq.IsEntityValid());
 
                     string result = QB.ExecuteQbRequest(delListRq);
-                    QbListDelView delListRs = new(result);
+                    ListDelRs delListRs = new(result);
                     Assert.IsTrue(validDelCodes.IsMatch(delListRs.StatusCode));
                     Assert.IsTrue(string.IsNullOrEmpty(delListRs.ParseError));
                 }
                 #endregion
                 #region ItemInventory List
                 ItemInventoryQueryRq itemRq = new() { NameFilter = new() { Name = "Qb", MatchCriterion = "StartsWith" } };
-                QbItemInventoryView itemVw = new(QB.ExecuteQbRequest(itemRq));
+                ItemInventoryRs itemVw = new(QB.ExecuteQbRequest(itemRq));
                 if (itemVw.TotalItemsInventory > 0)
                 {
                     foreach(var item in itemVw.ItemInventory)
@@ -192,7 +192,7 @@ namespace QbProcessor.TEST
                         Assert.IsTrue(delListRq.IsEntityValid());
 
                         string result = QB.ExecuteQbRequest(delListRq);
-                        QbListDelView delListRs = new(result);
+                        ListDelRs delListRs = new(result);
                         Assert.IsTrue(validDelCodes.IsMatch(delListRs.StatusCode));
                         Assert.IsTrue(string.IsNullOrEmpty(delListRs.ParseError));
                     }
@@ -200,7 +200,7 @@ namespace QbProcessor.TEST
                 #endregion
                 #region JobType List
                 JobTypeQueryRq jobTypeRq = new() { NameFilter = new() { Name = "Qb", MatchCriterion = "StartsWith" } };
-                QbJobTypesView jobTypeVw = new(QB.ExecuteQbRequest(jobTypeRq));
+                JobTypeRs jobTypeVw = new(QB.ExecuteQbRequest(jobTypeRq));
                 if (jobTypeVw.TotalJobTypes > 0)
                 {
                     JobTypeRetDto jobType = jobTypeVw.JobTypes.FirstOrDefault();
@@ -208,14 +208,29 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(delListRq.IsEntityValid());
 
                     string result = QB.ExecuteQbRequest(delListRq);
-                    QbListDelView delListRs = new(result);
+                    ListDelRs delListRs = new(result);
+                    Assert.IsTrue(validDelCodes.IsMatch(delListRs.StatusCode));
+                    Assert.IsTrue(string.IsNullOrEmpty(delListRs.ParseError));
+                }
+                #endregion
+                #region OtherName List
+                OtherNameQueryRq otherNameRq = new() { NameFilter = new() { Name = "Qb", MatchCriterion = "StartsWith" } };
+                OtherNameRs otherNameVw = new(QB.ExecuteQbRequest(otherNameRq));
+                if (otherNameVw.TotalOtherNames > 0)
+                {
+                    OtherNameRetDto otherName = otherNameVw.OtherNames.FirstOrDefault();
+                    delListRq = new() { ListDelType = "OtherName", ListID = otherName.ListID };
+                    Assert.IsTrue(delListRq.IsEntityValid());
+
+                    string result = QB.ExecuteQbRequest(delListRq);
+                    ListDelRs delListRs = new(result);
                     Assert.IsTrue(validDelCodes.IsMatch(delListRs.StatusCode));
                     Assert.IsTrue(string.IsNullOrEmpty(delListRs.ParseError));
                 }
                 #endregion
                 #region PaymentMethod List
                 PaymentMethodQueryRq paymentMethodRq = new() { NameFilter = new() { Name = "Qb", MatchCriterion = "StartsWith" } };
-                QbPaymentMethodsView paymentMethodVw = new(QB.ExecuteQbRequest(paymentMethodRq));
+                PaymentMethodRs paymentMethodVw = new(QB.ExecuteQbRequest(paymentMethodRq));
                 if (paymentMethodVw.TotalPaymentMethods > 0)
                 {
                     PaymentMethodRetDto paymentMethod = paymentMethodVw.PaymentMethods.FirstOrDefault();
@@ -223,14 +238,14 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(delListRq.IsEntityValid());
 
                     string result = QB.ExecuteQbRequest(delListRq);
-                    QbListDelView delListRs = new(result);
+                    ListDelRs delListRs = new(result);
                     Assert.IsTrue(validDelCodes.IsMatch(delListRs.StatusCode));
                     Assert.IsTrue(string.IsNullOrEmpty(delListRs.ParseError));
                 }
                 #endregion
                 #region PriceLevel List
                 PriceLevelQueryRq priceLevelRq = new() { NameFilter = new() { Name = "Qb", MatchCriterion = "StartsWith" } };
-                QbPriceLevelsView priceLevelVw = new(QB.ExecuteQbRequest(priceLevelRq));
+                PriceLevelRs priceLevelVw = new(QB.ExecuteQbRequest(priceLevelRq));
                 if (priceLevelVw.TotalPriceLevels > 0)
                 {
                     PriceLevelRetDto priceLevel = priceLevelVw.PriceLevels.FirstOrDefault();
@@ -238,14 +253,14 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(delListRq.IsEntityValid());
 
                     string result = QB.ExecuteQbRequest(delListRq);
-                    QbListDelView delListRs = new(result);
+                    ListDelRs delListRs = new(result);
                     Assert.IsTrue(validDelCodes.IsMatch(delListRs.StatusCode));
                     Assert.IsTrue(string.IsNullOrEmpty(delListRs.ParseError));
                 }
                 #endregion
                 #region SalesRep List
                 SalesRepQueryRq salesRepRq = new() { NameFilter = new() { Name = "Qb", MatchCriterion = "StartsWith" } };
-                QbSalesRepsView salesRepVw = new(QB.ExecuteQbRequest(salesRepRq));
+                SalesRepRs salesRepVw = new(QB.ExecuteQbRequest(salesRepRq));
                 if (salesRepVw.TotalSalesReps > 0)
                 {
                     SalesRepRetDto salesRep = salesRepVw.SalesReps.FirstOrDefault();
@@ -253,14 +268,14 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(delListRq.IsEntityValid());
 
                     string result = QB.ExecuteQbRequest(delListRq);
-                    QbListDelView delListRs = new(result);
+                    ListDelRs delListRs = new(result);
                     Assert.IsTrue(validDelCodes.IsMatch(delListRs.StatusCode));
                     Assert.IsTrue(string.IsNullOrEmpty(delListRs.ParseError));
                 }
                 #endregion
                 #region SalesTaxCode List
                 SalesTaxCodeQueryRq SalesTaxCodeRq = new() { NameFilter = new() { Name = "Qb", MatchCriterion = "StartsWith" } };
-                QbSalesTaxCodesView SalesTaxCodeVw = new(QB.ExecuteQbRequest(SalesTaxCodeRq));
+                SalesTaxCodeRs SalesTaxCodeVw = new(QB.ExecuteQbRequest(SalesTaxCodeRq));
                 if (SalesTaxCodeVw.TotalSalesTaxCodes > 0)
                 {
                     SalesTaxCodeRetDto SalesTaxCode = SalesTaxCodeVw.SalesTaxCodes.FirstOrDefault();
@@ -268,14 +283,14 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(delListRq.IsEntityValid());
 
                     string result = QB.ExecuteQbRequest(delListRq);
-                    QbListDelView delListRs = new(result);
+                    ListDelRs delListRs = new(result);
                     Assert.IsTrue(validDelCodes.IsMatch(delListRs.StatusCode));
                     Assert.IsTrue(string.IsNullOrEmpty(delListRs.ParseError));
                 }
                 #endregion
                 #region ShipMethod List
                 ShipMethodQueryRq shipMethodRq = new() { NameFilter = new() { Name = "Qb", MatchCriterion = "StartsWith" } };
-                QbShipMethodsView shipMethodVw = new(QB.ExecuteQbRequest(shipMethodRq));
+                ShipMethodRs shipMethodVw = new(QB.ExecuteQbRequest(shipMethodRq));
                 if (shipMethodVw.TotalShipMethods > 0)
                 {
                     ShipMethodRetDto shipMethod = shipMethodVw.ShipMethods.FirstOrDefault();
@@ -283,14 +298,14 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(delListRq.IsEntityValid());
 
                     string result = QB.ExecuteQbRequest(delListRq);
-                    QbListDelView delListRs = new(result);
+                    ListDelRs delListRs = new(result);
                     Assert.IsTrue(validDelCodes.IsMatch(delListRs.StatusCode));
                     Assert.IsTrue(string.IsNullOrEmpty(delListRs.ParseError));
                 }
                 #endregion
                 #region ToDo List
                 ToDoQueryRq toDoRq = new() { NameFilter = new() { Name = "Qb", MatchCriterion = "StartsWith" } };
-                QbToDosView toDoVw = new(QB.ExecuteQbRequest(toDoRq));
+                ToDoRs toDoVw = new(QB.ExecuteQbRequest(toDoRq));
                 if (toDoVw.TotalToDos > 0)
                 {
                     ToDoRetDto toDo = toDoVw.ToDos.FirstOrDefault();
@@ -298,14 +313,14 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(delListRq.IsEntityValid());
 
                     string result = QB.ExecuteQbRequest(delListRq);
-                    QbListDelView delListRs = new(result);
+                    ListDelRs delListRs = new(result);
                     Assert.IsTrue(validDelCodes.IsMatch(delListRs.StatusCode));
                     Assert.IsTrue(string.IsNullOrEmpty(delListRs.ParseError));
                 }
                 #endregion
                 #region Vehicle List
                 VehicleQueryRq vehicleRq = new() { NameFilter = new() { Name = "Qb", MatchCriterion = "StartsWith" } };
-                QbVehiclesView vehicleVw = new(QB.ExecuteQbRequest(vehicleRq));
+                VehicleRs vehicleVw = new(QB.ExecuteQbRequest(vehicleRq));
                 if (vehicleVw.TotalVehicles > 0)
                 {
                     VehicleRetDto vehicle = vehicleVw.Vehicles.FirstOrDefault();
@@ -313,14 +328,14 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(delListRq.IsEntityValid());
 
                     string result = QB.ExecuteQbRequest(delListRq);
-                    QbVehiclesView delListRs = new(result);
+                    VehicleRs delListRs = new(result);
                     Assert.IsTrue(validDelCodes.IsMatch(delListRs.StatusCode));
                     Assert.IsTrue(string.IsNullOrEmpty(delListRs.ParseError));
                 }
                 #endregion
                 #region Vendor List
                 VendorQueryRq vendorRq = new() { NameFilter = new() { Name = "Qb", MatchCriterion = "StartsWith" } };
-                QbVendorsView vendorVw = new(QB.ExecuteQbRequest(vendorRq));
+                VendorRs vendorVw = new(QB.ExecuteQbRequest(vendorRq));
                 if (vendorVw.TotalVendors > 0)
                 {
                     VendorRetDto vendor = vendorVw.Vendors.FirstOrDefault();
@@ -328,14 +343,14 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(delListRq.IsEntityValid());
 
                     string result = QB.ExecuteQbRequest(delListRq);
-                    QbListDelView delListRs = new(result);
+                    ListDelRs delListRs = new(result);
                     Assert.IsTrue(validDelCodes.IsMatch(delListRs.StatusCode));
                     Assert.IsTrue(string.IsNullOrEmpty(delListRs.ParseError));
                 }
                 #endregion
                 #region VendorType List
                 VendorTypeQueryRq vendorTypeRq = new() { NameFilter = new() { Name = "Qb", MatchCriterion = "StartsWith" } };
-                QbVendorTypesView vendorTypeVw = new(QB.ExecuteQbRequest(vendorTypeRq));
+                VendorTypeRs vendorTypeVw = new(QB.ExecuteQbRequest(vendorTypeRq));
                 if (vendorTypeVw.TotalVendorTypes > 0)
                 {
                     VendorTypeRetDto vendorType = vendorTypeVw.VendorTypes.FirstOrDefault();
@@ -343,14 +358,14 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(delListRq.IsEntityValid());
 
                     string result = QB.ExecuteQbRequest(delListRq);
-                    QbListDelView delListRs = new(result);
+                    ListDelRs delListRs = new(result);
                     Assert.IsTrue(validDelCodes.IsMatch(delListRs.StatusCode));
                     Assert.IsTrue(string.IsNullOrEmpty(delListRs.ParseError));
                 }
                 #endregion
                 #region WorkersCompCode List
                 WorkersCompCodeQueryRq workersCompCodeRq = new() { NameFilter = new() { Name = "Qb", MatchCriterion = "StartsWith" } };
-                QbWorkersCompCodesView workersCompCodeVw = new(QB.ExecuteQbRequest(workersCompCodeRq));
+                WorkersCompCodeRs workersCompCodeVw = new(QB.ExecuteQbRequest(workersCompCodeRq));
                 if (workersCompCodeVw.TotalWorkersCompCodes > 0)
                 {
                     WorkersCompCodeRetDto workersCompCode = workersCompCodeVw.WorkersCompCodes.FirstOrDefault();
@@ -358,7 +373,7 @@ namespace QbProcessor.TEST
                     Assert.IsTrue(delListRq.IsEntityValid());
 
                     string result = QB.ExecuteQbRequest(delListRq);
-                    QbListDelView delListRs = new(result);
+                    ListDelRs delListRs = new(result);
                     Assert.IsTrue(validDelCodes.IsMatch(delListRs.StatusCode));
                     Assert.IsTrue(string.IsNullOrEmpty(delListRs.ParseError));
                 }

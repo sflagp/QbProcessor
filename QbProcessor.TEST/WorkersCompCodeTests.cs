@@ -19,7 +19,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbWorkersCompCodesView qryRs, addRs = new(""), modRs;
+                WorkersCompCodeRs qryRs, addRs = new(""), modRs;
                 WorkersCompCodeAddRq addRq = new();
                 WorkersCompCodeModRq modRq = new();
                 string addRqName = $"QbProcessor.WorkersCompCode";

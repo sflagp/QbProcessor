@@ -20,7 +20,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbListDeletedView qryRs;
+                ListDeletedRs qryRs;
 
                 Regex acceptableCodes = new(@"^0$|^1$");
                 string delTypes = @"^Account$|^BillingRate$|^Class$|^Currency$|^Customer$|^CustomerMsg$|^CustomerType$|^DateDrivenTerms$|^Employee$|^InventorySite$|^ItemDiscount$|^ItemFixedAsset$|^ItemGroup$|^ItemInventory$|^ItemInventoryAssembly$|^ItemNonInventory$|^ItemOtherCharge$|^ItemPayment$|^ItemSalesTax$|^ItemSalesTaxGroup$|^ItemService$|^ItemSubtotal$|^JobType$|^OtherName$|^PaymentMethod$|^PayrollItemNonWage$|^PayrollItemWage$|^PriceLevel$|^SalesRep$|^SalesTaxCode$|^ShipMethod$|^StandardTerms$|^ToDo$|^UnitOfMeasureSet$|^Vehicle$|^Vendor$|^VendorType$|^WorkersCompCode$";

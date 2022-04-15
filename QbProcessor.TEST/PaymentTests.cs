@@ -20,7 +20,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbReceivePaymentsView qryRs, addRs = new(""), modRs;
+                ReceivePaymentRs qryRs, addRs = new(""), modRs;
                 ReceivePaymentAddRq addRq = new();
                 ReceivePaymentModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -42,11 +42,11 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     AccountQueryRq bankRq = new() { AccountType = "Bank" };
-                    QbAccountsView banks = new(QB.ExecuteQbRequest(bankRq));
+                    AccountRs banks = new(QB.ExecuteQbRequest(bankRq));
                     AccountRetDto bank = banks.Accounts[rdm.Next(0, banks.Accounts.Count)];
 
                     InvoiceQueryRq invoicesRq = new() { MaxReturned = 50, PaidStatus = "NotPaidOnly" };
-                    QbInvoicesView invoices = new(QB.ExecuteQbRequest(invoicesRq));
+                    InvoiceRs invoices = new(QB.ExecuteQbRequest(invoicesRq));
                     InvoiceRetDto invoice = invoices.Invoices?[rdm.Next(0, invoices.Invoices.Count)];
 
                     addRq.RefNumber = addRqName;
@@ -96,7 +96,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbPaymentMethodsView qryRs, addRs;
+                PaymentMethodRs qryRs, addRs;
                 PaymentMethodQueryRq qryRq;
                 PaymentMethodAddRq addRq;
 

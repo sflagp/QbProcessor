@@ -9,7 +9,7 @@ namespace QBProcessor
     {
         #region Private Variables and Properties
 
-        private QbCompanyView QbCompany;
+        private CompanyRs QbCompany;
 
         #endregion Private Variables and Properties
 

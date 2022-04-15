@@ -20,7 +20,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbCurrencysView qryRs, addRs = new(""), modRs;
+                CurrencyRs qryRs, addRs = new(""), modRs;
                 CurrencyAddRq addRq = new();
                 CurrencyModRq modRq = new();
                 string addRqName = $"QPD";

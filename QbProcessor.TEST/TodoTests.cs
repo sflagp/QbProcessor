@@ -19,7 +19,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbToDosView qryRs, addRs = new(""), modRs;
+                ToDoRs qryRs, addRs = new(""), modRs;
                 ToDoAddRq addRq = new();
                 ToDoModRq modRq = new();
                 Random rdm = new();
@@ -45,7 +45,7 @@ namespace QbProcessor.TEST
                 if (qryRs.TotalToDos == 0)
                 {
                     CustomerQueryRq custRq = new();
-                    QbCustomersView customers = new(QB.ExecuteQbRequest(custRq));
+                    CustomerRs customers = new(QB.ExecuteQbRequest(custRq));
                     CustomerRetDto cust = customers.Customers[rdm.Next(0, customers.Customers.Count)];
 
                     addRq.Notes = $"{addRqName}.{addRq.GetType().Name}";
@@ -66,7 +66,7 @@ namespace QbProcessor.TEST
                 ToDoRetDto Todo = qryRs.TotalToDos == 0 ? addRs.ToDos[0] : qryRs.ToDos[0];
 
                 EmployeeQueryRq empRq = new();
-                QbEmployeesView employees = new(QB.ExecuteQbRequest(empRq));
+                EmployeeRs employees = new(QB.ExecuteQbRequest(empRq));
                 EmployeeRetDto emp = employees.Employees[rdm.Next(0, employees.Employees.Count)];
 
                 modRq.ListID = Todo.ListID;

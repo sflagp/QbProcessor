@@ -19,7 +19,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbPurchaseOrdersView qryRs, addRs = new(""), modRs;
+                PurchaseOrderRs qryRs, addRs = new(""), modRs;
                 PurchaseOrderAddRq addRq = new();
                 PurchaseOrderModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -46,18 +46,18 @@ namespace QbProcessor.TEST
 
                     AccountQueryRq accountsRq = new();
                     accountsRq.AccountType = "AccountsReceivable";
-                    QbAccountsView accounts = new(QB.ExecuteQbRequest(accountsRq));
+                    AccountRs accounts = new(QB.ExecuteQbRequest(accountsRq));
                     AccountRetDto account = accounts.Accounts[rdm.Next(0, accounts.Accounts.Count)];
 
                     VendorQueryRq vendorRq = new();
-                    QbVendorsView vendors = new(QB.ExecuteQbRequest(vendorRq));
+                    VendorRs vendors = new(QB.ExecuteQbRequest(vendorRq));
                     VendorRetDto vendor = vendors.Vendors[rdm.Next(0, vendors.Vendors.Count)];
 
                     ItemInventoryQueryRq itemsRq = new() { NameFilter = new() { Name = "QbProcessor", MatchCriterion="StartsWith" } };
-                    QbItemInventoryView items = new(QB.ExecuteQbRequest(itemsRq));
+                    ItemInventoryRs items = new(QB.ExecuteQbRequest(itemsRq));
 
                     ItemOtherChargeQueryRq chargeRq = new();
-                    QbItemOtherChargesView charges = new(QB.ExecuteQbRequest(chargeRq));
+                    ItemOtherChargeRs charges = new(QB.ExecuteQbRequest(chargeRq));
 
                     addRq.Vendor = new() { ListID = vendor.ListID };
                     addRq.TxnDate = DateTime.Now;
@@ -121,7 +121,6 @@ namespace QbProcessor.TEST
                 modRq.Memo = $"QbProcessor.{modRq.GetType().Name} on {DateTime.Now}";
                 Assert.IsTrue(modRq.IsEntityValid());
 
-                modRq.TxnDate = default;
                 result = QB.ExecuteQbRequest(modRq);
                 modRs = new(result);
                 Assert.IsTrue(modRs.StatusCode == "0");

@@ -19,7 +19,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbAccountsView qryRs, addRs = new(""), modRs;
+                AccountRs qryRs, addRs = new(""), modRs;
                 AccountAddRq addRq = new();
                 AccountModRq modRq = new();
                 string addRqName = $"QbProcessor {addRq.GetType().Name}";

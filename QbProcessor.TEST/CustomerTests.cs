@@ -19,14 +19,26 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbCustomersView qryRs, addRs = new(""), modRs;
+                CustomerRs qryRs, addRs = new(""), modRs;
                 CustomerAddRq addRq = new();
                 CustomerModRq modRq = new();
                 string addRqName = $"QbProcessor";
                 #endregion
 
                 #region Query Test
-                CustomerQueryRq qryRq = new();
+                CustomerQueryRq qryRq = new() { MaxReturned = 100, Iterator = "Start" };
+                Assert.IsTrue(qryRq.IsEntityValid());
+
+                qryRs = new(QB.ExecuteQbRequest(qryRq));
+                while(qryRs.RemainingCount > 0)
+                {
+                    qryRq.IteratorID = qryRs.IteratorID;
+                    qryRq.Iterator = "Continue";
+                    qryRs = new(QB.ExecuteQbRequest(qryRq));
+                }
+                Assert.AreEqual(0, qryRs.RemainingCount);
+
+                qryRq = new();
                 qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = "StartsWith" };
                 qryRq.ActiveStatus = "All";
                 Assert.IsTrue(qryRq.IsEntityValid());
@@ -97,7 +109,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbCustomerTypesView qryRs, addRs;
+                CustomerTypeRs qryRs, addRs;
                 CustomerTypeAddRq addRq = new();
                 string addRqName = $"QbProcessor";
                 #endregion
@@ -140,7 +152,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbCustomerMsgsView qryRs, addRs;
+                CustomerMsgRs qryRs, addRs;
                 CustomerMsgAddRq addRq = new();
                 string addRqName = $"QbProcessor";
                 #endregion

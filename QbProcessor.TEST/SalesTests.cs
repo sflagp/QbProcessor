@@ -1,7 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels;
 using System;
-using System.Linq;
 using System.Threading;
 
 namespace QbProcessor.TEST
@@ -20,7 +19,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbSalesOrdersView qryRs, addRs = new(""), modRs;
+                SalesOrderRs qryRs, addRs = new(""), modRs;
                 SalesOrderAddRq addRq = new();
                 SalesOrderModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -46,11 +45,11 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     CustomerQueryRq customerRq = new();
-                    QbCustomersView customers = new(QB.ExecuteQbRequest(customerRq));
+                    CustomerRs customers = new(QB.ExecuteQbRequest(customerRq));
                     CustomerRetDto customer = customers.Customers[rdm.Next(0, customers.Customers.Count)];
 
                     ItemInventoryQueryRq itemsRq = new() { NameFilter = new() { Name = "QbProcessor", MatchCriterion="StartsWith" } };
-                    QbItemInventoryView items = new(QB.ExecuteQbRequest(itemsRq));
+                    ItemInventoryRs items = new(QB.ExecuteQbRequest(itemsRq));
 
                     addRq.Customer = new() { ListID = customer.ListID };
                     addRq.TxnDate = DateTime.Now;
@@ -139,7 +138,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbSalesReceiptsView qryRs, addRs = new(""), modRs;
+                SalesReceiptRs qryRs, addRs = new(""), modRs;
                 SalesReceiptAddRq addRq = new();
                 SalesReceiptModRq modRq = new();
                 string addRqName = $"QbProcessor";
@@ -165,11 +164,11 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     CustomerQueryRq customerRq = new();
-                    QbCustomersView customers = new(QB.ExecuteQbRequest(customerRq));
+                    CustomerRs customers = new(QB.ExecuteQbRequest(customerRq));
                     CustomerRetDto customer = customers.Customers[rdm.Next(0, customers.Customers.Count)];
 
                     ItemInventoryQueryRq itemsRq = new() { NameFilter = new() { Name = "QbProcessor", MatchCriterion = "StartsWith" } };
-                    QbItemInventoryView items = new(QB.ExecuteQbRequest(itemsRq));
+                    ItemInventoryRs items = new(QB.ExecuteQbRequest(itemsRq));
 
                     addRq.Customer = new() { ListID = customer.ListID };
                     addRq.TxnDate = DateTime.Now;
@@ -258,7 +257,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbSalesRepsView qryRs, addRs = new(""), modRs;
+                SalesRepRs qryRs, addRs = new(""), modRs;
                 SalesRepAddRq addRq = new();
                 SalesRepModRq modRq = new();
                 string addRqName = $"QbP";
@@ -280,7 +279,7 @@ namespace QbProcessor.TEST
                 {
                     Random rdm = new();
                     VendorQueryRq vendRq = new();
-                    QbVendorsView vendVw = new(QB.ExecuteQbRequest(vendRq));
+                    VendorRs vendVw = new(QB.ExecuteQbRequest(vendRq));
                     VendorRetDto vend = vendVw.Vendors[rdm.Next(0, vendVw.Vendors.Count)];
 
                     addRq.Initial = addRqName;
@@ -327,7 +326,7 @@ namespace QbProcessor.TEST
                     throw new Exception("Quickbooks not loaded or error connecting to Quickbooks.");
                 }
 
-                QbSalesTaxCodesView qryRs, addRs = new(""), modRs;
+                SalesTaxCodeRs qryRs, addRs = new(""), modRs;
                 SalesTaxCodeAddRq addRq = new();
                 SalesTaxCodeModRq modRq = new();
                 string addRqName = $"QbP";
