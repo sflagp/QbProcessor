@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels;
+using QbModels.ENUM;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -28,7 +29,7 @@ namespace QbProcessor.TEST
 
                 #region Query Test
                 CurrencyQueryRq qryRq = new();
-                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 qryRq.ActiveStatus = "All";
                 Assert.IsTrue(qryRq.IsEntityValid());
 
@@ -58,7 +59,7 @@ namespace QbProcessor.TEST
                 modRq.ListID = acct.ListID;
                 modRq.EditSequence = acct.EditSequence;
                 modRq.Name = acct.Name;
-                modRq.CurrencyFormat = new() { ThousandSeparator = "Comma" };
+                modRq.CurrencyFormat = new() { ThousandSeparator = ThousandSeparator.Comma };
                 Assert.IsTrue(modRq.IsEntityValid());
 
                 modRs = new(QB.ExecuteQbRequest(modRq));

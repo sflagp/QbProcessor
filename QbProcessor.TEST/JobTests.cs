@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels;
+using QbModels.ENUM;
 using System;
 using System.Threading;
 
@@ -29,7 +30,7 @@ namespace QbProcessor.TEST
                 JobTypeQueryRq qryRq = new();
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 result = QB.ExecuteQbRequest(qryRq);

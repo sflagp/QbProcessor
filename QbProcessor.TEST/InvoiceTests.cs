@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels;
+using QbModels.ENUM;
 using System;
 using System.Threading;
 
@@ -30,7 +31,7 @@ namespace QbProcessor.TEST
                 InvoiceQueryRq qryRq = new();
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 result = QB.ExecuteQbRequest(qryRq);
@@ -45,7 +46,7 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     AccountQueryRq accountsRq = new();
-                    accountsRq.AccountType = "AccountsReceivable";
+                    accountsRq.AccountType = AccountType.AccountsReceivable;
                     AccountRs accounts = new(QB.ExecuteQbRequest(accountsRq));
                     AccountRetDto account = accounts.Accounts[rdm.Next(0, accounts.Accounts.Count)];
 

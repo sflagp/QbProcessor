@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels;
+using QbModels.ENUM;
 using System;
 using System.Threading;
 
@@ -30,7 +31,7 @@ namespace QbProcessor.TEST
                 LeadQueryRq qryRq = new();
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 result = QB.ExecuteQbRequest(qryRq);
@@ -44,7 +45,7 @@ namespace QbProcessor.TEST
                 if (qryRs.TotalLeads == 0)
                 {
                     addRq.FullName = $"{addRqName}.{addRq.GetType().Name}";
-                    addRq.Status = "Cold";
+                    addRq.Status = LeadStatus.Cold;
                     addRq.MainPhone = "305-775-4754";
                     Assert.IsTrue(addRq.IsEntityValid());
 
@@ -61,7 +62,7 @@ namespace QbProcessor.TEST
                 modRq.ListID = Lead.ListID;
                 modRq.EditSequence = Lead.EditSequence;
                 modRq.FullName = $"{addRqName}.{modRq.GetType().Name}";
-                modRq.Status = "Hot";
+                modRq.Status = LeadStatus.Hot;
                 Assert.IsTrue(modRq.IsEntityValid());
 
                 result = QB.ExecuteQbRequest(modRq);

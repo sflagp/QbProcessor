@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbHelpers;
 using QbModels;
+using QbModels.ENUM;
 using System;
 using System.Threading;
 
@@ -81,7 +82,7 @@ namespace QbProcessor.TEST
                 modRq.Duration = timeTracking.Duration.FromQbTime() + 0.05M;
                 modRq.TxnDate = DateTime.Now;
                 modRq.Notes = $"{addRqName} modified on {DateTime.Now} by {modRq.GetType().Name}";
-                modRq.BillableStatus = "Billable";
+                modRq.BillableStatus = BillStatus.Billable;
                 Assert.IsTrue(modRq.IsEntityValid());
 
                 modRs = new(QB.ExecuteQbRequest(modRq));

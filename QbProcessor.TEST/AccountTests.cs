@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels;
+using QbModels.ENUM;
 using System;
 using System.Threading;
 
@@ -28,7 +29,7 @@ namespace QbProcessor.TEST
 
                 #region Query Test
                 AccountQueryRq qryRq = new();
-                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 qryRq.ActiveStatus = "All";
                 Assert.IsTrue(qryRq.IsEntityValid());
 
@@ -43,7 +44,7 @@ namespace QbProcessor.TEST
                 {
                     addRq.Name = addRqName;
                     addRq.IsActive = true;
-                    addRq.AccountType = "OtherExpense";
+                    addRq.AccountType = AccountType.OtherExpense;
                     addRq.Desc = addRq.GetType().Name;
                     Assert.IsTrue(addRq.IsEntityValid());
 

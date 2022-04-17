@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels;
+using QbModels.ENUM;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -23,8 +24,6 @@ namespace QbProcessor.TEST
                 TxnDeletedRs qryRs;
 
                 Regex acceptableCodes = new(@"^0$|^1$");
-                string delTypes = @"^ARRefundCreditCard$|^Bill$|^BillPaymentCheck$|^BillPaymentCreditCard$|^BuildAssembly$|^Charge$|^Check$|^CreditCardCharge$|^CreditCardCredit$|^CreditMemo$|^Deposit$|^Estimate$|^InventoryAdjustment$|^Invoice$|^ItemReceipt$|^JournalEntry$|^PayrollLiabilityAdjustment$|^PayrollPriorPayment$|^PayrollYearToDateAdjustment$|^PurchaseOrder$|^ReceivePayment$|^SalesOrder$|^SalesReceipt$|^SalesTaxPaymentCheck$|^TimeTracking$|^TransferInventory$|^VehicleMileage$|^VendorCredit$";
-                string[] txnDelTypes = delTypes.Replace(@"$", "").Replace("^", "").Split("|");
                 string result;
                 #endregion
 
@@ -33,8 +32,9 @@ namespace QbProcessor.TEST
                 qryRq.DeletedDateRangeFilter = new() { FromDeletedDate = DateTime.Today.AddDays(-7), ToDeletedDate = DateTime.Today };
                 Assert.IsFalse(qryRq.IsEntityValid());
 
-                foreach(string delType in txnDelTypes)
+                foreach(TxnDelType delType in Enum.GetValues(typeof(TxnDelType)))
                 {
+                    if (delType == TxnDelType.None) continue;
                     qryRq.TxnDelType = delType;
                     Assert.IsTrue(qryRq.IsEntityValid());
 

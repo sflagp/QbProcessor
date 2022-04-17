@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels;
+using QbModels.ENUM;
 using System;
 using System.Threading;
 
@@ -27,7 +28,7 @@ namespace QbProcessor.TEST
 
                 #region Query Test
                 ClassQueryRq qryRq = new();
-                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 qryRq.ActiveStatus = "All";
                 Assert.IsTrue(qryRq.IsEntityValid());
 

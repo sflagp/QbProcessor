@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels;
+using QbModels.ENUM;
 using System;
 using System.Threading;
 
@@ -44,11 +45,11 @@ namespace QbProcessor.TEST
                 {
                     Random rdm = new();
 
-                    AccountQueryRq bankRq = new() { AccountType = "Bank" };
+                    AccountQueryRq bankRq = new() { AccountType = AccountType.Bank };
                     AccountRs banks = new(QB.ExecuteQbRequest(bankRq));
                     AccountRetDto bank = banks.Accounts[rdm.Next(0, banks.Accounts.Count)];
 
-                    AccountQueryRq acctRq = new() { AccountType = "AccountsReceivable" };
+                    AccountQueryRq acctRq = new() { AccountType = AccountType.AccountsReceivable };
                     AccountRs accts = new(QB.ExecuteQbRequest(acctRq));
                     AccountRetDto acct = accts.Accounts[rdm.Next(0, accts.Accounts.Count)];
 

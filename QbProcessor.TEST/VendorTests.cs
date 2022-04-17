@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels;
+using QbModels.ENUM;
 using System;
 using System.Threading;
 
@@ -27,7 +28,7 @@ namespace QbProcessor.TEST
 
                 #region Query Test
                 VendorQueryRq qryRq = new();
-                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 qryRq.ActiveStatus = "All";
                 Assert.IsTrue(qryRq.IsEntityValid());
 
@@ -97,7 +98,7 @@ namespace QbProcessor.TEST
 
                 #region Query Test
                 VendorCreditQueryRq qryRq = new();
-                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 qryRq.IncludeLineItems = true;
                 qryRq.IncludeLinkedTxns = true;
                 Assert.IsTrue(qryRq.IsEntityValid());
@@ -116,7 +117,7 @@ namespace QbProcessor.TEST
                     VendorRs vendors = new(QB.ExecuteQbRequest(vendorRq));
                     VendorRetDto vendor = vendors.Vendors[rdm.Next(0, vendors.Vendors.Count)];
 
-                    ItemInventoryQueryRq itemsRq = new() { NameFilter = new() { Name = "QbProcessor", MatchCriterion = "StartsWith" } };
+                    ItemInventoryQueryRq itemsRq = new() { NameFilter = new() { Name = "QbProcessor", MatchCriterion = MatchCriterion.StartsWith } };
                     ItemInventoryRs items = new(QB.ExecuteQbRequest(itemsRq));
                     ItemInventoryRetDto item = items.ItemInventory[rdm.Next(0, items.ItemInventory.Count)];
 
@@ -175,7 +176,7 @@ namespace QbProcessor.TEST
 
                 #region Query Test
                 VendorTypeQueryRq qryRq = new();
-                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 qryRq.ActiveStatus = "All";
                 Assert.IsTrue(qryRq.IsEntityValid());
 

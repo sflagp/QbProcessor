@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels;
+using QbModels.ENUM;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace QbProcessor.TEST
 
                 #region Query Test
                 JournalEntryQueryRq qryRq = new() { IncludeLineItems = true };
-                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 string strRs = QB.ExecuteQbRequest(qryRq);
@@ -48,8 +49,8 @@ namespace QbProcessor.TEST
                     AccountQueryRq accountsRq = new();
                     AccountRs accounts = new(QB.ExecuteQbRequest(accountsRq));
                     List<AccountRetDto> expenses = 
-                        accounts.Accounts.Where(a => a.AccountType.Contains("Expense") && a.Balance > 0).ToList();
-                    List<AccountRetDto> assets = accounts.Accounts.Where(a => a.AccountType.Contains("Asset")).ToList();
+                        accounts.Accounts.Where(a => a.AccountType.Equals(AccountType.Expense) && a.Balance > 0).ToList();
+                    List<AccountRetDto> assets = accounts.Accounts.Where(a => a.AccountType.Equals(AccountType.OtherAsset)).ToList();
                     AccountRetDto expense = expenses[rdm.Next(0, expenses.Count)];
                     AccountRetDto asset = assets[rdm.Next(0, assets.Count)];
 

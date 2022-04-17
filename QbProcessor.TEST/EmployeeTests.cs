@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels;
+using QbModels.ENUM;
 using System;
 using System.Linq;
 using System.Threading;
@@ -43,6 +44,7 @@ namespace QbProcessor.TEST
                     addRq.FirstName = addRqName;
                     addRq.LastName = addRq.GetType().Name;
                     addRq.IsActive = true;
+                    addRq.EmployeeType = EmployeeType.Regular;
                     addRq.EmployeeAddress = new()
                     {
                         Addr1 = "3648 Kapalua Way",
@@ -64,6 +66,7 @@ namespace QbProcessor.TEST
                 EmployeeRetDto acct = qryRs.TotalEmployees == 0 ? addRs.Employees[0] : qryRs.Employees[0];
                 modRq.ListID = acct.ListID;
                 modRq.EditSequence = acct.EditSequence;
+                modRq.EmployeeType = EmployeeType.Officer;
                 modRq.Notes = $"{modRq.GetType().Name} on {DateTime.Now}";
                 modRq.IsActive = true;
                 modRq.Description = $"{addRqName}.{modRq.GetType().Name}";

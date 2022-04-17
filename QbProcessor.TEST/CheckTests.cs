@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels;
+using QbModels.ENUM;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -30,7 +31,7 @@ namespace QbProcessor.TEST
 
                 #region Query Test
                 CheckQueryRq qryRq = new();
-                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 qryRs = new(QB.ExecuteQbRequest(qryRq));
@@ -45,7 +46,7 @@ namespace QbProcessor.TEST
 
                     AccountQueryRq accountsRq = new();
                     AccountRs accounts = new(QB.ExecuteQbRequest(accountsRq));
-                    AccountRetDto account = accounts.Accounts.FirstOrDefault(a => a.AccountType == "Bank");
+                    AccountRetDto account = accounts.Accounts.FirstOrDefault(a => a.AccountType == AccountType.Bank);
 
                     ItemQueryRq itemsRq = new();
                     result = QB.ExecuteQbRequest(itemsRq);
@@ -109,7 +110,7 @@ namespace QbProcessor.TEST
 
                 #region Query Test
                 BillPaymentCheckQueryRq qryRq = new();
-                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 qryRs = new(QB.ExecuteQbRequest(qryRq));
@@ -124,10 +125,10 @@ namespace QbProcessor.TEST
 
                     AccountQueryRq accountsRq = new();
                     AccountRs accounts = new(QB.ExecuteQbRequest(accountsRq));
-                    AccountRetDto account = accounts.Accounts.FirstOrDefault(a => a.AccountType == "AccountsPayable");
-                    AccountRetDto bank = accounts.Accounts.FirstOrDefault(a => a.AccountType == "Bank");
+                    AccountRetDto account = accounts.Accounts.FirstOrDefault(a => a.AccountType == AccountType.AccountsPayable);
+                    AccountRetDto bank = accounts.Accounts.FirstOrDefault(a => a.AccountType == AccountType.Bank);
 
-                    BillQueryRq billsRq = new() { PaidStatus = "NotPaidOnly" };
+                    BillQueryRq billsRq = new() { PaidStatus = PaidStatus.NotPaidOnly };
                     BillRs bills = new(QB.ExecuteQbRequest(billsRq));
                     BillRetDto bill = bills.Bills[rdm.Next(0, bills.Bills.Count)];
 
@@ -196,7 +197,7 @@ namespace QbProcessor.TEST
 
                 #region Query Test
                 SalesTaxPaymentCheckQueryRq qryRq = new();
-                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 qryRs = new(QB.ExecuteQbRequest(qryRq));
@@ -212,7 +213,7 @@ namespace QbProcessor.TEST
 
                     AccountQueryRq accountsRq = new();
                     AccountRs accounts = new(QB.ExecuteQbRequest(accountsRq));
-                    AccountRetDto bank = accounts.Accounts.FirstOrDefault(a => a.AccountType == "Bank");
+                    AccountRetDto bank = accounts.Accounts.FirstOrDefault(a => a.AccountType == AccountType.Bank);
 
                     VendorQueryRq vendorRq = new();
                     VendorRs vendors = new(QB.ExecuteQbRequest(vendorRq));

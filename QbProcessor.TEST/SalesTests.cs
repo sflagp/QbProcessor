@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels;
+using QbModels.ENUM;
 using System;
 using System.Threading;
 
@@ -30,7 +31,7 @@ namespace QbProcessor.TEST
                 SalesOrderQueryRq qryRq = new();
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 result = QB.ExecuteQbRequest(qryRq);
@@ -48,7 +49,7 @@ namespace QbProcessor.TEST
                     CustomerRs customers = new(QB.ExecuteQbRequest(customerRq));
                     CustomerRetDto customer = customers.Customers[rdm.Next(0, customers.Customers.Count)];
 
-                    ItemInventoryQueryRq itemsRq = new() { NameFilter = new() { Name = "QbProcessor", MatchCriterion="StartsWith" } };
+                    ItemInventoryQueryRq itemsRq = new() { NameFilter = new() { Name = "QbProcessor", MatchCriterion= MatchCriterion.StartsWith } };
                     ItemInventoryRs items = new(QB.ExecuteQbRequest(itemsRq));
 
                     addRq.Customer = new() { ListID = customer.ListID };
@@ -58,7 +59,7 @@ namespace QbProcessor.TEST
                     addRq.SalesOrderLine.Add(new()
                     {
                         Item = new() { ListID = items.ItemInventory[0].ListID },
-                        OptionForPriceRuleConflict = "BasePrice",
+                        OptionForPriceRuleConflict = OptionForPriceRuleConflict.BasePrice,
                         Rate = 12.34M,
                         Quantity = 5,
                         Desc = $"#1 QbProcessor.{addRq.GetType().Name} on {DateTime.Now}"
@@ -66,7 +67,7 @@ namespace QbProcessor.TEST
                     addRq.SalesOrderLine.Add(new()
                     {
                         Item = new() { ListID = items.ItemInventory[1].ListID },
-                        OptionForPriceRuleConflict = "BasePrice",
+                        OptionForPriceRuleConflict = OptionForPriceRuleConflict.BasePrice,
                         Rate = 20M,
                         Quantity = 1,
                         Desc = $"#2 QbProcessor.{addRq.GetType().Name} on {DateTime.Now}"
@@ -74,7 +75,7 @@ namespace QbProcessor.TEST
                     addRq.SalesOrderLine.Add(new()
                     {
                         Item = new() { ListID = items.ItemInventory[2].ListID },
-                        OptionForPriceRuleConflict = "BasePrice",
+                        OptionForPriceRuleConflict = OptionForPriceRuleConflict.BasePrice,
                         Rate = 250,
                         Amount = 123.45M,
                         Desc = $"#3 QbProcessor.{addRq.GetType().Name} on {DateTime.Now}"
@@ -82,7 +83,7 @@ namespace QbProcessor.TEST
                     addRq.SalesOrderLine.Add(new()
                     {
                         Item = new() { ListID = items.ItemInventory[3].ListID },
-                        OptionForPriceRuleConflict = "BasePrice",
+                        OptionForPriceRuleConflict = OptionForPriceRuleConflict.BasePrice,
                         Rate = 11M,
                         Quantity = 30,
                         Desc = $"#4 QbProcessor.{addRq.GetType().Name} on {DateTime.Now}"
@@ -149,7 +150,7 @@ namespace QbProcessor.TEST
                 SalesReceiptQueryRq qryRq = new();
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 result = QB.ExecuteQbRequest(qryRq);
@@ -167,7 +168,7 @@ namespace QbProcessor.TEST
                     CustomerRs customers = new(QB.ExecuteQbRequest(customerRq));
                     CustomerRetDto customer = customers.Customers[rdm.Next(0, customers.Customers.Count)];
 
-                    ItemInventoryQueryRq itemsRq = new() { NameFilter = new() { Name = "QbProcessor", MatchCriterion = "StartsWith" } };
+                    ItemInventoryQueryRq itemsRq = new() { NameFilter = new() { Name = "QbProcessor", MatchCriterion = MatchCriterion.StartsWith } };
                     ItemInventoryRs items = new(QB.ExecuteQbRequest(itemsRq));
 
                     addRq.Customer = new() { ListID = customer.ListID };
@@ -177,7 +178,7 @@ namespace QbProcessor.TEST
                     addRq.SalesReceiptLine.Add(new()
                     {
                         Item = new() { ListID = items.ItemInventory[0].ListID },
-                        OptionForPriceRuleConflict = "BasePrice",
+                        OptionForPriceRuleConflict = OptionForPriceRuleConflict.BasePrice,
                         Rate = 12.34M,
                         Quantity = 5,
                         Desc = $"#1 QbProcessor.{addRq.GetType().Name} on {DateTime.Now}"
@@ -185,7 +186,7 @@ namespace QbProcessor.TEST
                     addRq.SalesReceiptLine.Add(new()
                     {
                         Item = new() { ListID = items.ItemInventory[1].ListID },
-                        OptionForPriceRuleConflict = "BasePrice",
+                        OptionForPriceRuleConflict = OptionForPriceRuleConflict.BasePrice,
                         Rate = 20M,
                         Quantity = 1,
                         Desc = $"#2 QbProcessor.{addRq.GetType().Name} on {DateTime.Now}"
@@ -193,7 +194,7 @@ namespace QbProcessor.TEST
                     addRq.SalesReceiptLine.Add(new()
                     {
                         Item = new() { ListID = items.ItemInventory[2].ListID },
-                        OptionForPriceRuleConflict = "BasePrice",
+                        OptionForPriceRuleConflict = OptionForPriceRuleConflict.BasePrice,
                         Rate = 250,
                         Amount = 123.45M,
                         Desc = $"#3 QbProcessor.{addRq.GetType().Name} on {DateTime.Now}"
@@ -201,7 +202,7 @@ namespace QbProcessor.TEST
                     addRq.SalesReceiptLine.Add(new()
                     {
                         Item = new() { ListID = items.ItemInventory[3].ListID },
-                        OptionForPriceRuleConflict = "BasePrice",
+                        OptionForPriceRuleConflict = OptionForPriceRuleConflict.BasePrice,
                         Rate = 11M,
                         Quantity = 30,
                         Desc = $"#4 QbProcessor.{addRq.GetType().Name} on {DateTime.Now}"
@@ -265,7 +266,7 @@ namespace QbProcessor.TEST
 
                 #region Query Test
                 SalesRepQueryRq qryRq = new();
-                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 qryRq.ActiveStatus = "All";
                 Assert.IsTrue(qryRq.IsEntityValid());
 
@@ -334,7 +335,7 @@ namespace QbProcessor.TEST
 
                 #region Query Test
                 SalesTaxCodeQueryRq qryRq = new();
-                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 qryRq.ActiveStatus = "All";
                 Assert.IsTrue(qryRq.IsEntityValid());
 

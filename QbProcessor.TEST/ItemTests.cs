@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels;
+using QbModels.ENUM;
 using System;
 using System.Linq;
 using System.Threading;
@@ -31,7 +32,7 @@ namespace QbProcessor.TEST
                 ItemInventoryQueryRq qryRq = new();
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 result = QB.ExecuteQbRequest(qryRq);
@@ -44,11 +45,11 @@ namespace QbProcessor.TEST
                 #region Add Test
                 Random rdm = new();
 
-                AccountQueryRq accountsRq = new() { AccountType = "Income" };
+                AccountQueryRq accountsRq = new() { AccountType = AccountType.Income };
                 AccountRs accounts = new(QB.ExecuteQbRequest(accountsRq));
                 AccountRetDto account = accounts.Accounts[rdm.Next(0, accounts.Accounts.Count)];
 
-                AccountQueryRq assetsRq = new() { AccountType = "OtherCurrentAsset" };
+                AccountQueryRq assetsRq = new() { AccountType = AccountType.OtherAsset };
                 AccountRs assets = new(QB.ExecuteQbRequest(assetsRq));
                 AccountRetDto asset = assets.Accounts[rdm.Next(0, assets.Accounts.Count)];
 

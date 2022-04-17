@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels;
+using QbModels.ENUM;
 using System;
 using System.Threading;
 
@@ -39,7 +40,7 @@ namespace QbProcessor.TEST
                 Assert.AreEqual(0, qryRs.RemainingCount);
 
                 qryRq = new();
-                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 qryRq.ActiveStatus = "All";
                 Assert.IsTrue(qryRq.IsEntityValid());
 
@@ -62,6 +63,7 @@ namespace QbProcessor.TEST
                     };
                     addRq.Phone = "305-775-4754";
                     addRq.Notes = addRq.GetType().Name;
+                    addRq.PreferredDeliveryMethod = PreferredDeliveryMethod.Email;
                     Assert.IsTrue(addRq.IsEntityValid());
 
                     addRs = new(QB.ExecuteQbRequest(addRq));
@@ -116,7 +118,7 @@ namespace QbProcessor.TEST
 
                 #region Query Test
                 CustomerTypeQueryRq qryRq = new();
-                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 qryRq.ActiveStatus = "All";
                 Assert.IsTrue(qryRq.IsEntityValid());
 
@@ -159,7 +161,7 @@ namespace QbProcessor.TEST
 
                 #region Query Test
                 CustomerMsgQueryRq qryRq = new();
-                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.NameFilter = new() { Name = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 qryRq.ActiveStatus = "All";
                 Assert.IsTrue(qryRq.IsEntityValid());
 

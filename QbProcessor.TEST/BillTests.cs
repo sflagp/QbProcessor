@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels;
+using QbModels.ENUM;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -28,7 +29,7 @@ namespace QbProcessor.TEST
 
                 #region Query Test
                 BillQueryRq qryRq = new();
-                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 qryRs = new(QB.ExecuteQbRequest(qryRq));

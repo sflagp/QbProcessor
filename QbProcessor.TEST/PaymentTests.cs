@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels;
+using QbModels.ENUM;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -28,7 +29,7 @@ namespace QbProcessor.TEST
 
                 #region Query Test
                 ReceivePaymentQueryRq qryRq = new();
-                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 qryRs = new(QB.ExecuteQbRequest(qryRq));
@@ -41,11 +42,11 @@ namespace QbProcessor.TEST
                 {
                     Random rdm = new();
 
-                    AccountQueryRq bankRq = new() { AccountType = "Bank" };
+                    AccountQueryRq bankRq = new() { AccountType = AccountType.Bank };
                     AccountRs banks = new(QB.ExecuteQbRequest(bankRq));
                     AccountRetDto bank = banks.Accounts[rdm.Next(0, banks.Accounts.Count)];
 
-                    InvoiceQueryRq invoicesRq = new() { MaxReturned = 50, PaidStatus = "NotPaidOnly" };
+                    InvoiceQueryRq invoicesRq = new() { MaxReturned = 50, PaidStatus = PaidStatus.NotPaidOnly };
                     InvoiceRs invoices = new(QB.ExecuteQbRequest(invoicesRq));
                     InvoiceRetDto invoice = invoices.Invoices?[rdm.Next(0, invoices.Invoices.Count)];
 
@@ -123,7 +124,7 @@ namespace QbProcessor.TEST
                     {
                         Name = addRqName,
                         IsActive = true,
-                        PaymentMethodType = "OtherCreditCard"
+                        PaymentMethodType = PaymentMethodType.OtherCreditCard
                     };
                     Assert.IsTrue(addRq.IsEntityValid());
 

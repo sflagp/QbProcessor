@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels;
+using QbModels.ENUM;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,7 @@ namespace QbProcessor.TEST
                 CreditCardChargeQueryRq qryRq = new();
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 result = QB.ExecuteQbRequest(qryRq);
@@ -48,7 +49,7 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     AccountQueryRq accountsRq = new();
-                    accountsRq.AccountType = "CreditCard";
+                    accountsRq.AccountType = AccountType.CreditCard;
                     AccountRs accounts = new(QB.ExecuteQbRequest(accountsRq));
                     AccountRetDto account = accounts.Accounts[rdm.Next(0, accounts.Accounts.Count)];
 
@@ -128,7 +129,7 @@ namespace QbProcessor.TEST
                 CreditCardCreditQueryRq qryRq = new();
                 Assert.IsTrue(qryRq.IsEntityValid());
 
-                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 result = QB.ExecuteQbRequest(qryRq);
@@ -143,7 +144,7 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     AccountQueryRq accountsRq = new();
-                    accountsRq.AccountType = "CreditCard";
+                    accountsRq.AccountType = AccountType.CreditCard;
                     AccountRs accounts = new(QB.ExecuteQbRequest(accountsRq));
                     AccountRetDto account = accounts.Accounts[rdm.Next(0, accounts.Accounts.Count)];
 
@@ -220,7 +221,7 @@ namespace QbProcessor.TEST
 
                 #region Query Test
                 BillPaymentCreditCardQueryRq qryRq = new();
-                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 qryRs = new(QB.ExecuteQbRequest(qryRq));
@@ -235,8 +236,8 @@ namespace QbProcessor.TEST
 
                     AccountQueryRq accountsRq = new();
                     AccountRs accounts = new(QB.ExecuteQbRequest(accountsRq));
-                    AccountRetDto account = accounts.Accounts.FirstOrDefault(a => a.AccountType == "AccountsPayable");
-                    AccountRetDto card = accounts.Accounts.FirstOrDefault(a => a.AccountType == "CreditCard");
+                    AccountRetDto account = accounts.Accounts.FirstOrDefault(a => a.AccountType == AccountType.AccountsPayable);
+                    AccountRetDto card = accounts.Accounts.FirstOrDefault(a => a.AccountType == AccountType.CreditCard);
 
                     BillQueryRq billsRq = new();
                     BillRs bills = new(QB.ExecuteQbRequest(billsRq));
@@ -288,7 +289,7 @@ namespace QbProcessor.TEST
 
                 #region Query Test
                 ARRefundCreditCardQueryRq qryRq = new();
-                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = "StartsWith" };
+                qryRq.RefNumberFilter = new() { RefNumber = addRqName, MatchCriterion = MatchCriterion.StartsWith };
                 Assert.IsTrue(qryRq.IsEntityValid());
 
                 qryRs = new(QB.ExecuteQbRequest(qryRq));
@@ -302,9 +303,10 @@ namespace QbProcessor.TEST
                     Random rdm = new();
 
                     AccountQueryRq accountsRq = new();
-                    AccountRs accounts = new(QB.ExecuteQbRequest(accountsRq));
-                    AccountRetDto account = accounts.Accounts.FirstOrDefault(a => a.AccountType == "AccountsReceivable");
-                    AccountRetDto bank = accounts.Accounts.FirstOrDefault(a => a.AccountType == "Bank");
+                    string acctQryRs = QB.ExecuteQbRequest(accountsRq);
+                    AccountRs accounts = new(acctQryRs);
+                    AccountRetDto account = accounts.Accounts.FirstOrDefault(a => a.AccountType == AccountType.AccountsReceivable);
+                    AccountRetDto bank = accounts.Accounts.FirstOrDefault(a => a.AccountType == AccountType.Bank);
 
                     InvoiceQueryRq invoicesRq = new() { MaxReturned = 100, IncludeLinkedTxns = true };
                     InvoiceRs invoicesRs = new(QB.ExecuteQbRequest(invoicesRq));
