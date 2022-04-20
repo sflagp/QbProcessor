@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace QbProcessor.TEST
+namespace QbModels.QbProcessor.TEST
 {
     [TestClass]
     public class ZCustomerCleanupTests
@@ -15,7 +15,7 @@ namespace QbProcessor.TEST
         //[Ignore("Do not cleanup transactions")]
         public void TestCleanupModels()
         {
-            using (QBProcessor.QbProcessor QB = new())
+            using (RequestProcessor QB = new())
             {
                 #region Properties
                 if (QB == null)

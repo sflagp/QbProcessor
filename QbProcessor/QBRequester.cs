@@ -1,7 +1,7 @@
 ﻿using System;
 using QBXMLRP2Lib;
 
-namespace QBProcessor
+namespace QbModels.QbProcessor
 {
     /// <summary>QBRequester Class</summary>
     public abstract partial class QBRequester : IDisposable

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace QbProcessor.TEST
+namespace QbModels.QbProcessor.TEST
 {
     [TestClass]
     public class JournalEntryTests
@@ -14,7 +14,7 @@ namespace QbProcessor.TEST
         [TestMethod]
         public void TestJournalEntryModels()
         {
-            using (QBProcessor.QbProcessor QB = new())
+            using (RequestProcessor QB = new())
             {
                 #region Properties
                 if (QB == null)

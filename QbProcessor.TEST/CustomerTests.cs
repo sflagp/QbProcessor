@@ -4,7 +4,7 @@ using QbModels.ENUM;
 using System;
 using System.Threading;
 
-namespace QbProcessor.TEST
+namespace QbModels.QbProcessor.TEST
 {
     [TestClass]
     public class CustomerTests
@@ -12,7 +12,7 @@ namespace QbProcessor.TEST
         [TestMethod]
         public void TestCustomerModels()
         {
-            using (QBProcessor.QbProcessor QB = new())
+            using (RequestProcessor QB = new())
             {
                 #region Properties
                 if (QB == null)
@@ -103,7 +103,7 @@ namespace QbProcessor.TEST
         [TestMethod]
         public void TestCustomerTypeModels()
         {
-            using (QBProcessor.QbProcessor QB = new())
+            using (RequestProcessor QB = new())
             {
                 #region Properties
                 if (QB == null)
@@ -146,7 +146,7 @@ namespace QbProcessor.TEST
         [TestMethod]
         public void TestCustomerMsgModels()
         {
-            using (QBProcessor.QbProcessor QB = new())
+            using (RequestProcessor QB = new())
             {
                 #region Properties
                 if (QB == null)

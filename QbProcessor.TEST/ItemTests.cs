@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using System.Threading;
 
-namespace QbProcessor.TEST
+namespace QbModels.QbProcessor.TEST
 {
     [TestClass]
     public class ItemInventoryTests
@@ -13,7 +13,7 @@ namespace QbProcessor.TEST
         [TestMethod]
         public void TestItemInventoryModels()
         {
-            using (QBProcessor.QbProcessor QB = new())
+            using (RequestProcessor QB = new())
             {
                 #region Properties
                 if (QB == null)

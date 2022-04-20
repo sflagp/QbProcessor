@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace QbProcessor.TEST
+namespace QbModels.QbProcessor.TEST
 {
     [TestClass]
     public class CheckTests
@@ -14,7 +14,7 @@ namespace QbProcessor.TEST
         [TestMethod]
         public void TestCheckModels()
         {
-            using (QBProcessor.QbProcessor QB = new())
+            using (RequestProcessor QB = new())
             {
                 #region Properties
                 if (QB == null)
@@ -94,7 +94,7 @@ namespace QbProcessor.TEST
         [TestMethod]
         public void TestBillPaymentCheckModels()
         {
-            using (QBProcessor.QbProcessor QB = new())
+            using (RequestProcessor QB = new())
             {
                 #region Properties
                 if (QB == null)
@@ -180,7 +180,7 @@ namespace QbProcessor.TEST
         [TestMethod]
         public void TestSalesTaxPaymentCheckModels()
         {
-            using (QBProcessor.QbProcessor QB = new())
+            using (RequestProcessor QB = new())
             {
                 #region Properties
                 if (QB == null)

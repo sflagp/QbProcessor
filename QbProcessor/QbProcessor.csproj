@@ -42,7 +42,7 @@
     </Reference>
   </ItemGroup>
   <PropertyGroup>
-	<Version>2.2022.12.10</Version>
+	<Version>2.2022.12.11</Version>
 	<Description>Quickbooks Processor Integration DLL</Description>
 	<Authors>sflagp</Authors>
 	<PackageProjectUrl>https://github.com/sflagp</PackageProjectUrl>
@@ -50,6 +50,8 @@
 	<RepositoryUrl>https://github.com/sflagp/QbProcessor</RepositoryUrl>
 	<RepositoryType>GitHub</RepositoryType>
 	<PackageTags>Quickbooks RP</PackageTags>
+	<RootNamespace>QbModels.QbProcessor</RootNamespace>
+	<AssemblyName>QbModels.QbProcessor</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 	<PlatformTarget>AnyCPU</PlatformTarget>

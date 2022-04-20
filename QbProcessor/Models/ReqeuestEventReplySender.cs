@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace QBProcessor
+namespace QbModels.QbProcessor
 {
     /// <summary>RequestEventReplySender Class</summary>
     public class RequestEventReplySender

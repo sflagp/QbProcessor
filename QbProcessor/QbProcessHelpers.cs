@@ -1,10 +1,10 @@
 ﻿using QbHelpers;
 using System;
 
-namespace QBProcessor
+namespace QbModels.QbProcessor
 {
     /// <summary>QbProcessor Class</summary>
-    public partial class QbProcessor
+    public partial class RequestProcessor
     {
         #region Processor Helpers
         /// <summary>Executes the qb request and returns XML string from Quickbooks processor.</summary>

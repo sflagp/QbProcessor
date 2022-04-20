@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace QbProcessor.TEST
+namespace QbModels.QbProcessor.TEST
 {
     [TestClass]
     public class CreditCardChargeTests
@@ -15,7 +15,7 @@ namespace QbProcessor.TEST
         [TestMethod]
         public void TestCreditCardChargeModels()
         {
-            using (QBProcessor.QbProcessor QB = new())
+            using (RequestProcessor QB = new())
             {
                 #region Properties
                 if (QB == null)
@@ -110,7 +110,7 @@ namespace QbProcessor.TEST
         [TestMethod]
         public void TestCreditCardCreditModels()
         {
-            using (QBProcessor.QbProcessor QB = new())
+            using (RequestProcessor QB = new())
             {
                 #region Properties
                 if (QB == null)
@@ -206,7 +206,7 @@ namespace QbProcessor.TEST
         [TestMethod]
         public void TestBillPaymentCreditCardModels()
         {
-            using (QBProcessor.QbProcessor QB = new())
+            using (RequestProcessor QB = new())
             {
                 #region Properties
                 if (QB == null)
@@ -274,7 +274,7 @@ namespace QbProcessor.TEST
         [TestMethod]
         public void TestARRefundCreditCardModels()
         {
-            using (QBProcessor.QbProcessor QB = new())
+            using (RequestProcessor QB = new())
             {
                 #region Properties
                 if (QB == null)

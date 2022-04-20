@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using QbHelpers;
-using QbModels;
 
-namespace QBProcessor
+namespace QbModels.QbProcessor
 {
-    public partial class QbProcessor : QBRequester
+    public partial class RequestProcessor : QBRequester
     {
         #region Private Variables and Properties
 
@@ -32,22 +31,21 @@ namespace QBProcessor
         #endregion Public Variables and Properties
 
         #region Constructors and QB Connection
-#pragma warning disable S112 // General exceptions should never be thrown
-        /// <summary>Initializes a new instance of the <see cref="QbProcessor" /> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref="RequestProcessor" /> class.</summary>
         /// <exception cref="System.Exception">Quickbooks not compatible with Invoicing Made Simple
         /// or</exception>
-        public QbProcessor()
+        public RequestProcessor()
         {
             if (SessionActive)
             {
                 if (!InitQBCompany())
                 {
-                    throw new Exception("Quickbooks not compatible with Invoicing Made Simple");
+                    throw new NotImplementedException("Quickbooks not compatible with Invoicing Made Simple");
                 }
             }
             else
             {
-                throw new Exception(StartStatus.ToString());
+                throw new NotSupportedException(StartStatus.ToString());
             }
         }
 
@@ -81,13 +79,12 @@ namespace QBProcessor
             return bolRequestComplete;
         }
         private string GetCompany() => QbObjectProcessor(new CompanyQueryRq(), Guid.NewGuid());
-#pragma warning restore S112 // General exceptions should never be thrown
         #endregion Constructors and QB Connection
 
         #region Cleanup
 
         /// <summary>Finalizes an instance of the <see cref="QBRequester" /> class.</summary>
-        ~QbProcessor()
+        ~RequestProcessor()
         {
             DisconnectQB();
         }
