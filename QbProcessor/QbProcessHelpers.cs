@@ -11,7 +11,7 @@ namespace QbModels.QbProcessor
         /// <typeparam name="T">Source request object to read from</typeparam>
         /// <param name="request">The request.</param>
         /// <returns>Fully formed XML response from Quickbooks processor</returns>
-        public string ExecuteQbRequest<T>(T request) where T : class => QbObjectProcessor<T>(request, Guid.NewGuid());
+        public string ExecuteQbRequest<T>(T request) where T : class, IQbRq => QbObjectProcessor<T>(request, Guid.NewGuid());
 
         /// <summary>Executes the qb request and returns XML string from Quickbooks processor.</summary>
         /// <typeparam name="T">Source request object to read from</typeparam>
