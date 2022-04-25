@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+	<AssemblyName>QbModels.QbOnlineProcessor</AssemblyName>
+    <RootNamespace>QbModels.QbOnline</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="QbModels">
+      <HintPath>..\..\QbModels\QbModels\bin\Release\netstandard2.0\QbModels.dll</HintPath>
+    </Reference>
+    <Reference Include="QbModels.QbOnline">
+      <HintPath>..\..\QbModels\QbOnlineModels\bin\Release\netstandard2.0\QbModels.QbOnline.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ENUM\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="6.0.3" />
+  </ItemGroup>
+
+</Project>

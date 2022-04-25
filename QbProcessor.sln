@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QbProcessor", "QbProcessor\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QbProcessor.TEST", "QbProcessor.TEST\QbProcessor.TEST.csproj", "{7ABAE501-40A6-4AC2-A8E3-5D31012471D0}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QbOnline", "QbOnline\QbOnline.csproj", "{A4EB9B9A-26E0-4D1B-9492-020D475C7BA8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QbOnlineProcessor.TEST", "QbOnlineProcessor.TEST\QbOnlineProcessor.TEST.csproj", "{683A1E8E-CAD0-4715-88CB-F3E990A38882}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{7ABAE501-40A6-4AC2-A8E3-5D31012471D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7ABAE501-40A6-4AC2-A8E3-5D31012471D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7ABAE501-40A6-4AC2-A8E3-5D31012471D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4EB9B9A-26E0-4D1B-9492-020D475C7BA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4EB9B9A-26E0-4D1B-9492-020D475C7BA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4EB9B9A-26E0-4D1B-9492-020D475C7BA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4EB9B9A-26E0-4D1B-9492-020D475C7BA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{683A1E8E-CAD0-4715-88CB-F3E990A38882}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{683A1E8E-CAD0-4715-88CB-F3E990A38882}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{683A1E8E-CAD0-4715-88CB-F3E990A38882}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{683A1E8E-CAD0-4715-88CB-F3E990A38882}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

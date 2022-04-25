@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <AssemblyName>QbModels.QbOnlineProcessor.TEST</AssemblyName>
+    <RootNamespace>QbModels.QbOnlineProcessor.TEST</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.3" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.3" />
+    <PackageReference Include="coverlet.collector" Version="3.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\QbOnline\QbOnline.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="QbModels.QbOnline">
+      <HintPath>..\..\QbModels\QbOnlineModels\bin\Release\netstandard2.0\QbModels.QbOnline.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

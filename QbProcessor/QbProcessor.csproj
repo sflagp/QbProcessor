@@ -43,13 +43,13 @@
   </ItemGroup>
   <PropertyGroup>
 	<Version>2.2022.12.12-preview01</Version>
-	<Description>Quickbooks Processor Integration DLL</Description>
+	<Description>Quickbooks Processor Integration DLL using QbModels</Description>
 	<Authors>sflagp</Authors>
-	<PackageProjectUrl>https://github.com/sflagp</PackageProjectUrl>
+	<PackageProjectUrl>https://github.com/sflagp/QbProcessor</PackageProjectUrl>
 	<PackageIcon>IMS 01 128x128.png</PackageIcon>
 	<RepositoryUrl>https://github.com/sflagp/QbProcessor</RepositoryUrl>
 	<RepositoryType>GitHub</RepositoryType>
-	<PackageTags>Quickbooks RP</PackageTags>
+	<PackageTags>Quickbooks QBXML SDK RP</PackageTags>
 	<RootNamespace>QbModels.QbProcessor</RootNamespace>
 	<AssemblyName>QbModels.QbProcessor</AssemblyName>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
