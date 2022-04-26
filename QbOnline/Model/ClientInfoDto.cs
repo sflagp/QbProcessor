@@ -1,4 +1,4 @@
-﻿namespace QbModels.QbOnlineProcessor
+﻿namespace QbModels.QBOProcessor
 {
     public class ClientInfoDto
     {

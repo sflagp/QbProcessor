@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace QbModels.QbOnlineProcessor
+namespace QbModels.QBOProcessor
 {
     public class DiscoveryEndpoints
     {

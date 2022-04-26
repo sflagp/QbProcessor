@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 
-namespace QbModels.QbOnlineProcessor
+namespace QbModels.QBOProcessor
 {
-    public class QboeAccessToken
+    public class QboAccessToken
     {
-        public QboeAccessToken()
+        public QboAccessToken()
         {
             TimeCreated = DateTime.Now;
         }

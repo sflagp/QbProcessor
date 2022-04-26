@@ -3,16 +3,16 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
-	<AssemblyName>QbModels.QbOnlineProcessor</AssemblyName>
-    <RootNamespace>QbModels.QbOnline</RootNamespace>
+	<AssemblyName>QbModels.QBOProcessor</AssemblyName>
+    <RootNamespace>QbModels.QBOProcessor</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
     <Reference Include="QbModels">
       <HintPath>..\..\QbModels\QbModels\bin\Release\netstandard2.0\QbModels.dll</HintPath>
     </Reference>
-    <Reference Include="QbModels.QbOnline">
-      <HintPath>..\..\QbModels\QbOnlineModels\bin\Release\netstandard2.0\QbModels.QbOnline.dll</HintPath>
+    <Reference Include="QbModels.QBO">
+      <HintPath>..\..\QbModels\QbOnlineModels\bin\Release\netstandard2.0\QbModels.QBO.dll</HintPath>
     </Reference>
   </ItemGroup>
 

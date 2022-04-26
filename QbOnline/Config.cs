@@ -4,7 +4,7 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace QbModels.QbOnlineProcessor
+namespace QbModels.QBOProcessor
 {
     public static class Config
     {
@@ -16,22 +16,22 @@ namespace QbModels.QbOnlineProcessor
         #endregion
 
         #region Endpoints
-        private static string qbDiscoveryUri = "https://developer.api.intuit.com/.well-known/openid_configuration";
-		public static string QbDiscoveryUri => qbDiscoveryUri;
-		private static DiscoveryEndpoints qboeEndpoints;
-		public static DiscoveryEndpoints QboeEndpoints => qboeEndpoints;
-        public static void OverrideDiscoveryEndpoint(string discoveryUri) => qbDiscoveryUri = discoveryUri;
-        public static void SetEndpoints(DiscoveryEndpoints endpoints) => qboeEndpoints = endpoints;
+        private static string qboDiscoveryUri = "https://developer.api.intuit.com/.well-known/openid_configuration";
+		public static string QboDiscoveryUri => qboDiscoveryUri;
+		private static DiscoveryEndpoints qboEndpoints;
+		public static DiscoveryEndpoints QboEndpoints => qboEndpoints;
+        public static void OverrideDiscoveryEndpoint(string discoveryUri) => qboDiscoveryUri = discoveryUri;
+        public static void SetEndpoints(DiscoveryEndpoints endpoints) => qboEndpoints = endpoints;
         #endregion
 
-        public static async Task<HttpClient> QbOnlineHttpClientAsync(bool returnJson = false)
+        public static async Task<HttpClient> QBOHttpClientAsync(bool returnJson = false)
 		{
 			string endpoint = @"https://sandbox-quickbooks.api.intuit.com";
 
-			if (QbOnlineClient.AccessToken == null || string.IsNullOrEmpty(QbOnlineClient.AccessToken.AccessToken)) return null;
-			if (QbOnlineClient.AccessToken.ShouldRefresh)
+			if (QBOClient.AccessToken == null || string.IsNullOrEmpty(QBOClient.AccessToken.AccessToken)) return null;
+			if (QBOClient.AccessToken.ShouldRefresh)
 			{
-				bool tokenRefreshed = await QbOnlineClient.RefreshAccessTokenAsync();
+				bool tokenRefreshed = await QBOClient.RefreshAccessTokenAsync();
 				if (!tokenRefreshed)
 				{
 					throw new HttpRequestException($"Token could not be refreshed");
@@ -44,7 +44,7 @@ namespace QbModels.QbOnlineProcessor
 			};
 
 			if(returnJson) qboeHttpClient.DefaultRequestHeaders.Add("Accept", "application/json");
-			qboeHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", QbOnlineClient.AccessToken.AccessToken);
+			qboeHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", QBOClient.AccessToken.AccessToken);
 
 			return qboeHttpClient;
 		}
