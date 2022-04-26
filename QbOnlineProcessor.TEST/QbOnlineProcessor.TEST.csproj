@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <IsPackable>false</IsPackable>
-    <AssemblyName>QbModels.QbOnlineProcessor.TEST</AssemblyName>
-    <RootNamespace>QbModels.QbOnlineProcessor.TEST</RootNamespace>
+    <AssemblyName>QbModels.QBOProcessor.TEST</AssemblyName>
+    <RootNamespace>QbModels.QBOProcessor.TEST</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,8 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="QbModels.QbOnline">
-      <HintPath>..\..\QbModels\QbOnlineModels\bin\Release\netstandard2.0\QbModels.QbOnline.dll</HintPath>
+    <Reference Include="QbModels.QBO">
+      <HintPath>..\..\QbModels\QbOnlineModels\bin\Release\netstandard2.0\QbModels.QBO.dll</HintPath>
     </Reference>
   </ItemGroup>
 
