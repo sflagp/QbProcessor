@@ -24,4 +24,10 @@
     <PackageReference Include="System.Text.Json" Version="6.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="appsettings.QbProcessor.QBO.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

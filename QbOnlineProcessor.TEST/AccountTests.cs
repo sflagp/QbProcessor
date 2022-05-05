@@ -1,7 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels.QBO;
 using QbModels.QBO.ENUM;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -13,7 +12,7 @@ namespace QbModels.QBOProcessor.TEST
     public class TestAccountModels
     {
         [TestMethod]
-        public async Task QBOAccountQueryTest()
+        public async Task Step_1_QBOAccountQueryTest()
         {
             #region Setting access token
             TestAccessToken accessToken = new();
@@ -24,7 +23,7 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting accounts
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
-            HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from Account");
+            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.ApiParameter(qboe.ClientInfo.RealmId, "select * from Account"));
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"QBOGet failed: {await getRs.Content.ReadAsStringAsync()}");
 
             string qryRs = await getRs.Content.ReadAsStringAsync();
@@ -38,7 +37,7 @@ namespace QbModels.QBOProcessor.TEST
         }
 
         [TestMethod]
-        public async Task QBOAccountAddTest()
+        public async Task Step_2_QBOAccountAddTest()
         {
             #region Setting access token
             TestAccessToken accessToken = new();
@@ -49,7 +48,7 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting account
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
-            HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from Account where Name='IMS Account'");
+            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.ApiParameter(qboe.ClientInfo.RealmId, "select * from Account where Name='IMS Account'"));
             AccountOnlineRs acctRs = new(await getRs.Content.ReadAsStringAsync());
             #endregion
 
@@ -60,7 +59,7 @@ namespace QbModels.QBOProcessor.TEST
             addRq.AccountType = AccountType.Income;
             addRq.Description = "IMS Account Test";
             if (!addRq.IsEntityValid()) Assert.Fail($"addRq is invalid: {addRq.GetErrorsAsString()}");
-            HttpResponseMessage postRs = await qboe.QBOPost($"/v3/company/{qboe.ClientInfo.RealmId}/account", addRq);
+            HttpResponseMessage postRs = await qboe.QBOPost(addRq.ApiParameter(qboe.ClientInfo.RealmId), addRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             AccountOnlineRs addRs = new(await postRs.Content.ReadAsStringAsync());
@@ -69,7 +68,7 @@ namespace QbModels.QBOProcessor.TEST
         }
 
         [TestMethod]
-        public async Task QBOAccountModTest()
+        public async Task Step_3_QBOAccountModTest()
         {
             #region Setting access token
             TestAccessToken accessToken = new();
@@ -80,7 +79,7 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting account
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
-            HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from Account where Name = 'IMS Account'");
+            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.ApiParameter(qboe.ClientInfo.RealmId, "select * from Account where Name = 'IMS Account'"));
             AccountOnlineRs acctRs = new(await getRs.Content.ReadAsStringAsync());
             #endregion
 
@@ -95,7 +94,7 @@ namespace QbModels.QBOProcessor.TEST
             modRq.SyncToken = acct.SyncToken;
             modRq.Description = $"IMS Account Test => {acct.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
-            HttpResponseMessage postRs = await qboe.QBOPost($"/v3/company/{qboe.ClientInfo.RealmId}/account", modRq);
+            HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             AccountOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());

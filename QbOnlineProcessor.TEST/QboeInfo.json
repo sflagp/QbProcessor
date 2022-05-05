@@ -1,0 +1,5 @@
+{
+  "ClientId": "{Your client id here}",
+  "ClientSecret": "{Your client secret here}",
+  "RealmId": "{Your realm id here}"
+}

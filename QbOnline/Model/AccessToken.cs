@@ -5,10 +5,7 @@ namespace QbModels.QBOProcessor
 {
     public class QboAccessToken
     {
-        public QboAccessToken()
-        {
-            TimeCreated = DateTime.Now;
-        }
+        public QboAccessToken() { }// { TimeCreated = DateTime.Now; }
 
         [JsonPropertyName("token_type")]
         public string TokenType { get; set; }
@@ -25,6 +22,7 @@ namespace QbModels.QBOProcessor
         [JsonPropertyName("x_refresh_token_expires_in")]
         public int RefreshTokenExpiresIn { get; set; }
 
+        [JsonPropertyName("timeCreated")]
         public DateTime TimeCreated { get; set; }
 
         public DateTime Expires => TimeCreated.AddSeconds(ExpiresIn);

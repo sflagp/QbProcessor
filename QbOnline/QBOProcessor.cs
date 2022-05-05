@@ -12,13 +12,13 @@ namespace QbModels.QBOProcessor
         public QBOProcessor() { }
 
         private bool disposedValue;
-        private string authCodePage;
-        public string AuthCodePage => authCodePage;
-        public ClientInfoDto ClientInfo => Config.ClientInfo;
 
-        public static void SetClientInfo(string info) => Config.SetClientInfo(info);
+        public ClientInfoDto ClientInfo => Settings.ClientInfo;
+        public static void SetClientInfo(string settingsFile = @".\appsettings.QbProcessor.QBO.json") => Settings.SetClientInfo(settingsFile);
 
-        public QboAccessToken AccessToken => QBOClient.AccessToken;
+        public QboAccessToken AccessToken => Settings.AccessToken;
+        public string AuthCode => Settings.AuthCode;
+        public string RedirectUri => Settings.RedirectUri;
 
         public async Task<bool> GetEndpointsAsync()
         {
@@ -26,7 +26,8 @@ namespace QbModels.QBOProcessor
             if (response.IsSuccessStatusCode)
             {
                 DiscoveryEndpoints endpoints = await JsonSerializer.DeserializeAsync<DiscoveryEndpoints>(await response.Content.ReadAsStreamAsync());
-                Config.SetEndpoints(endpoints);
+                Settings.QboDiscoveryEndpoints = endpoints;
+                Settings.SaveSettings();
                 return true;
             }
             return false;
@@ -34,28 +35,22 @@ namespace QbModels.QBOProcessor
 
         public async Task<bool> GetAuthCodesAsync()
         {
-            authCodePage = await QBOClient.GetAuthCodesAsync();
+            string authCodePage = await QBOClient.GetAuthCodesAsync();
             if (!string.IsNullOrEmpty(authCodePage))
             {
-                File.WriteAllBytes(@".\GetAuthCode.html", Encoding.ASCII.GetBytes(authCodePage));
+                File.WriteAllBytes(@".\GetAuthCode.html", Encoding.UTF8.GetBytes(authCodePage));
                 return true;
             }
             return false;
         }
 
-        public async Task<bool> SetAccessTokenAsync(string authCode)
-        {
-            return await QBOClient.SetAccessTokenAsync(authCode);
-        }
+        public async Task<bool> SetAccessTokenAsync(string authCode) => await QBOClient.SetAccessTokenAsync(authCode);
 
-        public async Task<bool> RefreshAccessTokenAsync()
-        {
-            return await QBOClient.RefreshAccessTokenAsync();
-        }
+        public async Task<bool> RefreshAccessTokenAsync() => await QBOClient.RefreshAccessTokenAsync();
 
         public void ManualAccessToken(QboAccessToken accessToken) => QBOClient.SetTokenManually(accessToken);
 
-        public async Task<HttpResponseMessage> QBOGet(string parameter) => await QBOClient.GetQBOAsync(parameter);
+        public async Task<HttpResponseMessage> QBOGet(string parameter, bool asXml = true) => await QBOClient.GetQBOAsync(parameter, asXml);
 
         public async Task<HttpResponseMessage> QBOPost<T>(string parameter, T data) => await QBOClient.PostQBOAsync<T>(parameter, data);
 

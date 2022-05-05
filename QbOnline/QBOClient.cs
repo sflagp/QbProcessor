@@ -1,6 +1,6 @@
-﻿using System;
+﻿#define GETAUTHCODEDISABLED
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -11,25 +11,49 @@ namespace QbModels.QBOProcessor
 {
     internal static class QBOClient
     {
-        public static QboAccessToken AccessToken { get; private set; }
-
-        public static void SetTokenManually(QboAccessToken accessToken) => AccessToken = accessToken;
+        internal static void SetTokenManually(QboAccessToken accessToken) => Settings.AccessToken = accessToken;
 
         public static async Task<HttpResponseMessage> DiscoverEndpointsAsync()
         {
             using HttpClient wsQbDiscovery = new HttpClient();
-            return await wsQbDiscovery.GetAsync(Config.QboDiscoveryUri);
+            return await wsQbDiscovery.GetAsync(Settings.DiscoveryUri);
         }
 
         public static async Task<string> GetAuthCodesAsync()
         {
-            string authScope = "com.intuit.quickbooks.accounting";
-            string redirectUrl = "https://developer.intuit.com/v2/OAuth2Playground/RedirectUrl";
+            string authScope = Settings.AuthScope;
+            string redirectUrl = Settings.RedirectUri;
             string authState = $"security_token{Guid.NewGuid()}";
 
             using HttpClient httpClient = new();
-            httpClient.BaseAddress = new Uri(Config.QboEndpoints.AuthorizationEndpoint);
-            string rqParam = $"client_id={Config.ClientInfo.ClientId}&response_type=code&scope={authScope}&redirect_uri={redirectUrl}&state={authState}";
+            httpClient.BaseAddress = new Uri(Settings.QboDiscoveryEndpoints.AuthorizationEndpoint);
+            string rqParam = $"client_id={Settings.ClientInfo.ClientId}&response_type=code&scope={authScope}&redirect_uri={redirectUrl}&state={authState}";
+
+#if (GETAUTHCODE)
+            using (HttpListener authListener = new HttpListener())
+            {
+                try
+                {
+                    authListener.Prefixes.Add($"{Settings.RedirectUri}/");
+                    authListener.Start();
+
+                    ProcessStartInfo authRq = new ProcessStartInfo($"{Settings.QboDiscoveryEndpoints.AuthorizationEndpoint}/{rqParam}")
+                    {
+                        UseShellExecute = true,
+                        Verb = "Open"
+                    };
+                    Process.Start(authRq);
+
+                    var context = await authListener.GetContextAsync();
+                    var authResponse = context.Response;
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"{ex.HResult} {ex.Message}");
+                }
+            }
+#endif
+
             HttpResponseMessage response = await httpClient.GetAsync(rqParam);
             if (response.IsSuccessStatusCode)
             {
@@ -44,10 +68,10 @@ namespace QbModels.QBOProcessor
             {
                 return await RefreshAccessTokenAsync();
             }
-            string authHeader = $"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes(Config.ClientInfo.ClientId + ":" + Config.ClientInfo.ClientSecret))}";
-            string redirectUrl = "https://developer.intuit.com/v2/OAuth2Playground/RedirectUrl";
+            string authHeader = $"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes(Settings.ClientInfo.ClientId + ":" + Settings.ClientInfo.ClientSecret))}";
+            string redirectUrl = Settings.RedirectUri;
 
-            HttpRequestMessage request = new(HttpMethod.Post, Config.QboEndpoints.TokenEndpoint);
+            HttpRequestMessage request = new(HttpMethod.Post, Settings.QboDiscoveryEndpoints.TokenEndpoint);
 
             request.Headers.TryAddWithoutValidation("Accept", "application/json");
             request.Headers.TryAddWithoutValidation("Authorization", authHeader);
@@ -64,24 +88,25 @@ namespace QbModels.QBOProcessor
             using HttpResponseMessage response = await httpClient.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
-                AccessToken = await JsonSerializer.DeserializeAsync<QboAccessToken>(await response.Content.ReadAsStreamAsync());
-                File.WriteAllBytes(@".\AccessToken.json", await response.Content.ReadAsByteArrayAsync());
+                Settings.AccessToken = await JsonSerializer.DeserializeAsync<QboAccessToken>(await response.Content.ReadAsStreamAsync());
+                Settings.AccessToken.TimeCreated = DateTime.Now;
+                Settings.SaveSettings();
             }
             return response.IsSuccessStatusCode;
         }
 
         public static async Task<bool> RefreshAccessTokenAsync()
         {
-            string authHeader = $"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes(Config.ClientInfo.ClientId + ":" + Config.ClientInfo.ClientSecret))}";
+            string authHeader = $"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes(Settings.ClientInfo.ClientId + ":" + Settings.ClientInfo.ClientSecret))}";
 
-            HttpRequestMessage request = new(HttpMethod.Post, Config.QboEndpoints.TokenEndpoint);
+            HttpRequestMessage request = new(HttpMethod.Post, Settings.QboDiscoveryEndpoints.TokenEndpoint);
 
             request.Headers.TryAddWithoutValidation("Accept", "application/json");
             request.Headers.TryAddWithoutValidation("Authorization", authHeader);
 
             List<KeyValuePair<string, string>> contentList = new();
             contentList.Add(new KeyValuePair<string, string>("grant_type", "refresh_token"));
-            contentList.Add(new KeyValuePair<string, string>("refresh_token", AccessToken.RefreshToken));
+            contentList.Add(new KeyValuePair<string, string>("refresh_token", Settings.AccessToken.RefreshToken));
             FormUrlEncodedContent formContent = new(contentList);
             request.Content = formContent;
             request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
@@ -90,15 +115,18 @@ namespace QbModels.QBOProcessor
             using HttpResponseMessage response = await httpClient.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
-                AccessToken = await JsonSerializer.DeserializeAsync<QboAccessToken>(await response.Content.ReadAsStreamAsync());
+                QboAccessToken accessToken = await JsonSerializer.DeserializeAsync<QboAccessToken>(await response.Content.ReadAsStreamAsync());
+                accessToken.TimeCreated = DateTime.Now;
+                Settings.AccessToken = accessToken;
+                Settings.SaveSettings();
             }
             return response.IsSuccessStatusCode;
         }
 
-        public static async Task<HttpResponseMessage> GetQBOAsync(string parameter)
+        public static async Task<HttpResponseMessage> GetQBOAsync(string parameter, bool asXml)
         {
             HttpResponseMessage getRs;
-            using (var wsQboeWeb = await Config.QBOHttpClientAsync(false))
+            using (var wsQboeWeb = await Config.QBOHttpClientAsync(asXml))
             {
                 wsQboeWeb.DefaultRequestHeaders.Add("Access-Control-Request-Method", "GET");
                 try
