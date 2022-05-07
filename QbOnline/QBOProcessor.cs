@@ -17,7 +17,7 @@ namespace QbModels.QBOProcessor
         public static void SetClientInfo(string settingsFile = @".\appsettings.QbProcessor.QBO.json") => Settings.SetClientInfo(settingsFile);
 
         public QboAccessToken AccessToken => Settings.AccessToken;
-        public string AuthCode => Settings.AuthCode;
+        public bool GetNewAuthCode => Settings.GetNewAuthCode;
         public string RedirectUri => Settings.RedirectUri;
 
         public async Task<bool> GetEndpointsAsync()
@@ -38,7 +38,7 @@ namespace QbModels.QBOProcessor
             string authCodePage = await QBOClient.GetAuthCodesAsync();
             if (!string.IsNullOrEmpty(authCodePage))
             {
-                File.WriteAllBytes(@".\GetAuthCode.html", Encoding.UTF8.GetBytes(authCodePage));
+                File.WriteAllBytes(@".\GetAuthCode.txt", Encoding.UTF8.GetBytes(authCodePage));
                 return true;
             }
             return false;

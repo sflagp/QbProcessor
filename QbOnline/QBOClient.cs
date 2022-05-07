@@ -1,6 +1,8 @@
-﻿#define GETAUTHCODEDISABLED
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -27,9 +29,8 @@ namespace QbModels.QBOProcessor
 
             using HttpClient httpClient = new();
             httpClient.BaseAddress = new Uri(Settings.QboDiscoveryEndpoints.AuthorizationEndpoint);
-            string rqParam = $"client_id={Settings.ClientInfo.ClientId}&response_type=code&scope={authScope}&redirect_uri={redirectUrl}&state={authState}";
+            string rqParam = $"client_id={Settings.ClientInfo.ClientId}&scope={authScope}&redirect_uri={redirectUrl}&response_type=code&state={authState}";
 
-#if (GETAUTHCODE)
             using (HttpListener authListener = new HttpListener())
             {
                 try
@@ -37,27 +38,47 @@ namespace QbModels.QBOProcessor
                     authListener.Prefixes.Add($"{Settings.RedirectUri}/");
                     authListener.Start();
 
-                    ProcessStartInfo authRq = new ProcessStartInfo($"{Settings.QboDiscoveryEndpoints.AuthorizationEndpoint}/{rqParam}")
+                    ProcessStartInfo authRq = new ProcessStartInfo($"{Settings.QboDiscoveryEndpoints.AuthorizationEndpoint}/?{rqParam}")
                     {
                         UseShellExecute = true,
                         Verb = "Open"
                     };
                     Process.Start(authRq);
 
-                    var context = await authListener.GetContextAsync();
-                    var authResponse = context.Response;
+                    var authCtxt = await authListener.GetContextAsync();
+
+                    // Sends an HTTP response to the browser.
+                    var authResp = authCtxt.Response;
+                    Stream authOutput = authResp.OutputStream;
+                    string responseString = string.Format($"<html><head>Authentication response</head><body>{authCtxt.Request.Url.ToString().Replace(Settings.RedirectUri, "")}</body></html>");
+                    var buffer = Encoding.UTF8.GetBytes(responseString);
+                    authResp.ContentLength64 = buffer.Length;
+                    Task responseTask = authOutput.WriteAsync(buffer, 0, buffer.Length).ContinueWith((task) =>
+                    {
+                        authOutput.Close();
+                        authListener.Stop();
+                        Console.WriteLine("HTTP server stopped.");
+                    });
+                    return extractAuthCode(authCtxt);
                 }
                 catch(Exception ex)
                 {
                     Console.WriteLine($"{ex.HResult} {ex.Message}");
                 }
             }
-#endif
 
-            HttpResponseMessage response = await httpClient.GetAsync(rqParam);
-            if (response.IsSuccessStatusCode)
+            return null;
+        }
+
+        private static string extractAuthCode(HttpListenerContext ctxt)
+        {
+            string[] codeResp = ctxt.Request.Url.ToString().Replace($"{Settings.RedirectUri}?", string.Empty).Split('&');
+            foreach(string resp in codeResp)
             {
-                return await response.Content.ReadAsStringAsync();
+                if (resp.StartsWith("code="))
+                {
+                    return resp.Substring(5);
+                }
             }
             return null;
         }

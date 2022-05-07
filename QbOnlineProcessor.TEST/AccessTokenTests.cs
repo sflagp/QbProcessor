@@ -12,33 +12,35 @@ namespace QbModels.QBOProcessor.TEST
         public async Task AccessTokenTest()
         {
             #region Get QBO Access Info
-            string authFile = @".\GetAuthCode.html";
+            string authFile = @".\GetAuthCode.txt";
 
             QBOProcessor.SetClientInfo();
             #endregion
 
             using QBOProcessor qboe = new();
-            Assert.IsTrue(await qboe.GetEndpointsAsync());
-            if (await qboe.GetAuthCodesAsync())
+            if (qboe.GetNewAuthCode)
             {
-                Assert.IsTrue(File.Exists(authFile));
-                try
+                Assert.IsTrue(await qboe.GetEndpointsAsync());
+                if (await qboe.GetAuthCodesAsync())
                 {
-                    if (!string.IsNullOrEmpty(qboe.AuthCode))
+                    Assert.IsTrue(File.Exists(authFile));
+                    try
                     {
-                        bool tokenCreated = await qboe.SetAccessTokenAsync(qboe.AuthCode);
+                        var authCode = File.ReadAllText(authFile);
+                        bool tokenCreated = await qboe.SetAccessTokenAsync(authCode);
                         if (!tokenCreated) Assert.Fail("Token not created");
                     }
-                    if (qboe.AccessToken.ShouldRefresh)
+                    catch (Exception ex)
                     {
-                        await qboe.RefreshAccessTokenAsync();
+                        Assert.Fail($"Error {ex.HResult}\r\n{ex.Message}");
                     }
                 }
-                catch (Exception ex)
-                {
-                    Assert.Fail($"Error {ex.HResult}\r\n{ex.Message}");
-                }
             }
+            else
+            {
+                await qboe.RefreshAccessTokenAsync();
+            }
+
             if (qboe.AccessToken == null) Assert.Fail("Access Token missing");
             if (qboe.AccessToken.Expires <= DateTime.Now) Assert.Fail($"Access token stale. Expired {qboe.AccessToken.Expires}.");
         }
