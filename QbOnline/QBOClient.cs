@@ -29,7 +29,7 @@ namespace QbModels.QBOProcessor
 
             using HttpClient httpClient = new();
             httpClient.BaseAddress = new Uri(Settings.QboDiscoveryEndpoints.AuthorizationEndpoint);
-            string rqParam = $"client_id={Settings.ClientInfo.ClientId}&scope={authScope}&redirect_uri={redirectUrl}&response_type=code&state={authState}";
+            string rqParam = $"?client_id={Settings.ClientInfo.ClientId}&scope={authScope}&redirect_uri={redirectUrl}&response_type=code&state={authState}";
 
             using (HttpListener authListener = new HttpListener())
             {
@@ -38,7 +38,7 @@ namespace QbModels.QBOProcessor
                     authListener.Prefixes.Add($"{Settings.RedirectUri}/");
                     authListener.Start();
 
-                    ProcessStartInfo authRq = new ProcessStartInfo($"{Settings.QboDiscoveryEndpoints.AuthorizationEndpoint}/?{rqParam}")
+                    ProcessStartInfo authRq = new ProcessStartInfo($"{Settings.QboDiscoveryEndpoints.AuthorizationEndpoint}{rqParam}")
                     {
                         UseShellExecute = true,
                         Verb = "Open"
