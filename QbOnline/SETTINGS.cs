@@ -16,7 +16,6 @@ namespace QbModels.QBOProcessor
         public static string ClientInfoFile => localSettings.ClientInfoFile;
         public static string IntuitEndpoint => localSettings.IntuitEndpoint;
         public static string DiscoveryUri => localSettings.DiscoveryUri;
-        public static bool GetNewAuthCode => localSettings.GetNewAuthCode;
         public static string AuthCode => localSettings.AuthCode;
         public static string AuthScope => localSettings.AuthScope;
         public static string RedirectUri => localSettings.RedirectUri;
@@ -32,7 +31,7 @@ namespace QbModels.QBOProcessor
         public static QboAccessToken AccessToken
         {
             get { return localSettings.AccessToken; }
-            set { localSettings.GetNewAuthCode = default; localSettings.AccessToken = value; }
+            set { localSettings.AccessToken = value; }
         }
         #endregion
 
@@ -96,7 +95,6 @@ namespace QbModels.QBOProcessor
             public string IntuitEndpoint { get; set; }
             public string DiscoveryUri { get; set; }
             public DiscoveryEndpoints QboDiscoveryEndpoints { get; set; }
-            public bool GetNewAuthCode { get; set; }
             public string AuthCode { get; set; }
             public string AuthScope { get; set; }
             public string RedirectUri { get; set; }

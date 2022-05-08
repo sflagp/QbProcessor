@@ -18,16 +18,17 @@ namespace QbModels.QBOProcessor.TEST
             #endregion
 
             using QBOProcessor qboe = new();
-            if (qboe.GetNewAuthCode)
+            Assert.IsTrue(await qboe.GetEndpointsAsync());
+            bool tokenCreated = await qboe.RefreshAccessTokenAsync();
+            if (!tokenCreated)
             {
-                Assert.IsTrue(await qboe.GetEndpointsAsync());
                 if (await qboe.GetAuthCodesAsync())
                 {
                     Assert.IsTrue(File.Exists(authFile));
                     try
                     {
                         var authCode = File.ReadAllText(authFile);
-                        bool tokenCreated = await qboe.SetAccessTokenAsync(authCode);
+                        tokenCreated = await qboe.SetAccessTokenAsync(authCode);
                         if (!tokenCreated) Assert.Fail("Token not created");
                     }
                     catch (Exception ex)
@@ -36,12 +37,8 @@ namespace QbModels.QBOProcessor.TEST
                     }
                 }
             }
-            else
-            {
-                await qboe.RefreshAccessTokenAsync();
-            }
 
-            if (qboe.AccessToken == null) Assert.Fail("Access Token missing");
+            if (!tokenCreated) Assert.Fail("Did not create or refresh Access Token missing");
             if (qboe.AccessToken.Expires <= DateTime.Now) Assert.Fail($"Access token stale. Expired {qboe.AccessToken.Expires}.");
         }
     }

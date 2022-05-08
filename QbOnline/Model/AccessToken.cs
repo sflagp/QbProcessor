@@ -22,12 +22,15 @@ namespace QbModels.QBOProcessor
         [JsonPropertyName("x_refresh_token_expires_in")]
         public int RefreshTokenExpiresIn { get; set; }
 
-        [JsonPropertyName("timeCreated")]
-        public DateTime TimeCreated { get; set; }
+        [JsonPropertyName("tokenCreated")]
+        public DateTime TokenCreated { get; set; }
 
-        public DateTime Expires => TimeCreated.AddSeconds(ExpiresIn);
+        [JsonPropertyName("refreshTokenCreated")]
+        public DateTime RefreshTokenCreated { get; set; }
 
-        public DateTime RefreshTokenExpires => TimeCreated.AddSeconds(RefreshTokenExpiresIn);
+        public DateTime Expires => TokenCreated.AddSeconds(ExpiresIn);
+
+        public DateTime RefreshTokenExpires => RefreshTokenCreated.AddSeconds(RefreshTokenExpiresIn);
 
         public bool ShouldRefresh => (Expires - DateTime.Now).TotalSeconds < 120;
     }

@@ -17,7 +17,6 @@ namespace QbModels.QBOProcessor
         public static void SetClientInfo(string settingsFile = @".\appsettings.QbProcessor.QBO.json") => Settings.SetClientInfo(settingsFile);
 
         public QboAccessToken AccessToken => Settings.AccessToken;
-        public bool GetNewAuthCode => Settings.GetNewAuthCode;
         public string RedirectUri => Settings.RedirectUri;
 
         public async Task<bool> GetEndpointsAsync()
@@ -47,8 +46,6 @@ namespace QbModels.QBOProcessor
         public async Task<bool> SetAccessTokenAsync(string authCode) => await QBOClient.SetAccessTokenAsync(authCode);
 
         public async Task<bool> RefreshAccessTokenAsync() => await QBOClient.RefreshAccessTokenAsync();
-
-        public void ManualAccessToken(QboAccessToken accessToken) => QBOClient.SetTokenManually(accessToken);
 
         public async Task<HttpResponseMessage> QBOGet(string parameter, bool asXml = true) => await QBOClient.GetQBOAsync(parameter, asXml);
 

@@ -13,8 +13,6 @@ namespace QbModels.QBOProcessor
 {
     internal static class QBOClient
     {
-        internal static void SetTokenManually(QboAccessToken accessToken) => Settings.AccessToken = accessToken;
-
         public static async Task<HttpResponseMessage> DiscoverEndpointsAsync()
         {
             using HttpClient wsQbDiscovery = new HttpClient();
@@ -85,10 +83,6 @@ namespace QbModels.QBOProcessor
 
         public static async Task<bool> SetAccessTokenAsync(string authCode)
         {
-            if (string.IsNullOrEmpty(authCode))
-            {
-                return await RefreshAccessTokenAsync();
-            }
             string authHeader = $"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes(Settings.ClientInfo.ClientId + ":" + Settings.ClientInfo.ClientSecret))}";
             string redirectUrl = Settings.RedirectUri;
 
@@ -110,7 +104,7 @@ namespace QbModels.QBOProcessor
             if (response.IsSuccessStatusCode)
             {
                 Settings.AccessToken = await JsonSerializer.DeserializeAsync<QboAccessToken>(await response.Content.ReadAsStreamAsync());
-                Settings.AccessToken.TimeCreated = DateTime.Now;
+                Settings.AccessToken.TokenCreated = DateTime.Now;
                 Settings.SaveSettings();
             }
             return response.IsSuccessStatusCode;
@@ -136,9 +130,10 @@ namespace QbModels.QBOProcessor
             using HttpResponseMessage response = await httpClient.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
-                QboAccessToken accessToken = await JsonSerializer.DeserializeAsync<QboAccessToken>(await response.Content.ReadAsStreamAsync());
-                accessToken.TimeCreated = DateTime.Now;
-                Settings.AccessToken = accessToken;
+                DateTime tokenCreated = Settings.AccessToken.TokenCreated;
+                Settings.AccessToken = await JsonSerializer.DeserializeAsync<QboAccessToken>(await response.Content.ReadAsStreamAsync());
+                Settings.AccessToken.TokenCreated = tokenCreated;
+                Settings.AccessToken.RefreshTokenCreated = DateTime.Now;
                 Settings.SaveSettings();
             }
             return response.IsSuccessStatusCode;
