@@ -28,7 +28,7 @@ namespace QbModels.QBOProcessor
         [JsonPropertyName("refreshTokenCreated")]
         public DateTime RefreshTokenCreated { get; set; }
 
-        public DateTime Expires => TokenCreated.AddSeconds(ExpiresIn);
+        public DateTime Expires => RefreshTokenCreated == default ? TokenCreated.AddSeconds(ExpiresIn) : RefreshTokenCreated.AddSeconds(ExpiresIn);
 
         public DateTime RefreshTokenExpires => RefreshTokenCreated.AddSeconds(RefreshTokenExpiresIn);
 

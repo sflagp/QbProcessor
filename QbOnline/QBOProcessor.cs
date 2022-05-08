@@ -32,16 +32,7 @@ namespace QbModels.QBOProcessor
             return false;
         }
 
-        public async Task<bool> GetAuthCodesAsync()
-        {
-            string authCodePage = await QBOClient.GetAuthCodesAsync();
-            if (!string.IsNullOrEmpty(authCodePage))
-            {
-                File.WriteAllBytes(@".\GetAuthCode.txt", Encoding.UTF8.GetBytes(authCodePage));
-                return true;
-            }
-            return false;
-        }
+        public async Task<string> GetAuthCodesAsync() => await QBOClient.GetAuthCodesAsync();
 
         public async Task<bool> SetAccessTokenAsync(string authCode) => await QBOClient.SetAccessTokenAsync(authCode);
 

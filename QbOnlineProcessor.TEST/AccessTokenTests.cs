@@ -1,6 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace QbModels.QBOProcessor.TEST
@@ -12,7 +11,6 @@ namespace QbModels.QBOProcessor.TEST
         public async Task AccessTokenTest()
         {
             #region Get QBO Access Info
-            string authFile = @".\GetAuthCode.txt";
 
             QBOProcessor.SetClientInfo();
             #endregion
@@ -22,13 +20,13 @@ namespace QbModels.QBOProcessor.TEST
             bool tokenCreated = await qboe.RefreshAccessTokenAsync();
             if (!tokenCreated)
             {
-                if (await qboe.GetAuthCodesAsync())
+                string authCodeResponse = await qboe.GetAuthCodesAsync();
+                if (authCodeResponse != null)
                 {
-                    Assert.IsTrue(File.Exists(authFile));
+                    Assert.IsFalse(string.IsNullOrEmpty(authCodeResponse), "Response AuthCode is not valid.");
                     try
                     {
-                        var authCode = File.ReadAllText(authFile);
-                        tokenCreated = await qboe.SetAccessTokenAsync(authCode);
+                        tokenCreated = await qboe.SetAccessTokenAsync(authCodeResponse);
                         if (!tokenCreated) Assert.Fail("Token not created");
                     }
                     catch (Exception ex)

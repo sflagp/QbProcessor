@@ -21,6 +21,7 @@ namespace QbModels.QBOProcessor
 
         public static async Task<string> GetAuthCodesAsync()
         {
+            AuthCodeResponse authCodeResponse = new();
             string authScope = Settings.AuthScope;
             string redirectUrl = Settings.RedirectUri;
             string authState = $"security_token{Guid.NewGuid()}";
@@ -46,9 +47,10 @@ namespace QbModels.QBOProcessor
                     var authCtxt = await authListener.GetContextAsync();
 
                     // Sends an HTTP response to the browser.
+                    authCodeResponse = extractAuthCode(authCtxt);
                     var authResp = authCtxt.Response;
                     Stream authOutput = authResp.OutputStream;
-                    string responseString = string.Format($"<html><head>Authentication response</head><body>{authCtxt.Request.Url.ToString().Replace(Settings.RedirectUri, "")}</body></html>");
+                    string responseString = GenAuthRespHtml(authState, authCodeResponse);
                     var buffer = Encoding.UTF8.GetBytes(responseString);
                     authResp.ContentLength64 = buffer.Length;
                     Task responseTask = authOutput.WriteAsync(buffer, 0, buffer.Length).ContinueWith((task) =>
@@ -57,7 +59,10 @@ namespace QbModels.QBOProcessor
                         authListener.Stop();
                         Console.WriteLine("HTTP server stopped.");
                     });
-                    return extractAuthCode(authCtxt);
+                    if(authCodeResponse.State != authState)
+                    {
+                        return null;
+                    }
                 }
                 catch(Exception ex)
                 {
@@ -65,20 +70,47 @@ namespace QbModels.QBOProcessor
                 }
             }
 
-            return null;
+            return authCodeResponse.AuthCode;
         }
 
-        private static string extractAuthCode(HttpListenerContext ctxt)
+        private static AuthCodeResponse extractAuthCode(HttpListenerContext ctxt)
         {
-            string[] codeResp = ctxt.Request.Url.ToString().Replace($"{Settings.RedirectUri}?", string.Empty).Split('&');
+            AuthCodeResponse response = new();
+            string[] codeResp = ctxt.Request.Url.ToString().Replace($"{Settings.RedirectUri}?", string.Empty).Split('?', '&');
             foreach(string resp in codeResp)
             {
-                if (resp.StartsWith("code="))
+                string[] r = resp.Split('=');
+                switch (r[0].ToLower())
                 {
-                    return resp.Substring(5);
+                    case "code":
+                        response.AuthCode = r[1];
+                        break;
+                    case "state":
+                        response.State = r[1];
+                        break;
+                    case "realmid":
+                        response.RealmId = r[1];
+                        break;
                 }
             }
-            return null;
+            return response;
+        }
+        
+        private static string GenAuthRespHtml(string authState, AuthCodeResponse authCodeResponse)
+        {
+            return $@"
+                        <html>
+                            <head>
+                                <h1>Authentication response</h1><br />
+                                Authentication State = {authState}<br />
+                            </head>
+                            <body>
+                                Authorization State = {authCodeResponse.State}<br />
+                                Authorization Code = {authCodeResponse.AuthCode}<br />
+                                RealmId = {authCodeResponse.RealmId}<br />
+                            </body>
+                        </html>
+            ";
         }
 
         public static async Task<bool> SetAccessTokenAsync(string authCode)
@@ -103,7 +135,8 @@ namespace QbModels.QBOProcessor
             using HttpResponseMessage response = await httpClient.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
-                Settings.AccessToken = await JsonSerializer.DeserializeAsync<QboAccessToken>(await response.Content.ReadAsStreamAsync());
+                QboAccessToken accessToken = await JsonSerializer.DeserializeAsync<QboAccessToken>(await response.Content.ReadAsStreamAsync());
+                Settings.AccessToken = accessToken;
                 Settings.AccessToken.TokenCreated = DateTime.Now;
                 Settings.SaveSettings();
             }
