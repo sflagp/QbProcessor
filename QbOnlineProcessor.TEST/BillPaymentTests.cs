@@ -12,7 +12,7 @@ namespace QbModels.QBOProcessor.TEST
     public class TestBillPaymentModels
     {
         [TestMethod]
-        public async Task Step_2_QBOBillPaymentQueryTest()
+        public async Task Step_1_QBOBillPaymentQueryTest()
         {
             #region Setting access token
             TestAccessToken accessToken = new();
@@ -34,7 +34,7 @@ namespace QbModels.QBOProcessor.TEST
         }
 
         [TestMethod]
-        public async Task Step_1_QBOBillPaymentAddTest()
+        public async Task Step_2_QBOBillPaymentAddTest()
         {
             #region Setting access token
             TestAccessToken accessToken = new();
@@ -127,7 +127,7 @@ namespace QbModels.QBOProcessor.TEST
         }
 
         [TestMethod]
-        public async Task Step_4_QBOBillDeleteTest()
+        public async Task Step_4_QBOBillPaymentDeleteTest()
         {
             #region Setting access token
             TestAccessToken accessToken = new();
