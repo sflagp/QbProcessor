@@ -1,0 +1,162 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using QbModels.QBO;
+using QbModels.QBO.ENUM;
+using System;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
+
+namespace QbModels.QBOProcessor.TEST
+{
+    [TestClass]
+    public class TestBillPaymentModels
+    {
+        [TestMethod]
+        public async Task Step_2_QBOBillPaymentQueryTest()
+        {
+            #region Setting access token
+            TestAccessToken accessToken = new();
+            await accessToken.AccessTokenTest();
+            #endregion
+
+            using QBOProcessor qboe = new();
+
+            #region Getting BillPayments
+            if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
+            HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from BillPayment", true);
+            if (!getRs.IsSuccessStatusCode) Assert.Fail($"QBOGet failed: {await getRs.Content.ReadAsStringAsync()}");
+
+            string qryRs = await getRs.Content.ReadAsStringAsync();
+            BillPaymentOnlineRs billPaymentRs = new(qryRs);
+            Assert.IsNull(billPaymentRs.ParseError);
+            Assert.AreNotEqual(0, billPaymentRs.TotalBillPayments);
+            #endregion
+        }
+
+        [TestMethod]
+        public async Task Step_1_QBOBillPaymentAddTest()
+        {
+            #region Setting access token
+            TestAccessToken accessToken = new();
+            await accessToken.AccessTokenTest();
+            #endregion
+
+            using QBOProcessor qboe = new();
+
+            #region Getting BillPayments
+            if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
+            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from BillPayment"));
+            if (!getRs.IsSuccessStatusCode) Assert.Fail($"Error querying bill: {await getRs.Content.ReadAsStringAsync()}");
+            BillPaymentOnlineRs acctRs = new(await getRs.Content.ReadAsStringAsync());
+            #endregion
+
+            #region Adding BillPayment
+            if (acctRs.BillPayments.Any(pmt => pmt.PrivateNote?.StartsWith("IMS Bill Payment") ?? false)) Assert.Inconclusive("IMS Bill Payment already exists.");
+
+            Random rdm = new();
+            HttpResponseMessage acctQryRq = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Account where AccountType = 'Bank'"));
+            if (!acctQryRq.IsSuccessStatusCode) Assert.Fail($"Error retrieving bank accounts.\n{await acctQryRq.Content.ReadAsStringAsync()}");
+            AccountOnlineRs accountRs = new(await acctQryRq.Content.ReadAsStringAsync());
+            AccountDto bank = accountRs.Accounts.ElementAt(rdm.Next(0, accountRs.TotalAccounts));
+
+            HttpResponseMessage billQryRq = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Bill"));
+            if (!billQryRq.IsSuccessStatusCode) Assert.Fail($"Error retrieving bills.\n{await billQryRq.Content.ReadAsStringAsync()}");
+            BillOnlineRs billRs = new(await billQryRq.Content.ReadAsStringAsync());
+            BillDto bill = billRs.Bills.ElementAt(rdm.Next(0, billRs.TotalBills));
+
+            BillPaymentAddRq addRq = new();
+            addRq.VendorRef = bill.VendorRef;
+            addRq.TotalAmt = 12.34M;
+            addRq.PayType = BillPaymentType.Check;
+            addRq.Line = new()
+            {
+                new()
+                {
+                    Amount = 12.34M,
+                    LinkedTxn = new() { new() { TxnId = bill.Id, TxnType = "Bill" } }
+                }
+            };
+            addRq.CheckPayment = new() { BankAccountRef = new() { name = bank.Name, Value = bank.Id } };
+            addRq.PrivateNote = "IMS Bill Payment";
+            if (!addRq.IsEntityValid()) Assert.Fail($"addRq is invalid: {addRq.GetErrorsAsString()}");
+            HttpResponseMessage postRs = await qboe.QBOPost(addRq.ApiParameter(qboe.ClientInfo.RealmId), addRq);
+            if (!postRs.IsSuccessStatusCode) Assert.Inconclusive($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
+
+            BillPaymentOnlineRs addRs = new(await postRs.Content.ReadAsStringAsync());
+            Assert.AreEqual(1, addRs.TotalBillPayments);
+            #endregion
+        }
+
+        [TestMethod]
+        public async Task Step_3_QBOBillPaymentModTest()
+        {
+            #region Setting access token
+            TestAccessToken accessToken = new();
+            await accessToken.AccessTokenTest();
+            #endregion
+
+            using QBOProcessor qboe = new();
+
+            #region Getting BillPayment
+            Random rdm = new();
+            if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
+            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from BillPayment"));
+            BillPaymentOnlineRs billPaymentRs = new(await getRs.Content.ReadAsStringAsync());
+            #endregion
+
+            #region Updating Bill
+            if (billPaymentRs.TotalBillPayments <= 0) Assert.Fail("No BillPayment to update.");
+            BillPaymentDto pmt = billPaymentRs.BillPayments.FirstOrDefault(pmt => pmt.PrivateNote.StartsWith("IMS Bill Payment"));
+            if (pmt == null) Assert.Inconclusive($"IMS Bill Payment does not exist.");
+            BillPaymentModRq modRq = new();
+            modRq.sparse = "true";
+            modRq.Id = pmt.Id;
+            modRq.SyncToken = pmt.SyncToken;
+            modRq.TotalAmt = pmt.TotalAmt;
+            modRq.Line = pmt.Line ?? new();
+            modRq.PayType = pmt.PayType;
+            modRq.VendorRef = pmt.VendorRef;
+            modRq.PrivateNote = $"IMS Bill Payment => {pmt.SyncToken}";
+            if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
+            HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
+            if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
+
+            BillPaymentOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
+            Assert.AreNotEqual(pmt.PrivateNote, modRs.BillPayments?[0]?.PrivateNote);
+            #endregion
+        }
+
+        [TestMethod]
+        public async Task Step_4_QBOBillDeleteTest()
+        {
+            #region Setting access token
+            TestAccessToken accessToken = new();
+            await accessToken.AccessTokenTest();
+            #endregion
+
+            using QBOProcessor qboe = new();
+
+            #region Getting BillPayment
+            if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
+            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from BillPayment"));
+            if (!getRs.IsSuccessStatusCode) Assert.Inconclusive($"Could not retrieve bill payment to delete: {await getRs.Content.ReadAsStringAsync()}");
+            BillPaymentOnlineRs billPmtRs = new(await getRs.Content.ReadAsStringAsync());
+
+            #endregion
+
+            #region Deleting BillPayment
+            if (billPmtRs.TotalBillPayments <= 0) Assert.Fail("No IMS Bill Payment to delete.");
+            BillPaymentDto billPmt = billPmtRs.BillPayments.FirstOrDefault(pmt => pmt.PrivateNote?.StartsWith("IMS Bill Payment") ?? false);
+            if (billPmt == null) Assert.Fail($"IMS Bill Payment does not exist.");
+            BillPaymentModRq modRq = new();
+            modRq.Id = billPmt.Id;
+            modRq.SyncToken = billPmt.SyncToken;
+            HttpResponseMessage postRs = await qboe.QBOPost($"{modRq.ApiParameter(qboe.ClientInfo.RealmId)}?operation=delete", modRq);
+            if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
+
+            BillPaymentOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
+            Assert.AreEqual(EntityStatus.Deleted, modRs.BillPayments[0].status, $"Bill status not Deleted: {modRs.BillPayments[0].status}");
+            #endregion
+        }
+    }
+}

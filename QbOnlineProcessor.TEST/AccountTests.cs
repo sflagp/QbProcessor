@@ -23,7 +23,7 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting accounts
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
-            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.ApiParameter(qboe.ClientInfo.RealmId, "select * from Account"));
+            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Account"));
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"QBOGet failed: {await getRs.Content.ReadAsStringAsync()}");
 
             string qryRs = await getRs.Content.ReadAsStringAsync();
@@ -48,7 +48,7 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting account
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
-            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.ApiParameter(qboe.ClientInfo.RealmId, "select * from Account where Name='IMS Account'"));
+            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Account where Name='IMS Account'"));
             AccountOnlineRs acctRs = new(await getRs.Content.ReadAsStringAsync());
             #endregion
 
@@ -79,7 +79,7 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting account
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
-            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.ApiParameter(qboe.ClientInfo.RealmId, "select * from Account where Name = 'IMS Account'"));
+            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Account where Name = 'IMS Account'"));
             AccountOnlineRs acctRs = new(await getRs.Content.ReadAsStringAsync());
             #endregion
 

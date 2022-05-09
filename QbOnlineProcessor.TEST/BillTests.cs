@@ -24,7 +24,7 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting Bill
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
-            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.ApiParameter(qboe.ClientInfo.RealmId, "select * from Bill where PrivateNote='IMS Bill'"));
+            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Bill where PrivateNote='IMS Bill'"));
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"Error querying bill: {await getRs.Content.ReadAsStringAsync()}");
             BillOnlineRs acctRs = new(await getRs.Content.ReadAsStringAsync());
             #endregion
@@ -33,7 +33,7 @@ namespace QbModels.QBOProcessor.TEST
             if (acctRs.TotalBills == 0)
             {
                 Random rdm = new();
-                HttpResponseMessage vendQryRq = await qboe.QBOGet(QueryRq.ApiParameter(qboe.ClientInfo.RealmId, "select * from Vendor"));
+                HttpResponseMessage vendQryRq = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Vendor"));
                 if (!vendQryRq.IsSuccessStatusCode) Assert.Fail($"Error retrieving vendors.\n{await vendQryRq.Content.ReadAsStringAsync()}");
                 VendorOnlineRs vendorRs = new(await vendQryRq.Content.ReadAsStringAsync());
                 VendorDto vendor = vendorRs.Vendors.ElementAt(rdm.Next(0, vendorRs.TotalVendors));
@@ -101,7 +101,7 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting Bill
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
-            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.ApiParameter(qboe.ClientInfo.RealmId, "select * from Bill where PrivateNote = 'IMS Bill'"));
+            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Bill where PrivateNote = 'IMS Bill'"));
             BillOnlineRs acctRs = new(await getRs.Content.ReadAsStringAsync());
             #endregion
 
@@ -137,7 +137,7 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting Bill
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
-            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.ApiParameter(qboe.ClientInfo.RealmId, "select * from Bill where PrivateNote = 'IMS Bill'"));
+            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Bill where PrivateNote = 'IMS Bill'"));
             BillOnlineRs acctRs = new(await getRs.Content.ReadAsStringAsync());
             #endregion
 
