@@ -211,6 +211,7 @@ namespace QbModels.QBOProcessor
 
         private static StringContent NewStringContent<T>(T data, string dataType = "application/xml")
         {
+            if (data == null) return default;
             var content = new StringContent(data.ToString());
             content.Headers.ContentType = new MediaTypeHeaderValue(dataType);
             return content;
