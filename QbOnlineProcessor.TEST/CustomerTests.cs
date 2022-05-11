@@ -1,7 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels.QBO;
-using QbModels.QBO.ENUM;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -98,6 +96,28 @@ namespace QbModels.QBOProcessor.TEST
 
             CustomerOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
             Assert.AreNotEqual(acct.Notes, modRs.Customers?[0]?.Notes);
+            #endregion
+        }
+
+        [TestMethod]
+        public async Task Step_5_QBOCustomerTypeQueryTest()
+        {
+            #region Setting access token
+            TestAccessToken accessToken = new();
+            await accessToken.AccessTokenTest();
+            #endregion
+
+            using QBOProcessor qboe = new();
+
+            #region Getting Customers
+            if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
+            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from CustomerType"));
+            if (!getRs.IsSuccessStatusCode) Assert.Fail($"QBOGet failed: {await getRs.Content.ReadAsStringAsync()}");
+
+            string qryRsStr = await getRs.Content.ReadAsStringAsync();
+            CustomerTypeOnlineRs qryRs = new(qryRsStr);
+            Assert.IsNull(qryRs.ParseError, $"CustomerType query parsing error: {qryRs.ParseError}");
+            if(qryRs.TotalCustomerTypes == 0) Assert.Inconclusive("No CustomerTypes found.");
             #endregion
         }
     }
