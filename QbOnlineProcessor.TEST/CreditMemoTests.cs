@@ -141,11 +141,11 @@ namespace QbModels.QBOProcessor.TEST
             if (creditMemoRs.TotalCreditMemos <= 0) Assert.Inconclusive("No CreditMemo to email.");
             CreditMemoDto creditMemo = creditMemoRs.CreditMemos.FirstOrDefault(cm => cm.PrivateNote?.StartsWith("IMS Credit Memo") ?? false);
             if (creditMemo == null) Assert.Inconclusive($"IMS CreditMemo does not exist.");
-            //HttpResponseMessage postRs = await qboe.QBOPost<CreditMemoDto>($"/v3/company/{qboe.ClientInfo.RealmId}/creditmemo/{creditMemo.Id}/send?sendTo=sfla_gp@yahoo.com", null);
-            //if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
+            HttpResponseMessage postRs = await qboe.QBOPost($"/v3/company/{qboe.ClientInfo.RealmId}/creditmemo/{creditMemo.Id}/send?sendTo=sfla_gp@yahoo.com");
+            if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
-            //CreditMemoOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
-            //Assert.AreEqual(creditMemo.PrivateNote, modRs.CreditMemos?[0]?.PrivateNote);
+            CreditMemoOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
+            Assert.AreEqual(creditMemo.PrivateNote, modRs.CreditMemos?[0]?.PrivateNote);
             #endregion
         }
 

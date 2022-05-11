@@ -210,6 +210,23 @@ namespace QbModels.QBOProcessor
             return postRs;
         }
 
+        public static async Task<HttpResponseMessage> PostQBOAsync(string parameter)
+        {
+            HttpResponseMessage postRs;
+            using (var wsQboeWeb = await Config.QBOHttpClientAsync())
+            {
+                try
+                {
+                    postRs = await wsQboeWeb.PostAsync($"{parameter}", null);
+                }
+                catch (Exception ex)
+                {
+                    throw new HttpRequestException($"Error:  {ex.HResult}\n{ex.Message}");
+                }
+            }
+            return postRs;
+        }
+
         private static StringContent NewStringContent<T>(T data, bool asXml) where T : QBO.IQbRq
         {
             if (data == null) return default;
