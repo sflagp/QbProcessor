@@ -154,8 +154,8 @@ namespace QbModels.QBOProcessor.TEST
             HttpResponseMessage postRs = await qboe.QBOPost($"{modRq.ApiParameter(qboe.ClientInfo.RealmId)}?operation=delete", modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
-            BillPaymentOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
-            Assert.AreEqual(EntityStatus.Deleted, modRs.BillPayments[0].status, $"Bill status not Deleted: {modRs.BillPayments[0].status}");
+            BillPaymentOnlineRs delRs = new(await postRs.Content.ReadAsStringAsync());
+            Assert.AreEqual(EntityStatus.Deleted, delRs.BillPayments[0].status, $"Bill status not Deleted: {delRs.BillPayments[0].status}");
             #endregion
         }
     }

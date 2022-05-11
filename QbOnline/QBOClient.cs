@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -190,12 +191,12 @@ namespace QbModels.QBOProcessor
             return getRs;
         }
 
-        public static async Task<HttpResponseMessage> PostQBOAsync<T>(string parameter, T data)
+        public static async Task<HttpResponseMessage> PostQBOAsync<T>(string parameter, T data, bool asXml) where T : QBO.IQbRq
         {
             HttpResponseMessage postRs;
-            using (var wsQboeWeb = await Config.QBOHttpClientAsync(false))
+            using (var wsQboeWeb = await Config.QBOHttpClientAsync(asXml))
             {
-                var content = NewStringContent<T>(data);
+                var content = NewStringContent<T>(data, asXml);
 
                 try
                 {
@@ -209,11 +210,18 @@ namespace QbModels.QBOProcessor
             return postRs;
         }
 
-        private static StringContent NewStringContent<T>(T data, string dataType = "application/xml")
+        private static StringContent NewStringContent<T>(T data, bool asXml) where T : QBO.IQbRq
         {
             if (data == null) return default;
-            var content = new StringContent(data.ToString());
-            content.Headers.ContentType = new MediaTypeHeaderValue(dataType);
+            StringContent content;
+            if (asXml)
+            {
+                content = new StringContent(data.ToXML());
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/xml");
+                return content;
+            }
+            content = new StringContent(data.ToJson());
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             return content;
         }
     }

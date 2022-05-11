@@ -40,7 +40,7 @@ namespace QbModels.QBOProcessor
 
         public async Task<HttpResponseMessage> QBOGet(string parameter, bool asXml = true) => await QBOClient.GetQBOAsync(parameter, asXml);
 
-        public async Task<HttpResponseMessage> QBOPost<T>(string parameter, T data) => await QBOClient.PostQBOAsync<T>(parameter, data);
+        public async Task<HttpResponseMessage> QBOPost<T>(string parameter, T data, bool asXml = true) where T : QBO.IQbRq => await QBOClient.PostQBOAsync<T>(parameter, data, asXml);
 
         #region IDisposable
         protected virtual void Dispose(bool disposing)
