@@ -11,6 +11,8 @@ namespace QbModels.QBOProcessor.TEST
     [TestClass]
     public class TestClassModels
     {
+        readonly string testName = "IMS Class";
+
         [TestMethod]
         public async Task Step_1_QBOClassQueryTest()
         {
@@ -51,10 +53,10 @@ namespace QbModels.QBOProcessor.TEST
             #endregion
 
             #region Adding Class
-            if (acctRs.Classes.Any(c => c.FullyQualifiedName?.StartsWith("IMS Class") ?? false)) Assert.Inconclusive("IMS Class already exists.");
+            if (acctRs.Classes.Any(c => c.FullyQualifiedName?.StartsWith(testName) ?? false)) Assert.Inconclusive($"{testName} already exists.");
 
             ClassAddRq addRq = new();
-            addRq.Name = "IMS Class";
+            addRq.Name = testName;
             if (!addRq.IsEntityValid()) Assert.Fail($"addRq is invalid: {addRq.GetErrorsAsString()}");
             HttpResponseMessage postRs = await qboe.QBOPost(addRq.ApiParameter(qboe.ClientInfo.RealmId), addRq);
             if (!postRs.IsSuccessStatusCode) Assert.Inconclusive($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
@@ -82,15 +84,18 @@ namespace QbModels.QBOProcessor.TEST
             #endregion
 
             #region Updating Class
-            if (ClassRs.TotalClasses <= 0) Assert.Fail("No Class to update.");
-            ClassDto cls = ClassRs.Classes.FirstOrDefault(c => c.FullyQualifiedName.StartsWith("IMS Class"));
-            if (cls == null) Assert.Inconclusive($"IMS Class does not exist.");
+            if (ClassRs.TotalClasses <= 0) Assert.Fail($"No {testName} to update.");
+
+            ClassDto cls = ClassRs.Classes.FirstOrDefault(c => c.FullyQualifiedName.StartsWith(testName));
+            if (cls == null) Assert.Inconclusive($"{testName} does not exist.");
+            
             ClassModRq modRq = new();
             modRq.sparse = "true";
             modRq.Id = cls.Id;
             modRq.SyncToken = cls.SyncToken;
             modRq.Name = cls.Name;
             modRq.FullyQualifiedName = $"IMS Class => {cls.SyncToken}";
+            
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
             HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");

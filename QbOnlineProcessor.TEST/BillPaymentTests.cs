@@ -11,6 +11,8 @@ namespace QbModels.QBOProcessor.TEST
     [TestClass]
     public class TestBillPaymentModels
     {
+        readonly string testName = "IMS Bill Payment";
+
         [TestMethod]
         public async Task Step_1_QBOBillPaymentQueryTest()
         {
@@ -51,7 +53,7 @@ namespace QbModels.QBOProcessor.TEST
             #endregion
 
             #region Adding BillPayment
-            if (acctRs.BillPayments.Any(pmt => pmt.PrivateNote?.StartsWith("IMS Bill Payment") ?? false)) Assert.Inconclusive("IMS Bill Payment already exists.");
+            if (acctRs.BillPayments.Any(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false)) Assert.Inconclusive($"{testName} already exists.");
 
             Random rdm = new();
             HttpResponseMessage acctQryRq = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Account where AccountType = 'Bank'"));
@@ -77,7 +79,7 @@ namespace QbModels.QBOProcessor.TEST
                 }
             };
             addRq.CheckPayment = new() { BankAccountRef = new() { name = bank.Name, Value = bank.Id } };
-            addRq.PrivateNote = "IMS Bill Payment";
+            addRq.PrivateNote = testName;
             if (!addRq.IsEntityValid()) Assert.Fail($"addRq is invalid: {addRq.GetErrorsAsString()}");
             HttpResponseMessage postRs = await qboe.QBOPost(addRq.ApiParameter(qboe.ClientInfo.RealmId), addRq);
             if (!postRs.IsSuccessStatusCode) Assert.Inconclusive($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
@@ -105,9 +107,9 @@ namespace QbModels.QBOProcessor.TEST
             #endregion
 
             #region Updating Bill
-            if (billPaymentRs.TotalBillPayments <= 0) Assert.Fail("No BillPayment to update.");
-            BillPaymentDto pmt = billPaymentRs.BillPayments.FirstOrDefault(pmt => pmt.PrivateNote.StartsWith("IMS Bill Payment"));
-            if (pmt == null) Assert.Inconclusive($"IMS Bill Payment does not exist.");
+            if (billPaymentRs.TotalBillPayments <= 0) Assert.Fail($"{testName} to update.");
+            BillPaymentDto pmt = billPaymentRs.BillPayments.FirstOrDefault(pmt => pmt.PrivateNote.StartsWith(testName));
+            if (pmt == null) Assert.Inconclusive($"{testName} does not exist.");
             BillPaymentModRq modRq = new();
             modRq.sparse = "true";
             modRq.Id = pmt.Id;
@@ -116,7 +118,7 @@ namespace QbModels.QBOProcessor.TEST
             modRq.Line = pmt.Line ?? new();
             modRq.PayType = pmt.PayType;
             modRq.VendorRef = pmt.VendorRef;
-            modRq.PrivateNote = $"IMS Bill Payment => {pmt.SyncToken}";
+            modRq.PrivateNote = $"{testName} => {pmt.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
             HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
@@ -145,9 +147,9 @@ namespace QbModels.QBOProcessor.TEST
             #endregion
 
             #region Deleting BillPayment
-            if (billPmtRs.TotalBillPayments <= 0) Assert.Fail("No IMS Bill Payment to delete.");
-            BillPaymentDto billPmt = billPmtRs.BillPayments.FirstOrDefault(pmt => pmt.PrivateNote?.StartsWith("IMS Bill Payment") ?? false);
-            if (billPmt == null) Assert.Fail($"IMS Bill Payment does not exist.");
+            if (billPmtRs.TotalBillPayments <= 0) Assert.Fail($"No {testName} to delete.");
+            BillPaymentDto billPmt = billPmtRs.BillPayments.FirstOrDefault(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false);
+            if (billPmt == null) Assert.Fail($"{testName} does not exist.");
             BillPaymentModRq modRq = new();
             modRq.Id = billPmt.Id;
             modRq.SyncToken = billPmt.SyncToken;

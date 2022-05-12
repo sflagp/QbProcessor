@@ -12,6 +12,8 @@ namespace QbModels.QBOProcessor.TEST
     [TestClass]
     public class TestBillModels
     {
+        readonly string testName = "IMS Bill";
+
         [TestMethod]
         public async Task Step_1_QBOBillAddTest()
         {
@@ -24,7 +26,7 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting Bill
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
-            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Bill where PrivateNote='IMS Bill'"));
+            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, $"select * from Bill where PrivateNote='{testName}'"));
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"Error querying bill: {await getRs.Content.ReadAsStringAsync()}");
             BillOnlineRs acctRs = new(await getRs.Content.ReadAsStringAsync());
             #endregion
@@ -37,6 +39,7 @@ namespace QbModels.QBOProcessor.TEST
                 if (!vendQryRq.IsSuccessStatusCode) Assert.Fail($"Error retrieving vendors.\n{await vendQryRq.Content.ReadAsStringAsync()}");
                 VendorOnlineRs vendorRs = new(await vendQryRq.Content.ReadAsStringAsync());
                 VendorDto vendor = vendorRs.Vendors.ElementAt(rdm.Next(0, vendorRs.TotalVendors));
+                
                 BillAddRq addRq = new();
                 addRq.VendorRef = new() { Value = vendor.Id };
                 addRq.Line = new() { new()
@@ -53,7 +56,7 @@ namespace QbModels.QBOProcessor.TEST
                         BillableStatus = BillableStatus.NotBillable
                     }
                 } };
-                addRq.PrivateNote = "IMS Bill";
+                addRq.PrivateNote = testName;
                 if (!addRq.IsEntityValid()) Assert.Fail($"addRq is invalid: {addRq.GetErrorsAsString()}");
                 HttpResponseMessage postRs = await qboe.QBOPost(addRq.ApiParameter(qboe.ClientInfo.RealmId), addRq);
                 if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
@@ -85,7 +88,7 @@ namespace QbModels.QBOProcessor.TEST
             Assert.AreNotEqual(0, acctRs.TotalBills);
 
             List<BillDto> imsAccts = acctRs.Bills.Where(a => a.PrivateNote?.Contains("IMS") ?? false)?.ToList();
-            if (imsAccts.Count == 0) Assert.Fail("No IMS Bills found");
+            if (imsAccts.Count == 0) Assert.Fail($"No {testName} found");
             #endregion
         }
 
@@ -101,21 +104,23 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting Bill
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
-            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Bill where PrivateNote = 'IMS Bill'"));
+            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, $"select * from Bill where PrivateNote = '{testName}'"));
             BillOnlineRs acctRs = new(await getRs.Content.ReadAsStringAsync());
             #endregion
 
             #region Updating Bill
-            if (acctRs.TotalBills <= 0) Assert.Fail("No IMS Bill to update.");
+            if (acctRs.TotalBills <= 0) Assert.Fail($"No {testName} to update.");
+            
             BillDto bill = acctRs.Bills.FirstOrDefault();
-            if (bill == null) Assert.Fail($"IMS Bill does not exist.");
+            if (bill == null) Assert.Fail($"{testName} does not exist.");
+            
             BillModRq modRq = new();
             modRq.sparse = "true";
             modRq.Id = bill.Id;
             modRq.SyncToken = bill.SyncToken;
             modRq.Line = bill.Line;
             modRq.VendorRef = bill.VendorRef;
-            modRq.DocNumber = $"IMS Bill Test => {bill.SyncToken}";
+            modRq.DocNumber = $"{testName} Test => {bill.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
             HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
@@ -142,9 +147,9 @@ namespace QbModels.QBOProcessor.TEST
             #endregion
 
             #region Deleting Bill
-            if (acctRs.TotalBills <= 0) Assert.Fail("No IMS Bill to delete.");
+            if (acctRs.TotalBills <= 0) Assert.Fail($"No {testName} to delete.");
             BillDto bill = acctRs.Bills.FirstOrDefault();
-            if (bill == null) Assert.Fail($"IMS Bill does not exist.");
+            if (bill == null) Assert.Fail($"{testName} does not exist.");
             BillModRq modRq = new();
             modRq.Id = bill.Id;
             modRq.SyncToken = bill.SyncToken;
@@ -152,7 +157,7 @@ namespace QbModels.QBOProcessor.TEST
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             BillOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
-            Assert.AreEqual("Deleted", modRs.Bills[0].status, $"Bill status not Deleted: {modRs.Bills[0].status}");
+            Assert.AreEqual("Deleted", modRs.Bills[0].status, $"{testName} status not Deleted: {modRs.Bills[0].status}");
             #endregion
         }
     }

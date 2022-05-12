@@ -9,6 +9,8 @@ namespace QbModels.QBOProcessor.TEST
     [TestClass]
     public class TestCompanyCurrencyModels
     {
+        readonly string testName = "IMS CompanyCurrency";
+
         [TestMethod]
         public async Task Step_1_QBOCompanyCurrencyQueryTest()
         {
@@ -50,10 +52,10 @@ namespace QbModels.QBOProcessor.TEST
             #endregion
 
             #region Adding Class
-            if (cmpCurrRs.CompanyCurrencies.Any(c => c.Code?.Equals("IMS") ?? false)) Assert.Inconclusive("IMS CompanyCurrency already exists.");
+            if (cmpCurrRs.CompanyCurrencies.Any(c => c.Code?.Equals("IMS") ?? false)) Assert.Inconclusive($"{testName} already exists.");
 
             CompanyCurrencyAddRq addRq = new();
-            addRq.Name = "IMS CompanyCurrency";
+            addRq.Name = testName;
             addRq.Code = "IMS";
             if (!addRq.IsEntityValid()) Assert.Fail($"addRq is invalid: {addRq.GetErrorsAsString()}");
             HttpResponseMessage postRs = await qboe.QBOPost(addRq.ApiParameter(qboe.ClientInfo.RealmId), addRq);

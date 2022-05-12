@@ -11,6 +11,8 @@ namespace QbModels.QBOProcessor.TEST
     [TestClass]
     public class TestAccountModels
     {
+        readonly string testName = "IMS Account";
+
         [TestMethod]
         public async Task Step_1_QBOAccountQueryTest()
         {
@@ -32,7 +34,7 @@ namespace QbModels.QBOProcessor.TEST
             Assert.AreNotEqual(0, acctRs.TotalAccounts);
 
             List<AccountDto> imsAccts = acctRs.Accounts.Where(a => a.Description?.Contains("IMS") ?? false)?.ToList();
-            if (imsAccts.Count == 0) Assert.Fail("No IMS accounts found");
+            if (imsAccts.Count == 0) Assert.Fail($"No {testName} found");
             #endregion
         }
 
@@ -53,17 +55,17 @@ namespace QbModels.QBOProcessor.TEST
             #endregion
 
             #region Adding account
-            if (acctRs.TotalAccounts > 0) Assert.Inconclusive("IMS Account already exists.");
+            if (acctRs.TotalAccounts > 0) Assert.Inconclusive($"{testName} already exists.");
             AccountAddRq addRq = new();
-            addRq.Name = "IMS Account";
+            addRq.Name = testName;
             addRq.AccountType = AccountType.Income;
-            addRq.Description = "IMS Account Test";
+            addRq.Description = $"{testName} Test";
             if (!addRq.IsEntityValid()) Assert.Fail($"addRq is invalid: {addRq.GetErrorsAsString()}");
             HttpResponseMessage postRs = await qboe.QBOPost(addRq.ApiParameter(qboe.ClientInfo.RealmId), addRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             AccountOnlineRs addRs = new(await postRs.Content.ReadAsStringAsync());
-            Assert.AreEqual("IMS Account", addRs.Accounts?[0]?.Name);
+            Assert.AreEqual(testName, addRs.Accounts?[0]?.Name);
             #endregion
         }
 
@@ -84,15 +86,15 @@ namespace QbModels.QBOProcessor.TEST
             #endregion
 
             #region Updating account
-            if (acctRs.TotalAccounts <= 0) Assert.Fail("No accounts to update.");
-            AccountDto acct = acctRs.Accounts.FirstOrDefault(a => a.Name.Equals("IMS Account"));
-            if (acct == null) Assert.Fail($"IMS Account does not exist.");
+            if (acctRs.TotalAccounts <= 0) Assert.Fail($"No {testName} to update.");
+            AccountDto acct = acctRs.Accounts.FirstOrDefault(a => a.Name.Equals(testName));
+            if (acct == null) Assert.Fail($"{testName} does not exist.");
             AccountModRq modRq = new();
             modRq.sparse = "true";
             modRq.Id = acct.Id;
             modRq.Name = acct.Name;
             modRq.SyncToken = acct.SyncToken;
-            modRq.Description = $"IMS Account Test => {acct.SyncToken}";
+            modRq.Description = $"{testName} Test => {acct.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
             HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
