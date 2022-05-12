@@ -23,6 +23,7 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting Company Currencies
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
+            
             HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from CompanyCurrency", false);
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"QBOGet failed: {await getRs.Content.ReadAsStringAsync()}");
 
@@ -46,8 +47,10 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting Classes
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
+            
             HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from CompanyCurrency"));
-            if (!getRs.IsSuccessStatusCode) Assert.Fail($"Error querying Class: {await getRs.Content.ReadAsStringAsync()}");
+            if (!getRs.IsSuccessStatusCode) Assert.Fail($"Error querying CompanyCurrency: {await getRs.Content.ReadAsStringAsync()}");
+            
             CompanyCurrencyOnlineRs cmpCurrRs = new(await getRs.Content.ReadAsStringAsync());
             #endregion
 
