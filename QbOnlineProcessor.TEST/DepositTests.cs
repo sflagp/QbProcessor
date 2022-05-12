@@ -67,15 +67,16 @@ namespace QbModels.QBOProcessor.TEST
             AccountDto bank = bankRs.Accounts.ElementAt(rdm.Next(0, bankRs.TotalAccounts));
 
             DepositAddRq addRq = new();
-            addRq.DepositToAccountRef = new() { name = bank.FullyQualifiedName, Value = bank.Id };
+            addRq.DepositToAccountRef = new(bank.Id, bank.FullyQualifiedName);
             addRq.Line = new() { new()
             {
                 DetailType = LineDetailType.DepositLineDetail,
                 Amount = 1.23M,
-                LineDetail = new DepositLineDetailDto() { AccountRef = new() { name = acct.Name, Value = acct.Id } },
+                LineDetail = new DepositLineDetailDto() { AccountRef = new(acct.Id, acct.Name) },
             }};
             addRq.PrivateNote = testName;
             if (!addRq.IsEntityValid()) Assert.Fail($"addRq is invalid: {addRq.GetErrorsAsString()}");
+            
             HttpResponseMessage postRs = await qboe.QBOPost(addRq.ApiParameter(qboe.ClientInfo.RealmId), addRq);
             if (!postRs.IsSuccessStatusCode) Assert.Inconclusive($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 

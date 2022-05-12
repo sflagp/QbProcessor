@@ -44,10 +44,13 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Updating company
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("AccessToken not valid.");
+
             HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/companyinfo/{qboe.ClientInfo.RealmId}");
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"QBOGet failed: {await getRs.Content.ReadAsStringAsync()}");
+            
             string qryRs = await getRs.Content.ReadAsStringAsync();
             CompanyOnlineRs company = new(qryRs);
+            
             CompanyModRq modRq = new();
             modRq.sparse = "true";
             modRq.Id = company.CompanyInfo.Id;
@@ -72,8 +75,10 @@ namespace QbModels.QBOProcessor.TEST
             modRq.WebAddr = company.CompanyInfo.WebAddr;
             modRq.WebAddr.URI = "https://www.invoicingmadesimple.com";
             modRq.MetaData = company.CompanyInfo.MetaData;
+            
             HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
+            
             CompanyOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
             Assert.AreEqual("(954) 925-1900", modRs.CompanyInfo.PrimaryPhone.FreeFormNumber);
             Assert.AreEqual("Invoicing Made Simple", modRs.CompanyInfo.CompanyName);

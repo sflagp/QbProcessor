@@ -41,7 +41,7 @@ namespace QbModels.QBOProcessor.TEST
                 VendorDto vendor = vendorRs.Vendors.ElementAt(rdm.Next(0, vendorRs.TotalVendors));
                 
                 BillAddRq addRq = new();
-                addRq.VendorRef = new() { Value = vendor.Id };
+                addRq.VendorRef = new(vendor.Id);
                 addRq.Line = new() { new()
                 {
                     Id = "-1",
@@ -49,10 +49,10 @@ namespace QbModels.QBOProcessor.TEST
                     DetailType = LineDetailType.ItemBasedExpenseLineDetail,
                     LineDetail = new ItemBasedExpenseLineDetailDto()
                     {
-                        ItemRef = new() { name = "Pump", Value = "11" },
+                        ItemRef = new("11", "Pump"),
                         UnitPrice = 10M,
                         Qty = 8M,
-                        TaxCodeRef = new() { Value = "NON" },
+                        TaxCodeRef = new("NON"),
                         BillableStatus = BillableStatus.NotBillable
                     }
                 } };

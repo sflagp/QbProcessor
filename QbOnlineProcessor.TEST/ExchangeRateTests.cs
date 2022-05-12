@@ -46,7 +46,7 @@ namespace QbModels.QBOProcessor.TEST
 
             using QBOProcessor qboe = new();
 
-            #region Getting Classes
+            #region Getting ExchangeRate
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
             
             HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from ExchangeRate"));
@@ -55,7 +55,7 @@ namespace QbModels.QBOProcessor.TEST
             ExchangeRateOnlineRs exchgRteRs = new(await getRs.Content.ReadAsStringAsync());
             #endregion
 
-            #region Adding Class
+            #region Adding ExchangeRate
             if (!exchgRteRs.ExchangeRates.Any(c => c.SourceCurrencyCode?.Equals("IMS") ?? false)) Assert.Inconclusive($"{testName} already exists.");
             ExchangeRateDto exchgRte = exchgRteRs.ExchangeRates.FirstOrDefault(r => r.SourceCurrencyCode.Equals("IMS"));
 

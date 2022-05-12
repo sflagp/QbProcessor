@@ -51,14 +51,16 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Adding Employee
             if (empRs.TotalEmployees > 0) Assert.Inconclusive($"{testName} already exists.");
+            
             EmployeeAddRq addRq = new();
             addRq.GivenName = "Test";
             addRq.FamilyName = testName;
             addRq.DisplayName = testName;
             addRq.PrintOnCheckName = testName;
-            addRq.PrimaryPhone = new() { FreeFormNumber = "(919) 555-1212" };
-            addRq.PrimaryAddr = new() { Line1 = "123 Main Street", City = "Main", CountrySubDivisionCode = "NC" };
+            addRq.PrimaryPhone = new("(919) 555-1212");
+            addRq.PrimaryAddr = new("123 Main Street", "Main", "NC", "27601");
             if (!addRq.IsEntityValid()) Assert.Fail($"addRq is invalid: {addRq.GetErrorsAsString()}");
+            
             HttpResponseMessage postRs = await qboe.QBOPost(addRq.ApiParameter(qboe.ClientInfo.RealmId), addRq, false);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
@@ -85,8 +87,10 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Updating Employee
             if (empRs.TotalEmployees <= 0) Assert.Fail("No Employees to update.");
+            
             EmployeeDto emp = empRs.Employees.FirstOrDefault(a => a.FamilyName.Equals(testName));
             if (emp == null) Assert.Fail($"{testName} does not exist.");
+            
             EmployeeModRq modRq = new();
             modRq.sparse = "true";
             modRq.Id = emp.Id;
@@ -96,6 +100,7 @@ namespace QbModels.QBOProcessor.TEST
             modRq.GivenName = $"Test => {emp.SyncToken}";
             modRq.PrimaryAddr = emp.PrimaryAddr;
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
+            
             HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 

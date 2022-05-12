@@ -56,8 +56,8 @@ namespace QbModels.QBOProcessor.TEST
             addRq.GivenName = testName;
             addRq.DisplayName = testName;
             addRq.Notes = $"{testName} Test";
-            addRq.PrimaryPhone = new() { FreeFormNumber = "(919) 555-1212" };
-            addRq.BillAddr = new() { Line1 = "123 Main Street", City = "Main", CountrySubDivisionCode = "NC" };
+            addRq.PrimaryPhone = new("(919) 555-1212");
+            addRq.BillAddr = new("123 Main Street", "Main", "NC", "12345" );
             if (!addRq.IsEntityValid()) Assert.Fail($"addRq is invalid: {addRq.GetErrorsAsString()}");
 
             HttpResponseMessage postRs = await qboe.QBOPost(addRq.ApiParameter(qboe.ClientInfo.RealmId), addRq);

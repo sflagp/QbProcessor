@@ -56,11 +56,13 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Adding account
             if (acctRs.TotalAccounts > 0) Assert.Inconclusive($"{testName} already exists.");
+
             AccountAddRq addRq = new();
             addRq.Name = testName;
             addRq.AccountType = AccountType.Income;
             addRq.Description = $"{testName} Test";
             if (!addRq.IsEntityValid()) Assert.Fail($"addRq is invalid: {addRq.GetErrorsAsString()}");
+            
             HttpResponseMessage postRs = await qboe.QBOPost(addRq.ApiParameter(qboe.ClientInfo.RealmId), addRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
@@ -87,8 +89,10 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Updating account
             if (acctRs.TotalAccounts <= 0) Assert.Fail($"No {testName} to update.");
+
             AccountDto acct = acctRs.Accounts.FirstOrDefault(a => a.Name.Equals(testName));
             if (acct == null) Assert.Fail($"{testName} does not exist.");
+            
             AccountModRq modRq = new();
             modRq.sparse = "true";
             modRq.Id = acct.Id;
@@ -96,6 +100,7 @@ namespace QbModels.QBOProcessor.TEST
             modRq.SyncToken = acct.SyncToken;
             modRq.Description = $"{testName} Test => {acct.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
+            
             HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 

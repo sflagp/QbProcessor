@@ -45,12 +45,12 @@ namespace QbModels.QBOProcessor.TEST
             ItemDto item = itemRs.Items.ElementAt(rdm.Next(0, itemRs.TotalItems));
 
             EstimateAddRq addRq = new();
-            addRq.CustomerRef = new() { name = cust.FullyQualifiedName, Value = cust.Id };
+            addRq.CustomerRef = new(cust.Id, cust.FullyQualifiedName);
             addRq.Line = new() { new()
             {
                 DetailType = LineDetailType.SalesItemLineDetail,
                 Amount = 1.23M,
-                LineDetail = new SalesItemLineDetailDto() { ItemRef = new() { name = item.Name, Value = item.Id } },
+                LineDetail = new SalesItemLineDetailDto() { ItemRef = new(item.Id, item.Name) },
             }};
             addRq.PrivateNote = testName;
             if (!addRq.IsEntityValid()) Assert.Fail($"addRq is invalid: {addRq.GetErrorsAsString()}");
@@ -122,7 +122,7 @@ namespace QbModels.QBOProcessor.TEST
             {
                 DetailType = LineDetailType.SalesItemLineDetail,
                 Amount = item.UnitPrice,
-                LineDetail = new SalesItemLineDetailDto() { ItemRef = new() { name = item.Name, Value = item.Id }, Qty = 5 },
+                LineDetail = new SalesItemLineDetailDto() { ItemRef = new(item.Id, item.Name), Qty = 5 },
             });
             modRq.CustomerRef = estimate.CustomerRef;
             modRq.PrivateNote = $"{testName} => {estimate.SyncToken}";

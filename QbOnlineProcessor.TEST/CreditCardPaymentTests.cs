@@ -67,8 +67,8 @@ namespace QbModels.QBOProcessor.TEST
             AccountDto creditCard = ccRs.Accounts.Where(cc => cc.AccountType == AccountType.CreditCard).OrderBy(c => Guid.NewGuid()).FirstOrDefault();
 
             CreditCardPaymentAddRq addRq = new();
-            addRq.BankAccountRef = new() { name = bank.Name, Value = bank.Id };
-            addRq.CreditCardAccountRef = new() { name = creditCard.Name, Value = creditCard.Id };
+            addRq.BankAccountRef = new(bank.Id, bank.Name);
+            addRq.CreditCardAccountRef = new(creditCard.Id, creditCard.Name);
             addRq.Amount = 12.34M;
             addRq.TxnDate = DateTime.Now;
             addRq.PrivateNote = testName;
