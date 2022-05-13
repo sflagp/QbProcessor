@@ -52,8 +52,7 @@ namespace QbModels.QBOProcessor.TEST
             CompanyOnlineRs company = new(qryRs);
             
             CompanyModRq modRq = new();
-            modRq.CopyDto(company.CompanyInfo);
-            modRq.MetaData = null;
+            modRq.CopyDto(company.CompanyInfo, "MetaData");
             modRq.sparse = "true";
             modRq.CompanyName = "Invoicing Made Simple";
             modRq.LegalName = "David Becker CPA";

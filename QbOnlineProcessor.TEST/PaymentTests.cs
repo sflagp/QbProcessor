@@ -111,8 +111,7 @@ namespace QbModels.QBOProcessor.TEST
             if (pmt == null) Assert.Inconclusive($"{testName} does not exist.");
             
             PaymentModRq modRq = new();
-            modRq.CopyDto(pmt);
-            modRq.MetaData = null;
+            modRq.CopyDto(pmt, "MetaData");
             modRq.sparse = "true";
             modRq.PrivateNote = $"{testName} => {pmt.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
