@@ -65,27 +65,24 @@ namespace QbModels.QBOProcessor.TEST
             PreferencesModRq modRq = new();
             modRq.CopyDto(preferences.Preferences, "MetaData");
             modRq.sparse = "true";
-            modRq.EmailMessagesPrefs.EstimateMessage.Message = msgEstimate;
-            modRq.EmailMessagesPrefs.EstimateMessage.Subject = subEstimate;
-            modRq.EmailMessagesPrefs.InvoiceMessage.Message = msgInvoice;
-            modRq.EmailMessagesPrefs.InvoiceMessage.Subject = subInvoice;
-            modRq.EmailMessagesPrefs.SalesReceiptMessage.Message = msgSalesReceipt;
-            modRq.EmailMessagesPrefs.SalesReceiptMessage.Subject = subSalesReceipt;
-            modRq.EmailMessagesPrefs.StatementMessage.Message = msgStatement;
-            modRq.EmailMessagesPrefs.StatementMessage.Subject = subStatement;
+            EmailMessagesPrefsDto emailMsgs = modRq.EmailMessagesPrefs;
+            emailMsgs.EstimateMessage.Message = emailMsgs.EstimateMessage.Message.Replace("Craig's Design and Landscaping Services", company.CompanyName);
+            emailMsgs.EstimateMessage.Subject = $"Estimate from {company.CompanyName}";
+            emailMsgs.InvoiceMessage.Message = emailMsgs.EstimateMessage.Message.Replace("Craig's Design and Landscaping Services", company.CompanyName);
+            emailMsgs.InvoiceMessage.Subject = $"Invoice from {company.CompanyName}";
+            emailMsgs.SalesReceiptMessage.Message = emailMsgs.EstimateMessage.Message.Replace("Craig's Design and Landscaping Services", company.CompanyName);
+            emailMsgs.SalesReceiptMessage.Subject = $"Sales Receipt from {company.CompanyName}";
+            emailMsgs.StatementMessage.Message = emailMsgs.EstimateMessage.Message.Replace("Craig's Design and Landscaping Services", company.CompanyName);
+            emailMsgs.StatementMessage.Subject = $"Statement from {company.CompanyName}";
 
             HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq, true);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
             
             PreferencesOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
-            Assert.AreEqual(msgEstimate, modRq.EmailMessagesPrefs.EstimateMessage.Message);
-            Assert.AreEqual(subEstimate, modRq.EmailMessagesPrefs.EstimateMessage.Subject);
-            Assert.AreEqual(msgInvoice, modRq.EmailMessagesPrefs.InvoiceMessage.Message);
-            Assert.AreEqual(subInvoice, modRq.EmailMessagesPrefs.InvoiceMessage.Subject);
-            Assert.AreEqual(msgSalesReceipt, modRq.EmailMessagesPrefs.SalesReceiptMessage.Message);
-            Assert.AreEqual(subSalesReceipt, modRq.EmailMessagesPrefs.SalesReceiptMessage.Subject);
-            Assert.AreEqual(msgStatement, modRq.EmailMessagesPrefs.StatementMessage.Message);
-            Assert.AreEqual(subStatement, modRq.EmailMessagesPrefs.StatementMessage.Subject);
+            Assert.AreEqual($"Estimate from {company.CompanyName}", modRq.EmailMessagesPrefs.EstimateMessage.Subject);
+            Assert.AreEqual($"Invoice from {company.CompanyName}", modRq.EmailMessagesPrefs.InvoiceMessage.Subject);
+            Assert.AreEqual($"Sales Receipt from {company.CompanyName}", modRq.EmailMessagesPrefs.SalesReceiptMessage.Subject);
+            Assert.AreEqual($"Statement from {company.CompanyName}", modRq.EmailMessagesPrefs.StatementMessage.Subject);
             #endregion
         }
     }
