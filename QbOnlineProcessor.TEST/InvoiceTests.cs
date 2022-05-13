@@ -187,7 +187,7 @@ namespace QbModels.QBOProcessor.TEST
             #endregion
 
             #region Downloading Invoice
-            if (invoiceRs.TotalInvoices <= 0) Assert.Inconclusive($"No {testName} to email.");
+            if (invoiceRs.TotalInvoices <= 0) Assert.Inconclusive($"No {testName} to download.");
 
             InvoiceDto invoice = invoiceRs.Invoices.FirstOrDefault(cm => cm.PrivateNote?.StartsWith(testName) ?? false);
             if (invoice == null) Assert.Inconclusive($"{testName} does not exist.");
