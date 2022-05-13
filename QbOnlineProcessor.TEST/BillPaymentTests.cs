@@ -55,32 +55,29 @@ namespace QbModels.QBOProcessor.TEST
             #region Adding BillPayment
             if (acctRs.BillPayments.Any(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false)) Assert.Inconclusive($"{testName} already exists.");
 
-            Random rdm = new();
             HttpResponseMessage acctQryRq = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Account where AccountType = 'Bank'"));
             if (!acctQryRq.IsSuccessStatusCode) Assert.Fail($"Error retrieving bank accounts.\n{await acctQryRq.Content.ReadAsStringAsync()}");
             AccountOnlineRs accountRs = new(await acctQryRq.Content.ReadAsStringAsync());
-            AccountDto bank = accountRs.Accounts.ElementAt(rdm.Next(0, accountRs.TotalAccounts));
+            AccountDto bank = accountRs.Accounts.OrderBy(a => Guid.NewGuid()).FirstOrDefault();
 
             HttpResponseMessage billQryRq = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Bill"));
             if (!billQryRq.IsSuccessStatusCode) Assert.Fail($"Error retrieving bills.\n{await billQryRq.Content.ReadAsStringAsync()}");
             BillOnlineRs billRs = new(await billQryRq.Content.ReadAsStringAsync());
-            BillDto bill = billRs.Bills.ElementAt(rdm.Next(0, billRs.TotalBills));
+            BillDto bill = billRs.Bills.OrderBy(b => Guid.NewGuid()).FirstOrDefault(b => b.Balance > 0);
 
             BillPaymentAddRq addRq = new();
             addRq.VendorRef = bill.VendorRef;
             addRq.TotalAmt = 12.34M;
             addRq.PayType = BillPaymentType.Check;
-            addRq.Line = new()
+            addRq.Line = new() { new()
             {
-                new()
-                {
-                    Amount = 12.34M,
-                    LinkedTxn = new() { new() { TxnId = bill.Id, TxnType = "Bill" } }
-                }
-            };
+                Amount = 12.34M,
+                LinkedTxn = new() { new() { TxnId = bill.Id, TxnType = "Bill" } }
+            }};
             addRq.CheckPayment = new() { BankAccountRef = new(bank.Id, bank.Name) };
             addRq.PrivateNote = testName;
             if (!addRq.IsEntityValid()) Assert.Fail($"addRq is invalid: {addRq.GetErrorsAsString()}");
+
             HttpResponseMessage postRs = await qboe.QBOPost(addRq.ApiParameter(qboe.ClientInfo.RealmId), addRq);
             if (!postRs.IsSuccessStatusCode) Assert.Inconclusive($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
@@ -107,19 +104,14 @@ namespace QbModels.QBOProcessor.TEST
             #endregion
 
             #region Updating Bill
-            if (billPaymentRs.TotalBillPayments <= 0) Assert.Fail($"{testName} to update.");
+            if (billPaymentRs.TotalBillPayments <= 0) Assert.Fail($"No {testName} to update.");
 
-            BillPaymentDto pmt = billPaymentRs.BillPayments.FirstOrDefault(pmt => pmt.PrivateNote.StartsWith(testName));
+            BillPaymentDto pmt = billPaymentRs.BillPayments.FirstOrDefault(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false);
             if (pmt == null) Assert.Inconclusive($"{testName} does not exist.");
             
             BillPaymentModRq modRq = new();
+            modRq.CopyDto(pmt);
             modRq.sparse = "true";
-            modRq.Id = pmt.Id;
-            modRq.SyncToken = pmt.SyncToken;
-            modRq.TotalAmt = pmt.TotalAmt;
-            modRq.Line = pmt.Line ?? new();
-            modRq.PayType = pmt.PayType;
-            modRq.VendorRef = pmt.VendorRef;
             modRq.PrivateNote = $"{testName} => {pmt.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
             
@@ -154,12 +146,10 @@ namespace QbModels.QBOProcessor.TEST
 
             BillPaymentDto billPmt = billPmtRs.BillPayments.FirstOrDefault(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false);
             if (billPmt == null) Assert.Fail($"{testName} does not exist.");
+
+            DeleteRq delRq = new("BillPayment", billPmt.Id, billPmt.SyncToken);
             
-            BillPaymentModRq modRq = new();
-            modRq.Id = billPmt.Id;
-            modRq.SyncToken = billPmt.SyncToken;
-            
-            HttpResponseMessage postRs = await qboe.QBOPost($"{modRq.ApiParameter(qboe.ClientInfo.RealmId)}?operation=delete", modRq);
+            HttpResponseMessage postRs = await qboe.QBOPost(delRq.ApiParameter(qboe.ClientInfo.RealmId), delRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             BillPaymentOnlineRs delRs = new(await postRs.Content.ReadAsStringAsync());

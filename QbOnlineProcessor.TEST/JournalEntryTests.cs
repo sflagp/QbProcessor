@@ -158,12 +158,9 @@ namespace QbModels.QBOProcessor.TEST
             JournalEntryDto journalEntry = journalEntryRs.JournalEntries.FirstOrDefault(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false);
             if (journalEntry == null) Assert.Inconclusive($"{testName} does not exist.");
 
-            JournalEntryModRq modRq = new();
-            modRq.Id = journalEntry.Id;
-            modRq.SyncToken = journalEntry.SyncToken;
-            Assert.IsFalse(modRq.IsEntityValid(), "modRq entity is not valid for deleting JournalEntry.");
+            DeleteRq delRq = new("JournalEntry", journalEntry.Id, journalEntry.SyncToken);
             
-            HttpResponseMessage postRs = await qboe.QBOPost($"{modRq.ApiParameter(qboe.ClientInfo.RealmId)}?operation=delete", modRq);
+            HttpResponseMessage postRs = await qboe.QBOPost(delRq.ApiParameter(qboe.ClientInfo.RealmId), delRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             JournalEntryOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());

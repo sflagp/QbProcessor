@@ -106,6 +106,7 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Updating Invoice
             if (InvoiceRs.TotalInvoices <= 0) Assert.Inconclusive("No Invoice to update.");
+
             InvoiceDto invoice = InvoiceRs.Invoices.FirstOrDefault(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false);
             if (invoice == null) Assert.Inconclusive($"{testName} does not exist.");
 
@@ -115,18 +116,15 @@ namespace QbModels.QBOProcessor.TEST
             ItemDto item = itemRs.Items.ElementAt(rdm.Next(0, itemRs.TotalItems));
 
             InvoiceModRq modRq = new();
+            modRq.CopyDto(invoice);
+            modRq.MetaData = null;
             modRq.sparse = "true";
-            modRq.Id = invoice.Id;
-            modRq.SyncToken = invoice.SyncToken;
-            modRq.TotalAmt = invoice.TotalAmt;
-            modRq.Line = invoice.Line;
             modRq.Line.Add(new() 
             {
                 DetailType = LineDetailType.SalesItemLineDetail,
                 Amount = item.UnitPrice,
                 LineDetail = new SalesItemLineDetailDto() { ItemRef = new(item.Id, item.Name), Qty = 5 },
             });
-            modRq.CustomerRef = invoice.CustomerRef;
             modRq.PrivateNote = $"{testName} => {invoice.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
             
@@ -192,10 +190,10 @@ namespace QbModels.QBOProcessor.TEST
             InvoiceDto invoice = invoiceRs.Invoices.FirstOrDefault(cm => cm.PrivateNote?.StartsWith(testName) ?? false);
             if (invoice == null) Assert.Inconclusive($"{testName} does not exist.");
 
-            HttpResponseMessage postRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/invoice/{invoice.Id}/pdf");
-            if (!postRs.IsSuccessStatusCode) Assert.Fail($"Invoice pdf download failed: {await postRs.Content.ReadAsStringAsync()}");
+            HttpResponseMessage pdfRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/invoice/{invoice.Id}/pdf", true);
+            if (!getRs.IsSuccessStatusCode) Assert.Fail($"Invoice pdf download failed: {await pdfRs.Content.ReadAsStringAsync()}");
 
-            string modRs = new(await postRs.Content.ReadAsStringAsync());
+            string modRs = new(await pdfRs.Content.ReadAsStringAsync());
             Assert.AreEqual(".pdf", IMAGE.GetContentType(modRs).FileExtension(), "Webapi result is not a PDF document.");
             #endregion
         }
@@ -220,15 +218,12 @@ namespace QbModels.QBOProcessor.TEST
             #region Deleting Invoice
             if (invoiceRs.TotalInvoices <= 0) Assert.Inconclusive($"No {testName} to delete.");
 
-            InvoiceDto Invoice = invoiceRs.Invoices.FirstOrDefault(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false);
-            if (Invoice == null) Assert.Inconclusive($"{testName} does not exist.");
+            InvoiceDto invoice = invoiceRs.Invoices.FirstOrDefault(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false);
+            if (invoice == null) Assert.Inconclusive($"{testName} does not exist.");
+
+            DeleteRq delRq = new("Invoice", invoice.Id, invoice.SyncToken);
             
-            InvoiceModRq modRq = new();
-            modRq.Id = Invoice.Id;
-            modRq.SyncToken = Invoice.SyncToken;
-            Assert.IsFalse(modRq.IsEntityValid(), "modRq entity is not valid for deleting Invoice.");
-            
-            HttpResponseMessage postRs = await qboe.QBOPost($"{modRq.ApiParameter(qboe.ClientInfo.RealmId)}?operation=delete", modRq);
+            HttpResponseMessage postRs = await qboe.QBOPost(delRq.ApiParameter(qboe.ClientInfo.RealmId), delRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             InvoiceOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());

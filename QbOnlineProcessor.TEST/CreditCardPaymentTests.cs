@@ -53,18 +53,13 @@ namespace QbModels.QBOProcessor.TEST
             #endregion
 
             #region Adding CreditCardPayment
-            if (qryRs.CreditCardPayments.Any(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false)) Assert.Inconclusive($"{testName} already exists.");
+            if (qryRs.TotalCreditCardPayments > 0 && qryRs.CreditCardPayments.Any(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false)) Assert.Inconclusive($"{testName} already exists.");
 
-            Random rdm = new();
             HttpResponseMessage acctQryRq = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Account"));
-            if (!acctQryRq.IsSuccessStatusCode) Assert.Fail($"Error retrieving bank accounts.\n{await acctQryRq.Content.ReadAsStringAsync()}");
-            AccountOnlineRs bankRs = new(await acctQryRq.Content.ReadAsStringAsync());
-            AccountDto bank = bankRs.Accounts.Where(b => b.AccountType == AccountType.Bank).OrderBy(ba => Guid.NewGuid()).FirstOrDefault();
-
-            HttpResponseMessage ccQryRq = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Account"));
-            if (!ccQryRq.IsSuccessStatusCode) Assert.Fail($"Error retrieving credit card accounts.\n{await ccQryRq.Content.ReadAsStringAsync()}");
-            AccountOnlineRs ccRs = new(await ccQryRq.Content.ReadAsStringAsync());
-            AccountDto creditCard = ccRs.Accounts.Where(cc => cc.AccountType == AccountType.CreditCard).OrderBy(c => Guid.NewGuid()).FirstOrDefault();
+            if (!acctQryRq.IsSuccessStatusCode) Assert.Fail($"Error retrieving accounts.\n{await acctQryRq.Content.ReadAsStringAsync()}");
+            AccountOnlineRs acctsRs = new(await acctQryRq.Content.ReadAsStringAsync());
+            AccountDto bank = acctsRs.Accounts.OrderBy(ba => Guid.NewGuid()).FirstOrDefault(b => b.AccountType == AccountType.Bank);
+            AccountDto creditCard = acctsRs.Accounts.OrderBy(c => Guid.NewGuid()).FirstOrDefault(cc => cc.AccountType == AccountType.CreditCard);
 
             CreditCardPaymentAddRq addRq = new();
             addRq.BankAccountRef = new(bank.Id, bank.Name);
@@ -73,6 +68,7 @@ namespace QbModels.QBOProcessor.TEST
             addRq.TxnDate = DateTime.Now;
             addRq.PrivateNote = testName;
             if (!addRq.IsEntityValid()) Assert.Fail($"addRq is invalid: {addRq.GetErrorsAsString()}");
+            
             HttpResponseMessage postRs = await qboe.QBOPost(addRq.ApiParameter(qboe.ClientInfo.RealmId), addRq);
             if (!postRs.IsSuccessStatusCode) Assert.Inconclusive($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
@@ -147,10 +143,10 @@ namespace QbModels.QBOProcessor.TEST
             CreditCardPaymentTxnDto ccPmt = billPmtRs.CreditCardPayments.FirstOrDefault(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false);
             if (ccPmt == null) Assert.Fail($"IMS CreditCardPayment does not exist.");
 
-            CreditCardPaymentModRq modRq = new();
-            modRq.Id = ccPmt.Id;
-            modRq.SyncToken = ccPmt.SyncToken;
-            HttpResponseMessage postRs = await qboe.QBOPost($"{modRq.ApiParameter(qboe.ClientInfo.RealmId)}?operation=delete", modRq);
+            DeleteRq delRq = new("CreditCardPayment", ccPmt.Id, ccPmt.SyncToken);
+
+            // Credit card payment will only work as Json.  #becauseintuit
+            HttpResponseMessage postRs = await qboe.QBOPost(delRq.ApiParameter(qboe.ClientInfo.RealmId), delRq, false);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             CreditCardPaymentOnlineRs delRs = new(await postRs.Content.ReadAsStringAsync());

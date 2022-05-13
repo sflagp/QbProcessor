@@ -107,16 +107,13 @@ namespace QbModels.QBOProcessor.TEST
             #region Updating Payment
             if (qryRs.TotalPayments <= 0) Assert.Fail($"{testName} to update.");
 
-            PaymentDto pmt = qryRs.Payments.FirstOrDefault(pmt => pmt.PrivateNote.StartsWith(testName));
+            PaymentDto pmt = qryRs.Payments.FirstOrDefault(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false);
             if (pmt == null) Assert.Inconclusive($"{testName} does not exist.");
             
             PaymentModRq modRq = new();
+            modRq.CopyDto(pmt);
+            modRq.MetaData = null;
             modRq.sparse = "true";
-            modRq.Id = pmt.Id;
-            modRq.SyncToken = pmt.SyncToken;
-            modRq.TotalAmt = pmt.TotalAmt;
-            modRq.Line = pmt.Line ?? default;
-            modRq.CustomerRef = pmt.CustomerRef;
             modRq.PrivateNote = $"{testName} => {pmt.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
             
@@ -179,13 +176,13 @@ namespace QbModels.QBOProcessor.TEST
             #region Downloading Payment
             if (pmtRs.TotalPayments <= 0) Assert.Inconclusive($"No {testName} to download.");
 
-            PaymentDto Payment = pmtRs.Payments.FirstOrDefault(cm => cm.PrivateNote?.StartsWith(testName) ?? false);
-            if (Payment == null) Assert.Inconclusive($"{testName} does not exist.");
+            PaymentDto payment = pmtRs.Payments.FirstOrDefault(cm => cm.PrivateNote?.StartsWith(testName) ?? false);
+            if (payment == null) Assert.Inconclusive($"{testName} does not exist.");
 
-            HttpResponseMessage postRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/payment/{Payment.Id}/pdf");
-            if (!postRs.IsSuccessStatusCode) Assert.Fail($"Payment pdf download failed: {await postRs.Content.ReadAsStringAsync()}");
+            HttpResponseMessage pdfRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/payment/{payment.Id}/pdf", true);
+            if (!pdfRs.IsSuccessStatusCode) Assert.Fail($"Payment pdf download failed: {await pdfRs.Content.ReadAsStringAsync()}");
 
-            string modRs = new(await postRs.Content.ReadAsStringAsync());
+            string modRs = new(await pdfRs.Content.ReadAsStringAsync());
             Assert.AreEqual(".pdf", IMAGE.GetContentType(modRs).FileExtension(), "Webapi result is not a PDF document.");
             #endregion
         }
@@ -210,16 +207,14 @@ namespace QbModels.QBOProcessor.TEST
             #endregion
 
             #region Deleting Payment
-            if (qryRs.TotalPayments <= 0) Assert.Fail($"No {testName} to delete.");
+            if (qryRs.TotalPayments <= 0) Assert.Inconclusive($"No {testName} to delete.");
 
             PaymentDto billPmt = qryRs.Payments.FirstOrDefault(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false);
             if (billPmt == null) Assert.Fail($"{testName} does not exist.");
             
-            PaymentModRq modRq = new();
-            modRq.Id = billPmt.Id;
-            modRq.SyncToken = billPmt.SyncToken;
+            DeleteRq delRq = new("Payment", billPmt.Id, billPmt.SyncToken);
             
-            HttpResponseMessage postRs = await qboe.QBOPost($"{modRq.ApiParameter(qboe.ClientInfo.RealmId)}?operation=delete", modRq);
+            HttpResponseMessage postRs = await qboe.QBOPost(delRq.ApiParameter(qboe.ClientInfo.RealmId), delRq, false);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             PaymentOnlineRs delRs = new(await postRs.Content.ReadAsStringAsync());

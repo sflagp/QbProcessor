@@ -189,13 +189,10 @@ namespace QbModels.QBOProcessor.TEST
 
             EstimateDto estimate = estimateRs.Estimates.FirstOrDefault(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false);
             if (estimate == null) Assert.Inconclusive($"{testName} does not exist.");
+
+            DeleteRq delRq = new("Estimate", estimate.Id, estimate.SyncToken);
             
-            EstimateModRq modRq = new();
-            modRq.Id = estimate.Id;
-            modRq.SyncToken = estimate.SyncToken;
-            Assert.IsFalse(modRq.IsEntityValid(), "modRq entity is not valid for deleting Estimate.");
-            
-            HttpResponseMessage postRs = await qboe.QBOPost($"{modRq.ApiParameter(qboe.ClientInfo.RealmId)}?operation=delete", modRq);
+            HttpResponseMessage postRs = await qboe.QBOPost(delRq.ApiParameter(qboe.ClientInfo.RealmId), delRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             EstimateOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());

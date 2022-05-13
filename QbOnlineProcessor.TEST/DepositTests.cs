@@ -142,13 +142,13 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Deleting Deposit
             if (DepositRs.TotalDeposits <= 0) Assert.Inconclusive($"No {testName} to delete.");
-            DepositDto Deposit = DepositRs.Deposits.FirstOrDefault(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false);
-            if (Deposit == null) Assert.Inconclusive($"{testName} does not exist.");
-            DepositModRq modRq = new();
-            modRq.Id = Deposit.Id;
-            modRq.SyncToken = Deposit.SyncToken;
-            Assert.IsFalse(modRq.IsEntityValid(), "modRq entity is not valid for deleting Deposit.");
-            HttpResponseMessage postRs = await qboe.QBOPost($"{modRq.ApiParameter(qboe.ClientInfo.RealmId)}?operation=delete", modRq);
+
+            DepositDto deposit = DepositRs.Deposits.FirstOrDefault(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false);
+            if (deposit == null) Assert.Inconclusive($"{testName} does not exist.");
+
+            DeleteRq delRq = new("Deposit", deposit.Id, deposit.SyncToken);
+            
+            HttpResponseMessage postRs = await qboe.QBOPost(delRq.ApiParameter(qboe.ClientInfo.RealmId), delRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             DepositOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());

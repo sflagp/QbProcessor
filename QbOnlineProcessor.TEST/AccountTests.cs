@@ -25,6 +25,7 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting accounts
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
+
             HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Account"));
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"QBOGet failed: {await getRs.Content.ReadAsStringAsync()}");
 
@@ -94,10 +95,8 @@ namespace QbModels.QBOProcessor.TEST
             if (acct == null) Assert.Fail($"{testName} does not exist.");
             
             AccountModRq modRq = new();
+            modRq.CopyDto(acct);
             modRq.sparse = "true";
-            modRq.Id = acct.Id;
-            modRq.Name = acct.Name;
-            modRq.SyncToken = acct.SyncToken;
             modRq.Description = $"{testName} Test => {acct.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
             

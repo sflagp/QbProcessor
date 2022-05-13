@@ -182,13 +182,13 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Deleting CreditMemo
             if (creditMemoRs.TotalCreditMemos <= 0) Assert.Inconclusive($"No {testName} to delete.");
+
             CreditMemoDto creditMemo = creditMemoRs.CreditMemos.FirstOrDefault(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false);
             if (creditMemo == null) Assert.Inconclusive($"{testName} does not exist.");
-            CreditMemoModRq modRq = new();
-            modRq.Id = creditMemo.Id;
-            modRq.SyncToken = creditMemo.SyncToken;
-            Assert.IsFalse(modRq.IsEntityValid(), "modRq entity is not valid for deleting CreditMemo.");
-            HttpResponseMessage postRs = await qboe.QBOPost($"{modRq.ApiParameter(qboe.ClientInfo.RealmId)}?operation=delete", modRq);
+
+            DeleteRq delRq = new("CreditMemo", creditMemo.Id, creditMemo.SyncToken);
+            
+            HttpResponseMessage postRs = await qboe.QBOPost(delRq.ApiParameter(qboe.ClientInfo.RealmId), delRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             CreditMemoOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
