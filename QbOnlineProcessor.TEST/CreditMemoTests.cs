@@ -47,24 +47,26 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting CreditMemos
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
+            
             HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from CreditMemo"));
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"Error querying CreditMemo: {await getRs.Content.ReadAsStringAsync()}");
-            CreditMemoOnlineRs acctRs = new(await getRs.Content.ReadAsStringAsync());
+            
+            CreditMemoOnlineRs creditMemoRs = new(await getRs.Content.ReadAsStringAsync());
             #endregion
 
             #region Adding CreditMemo
-            if (acctRs.CreditMemos.Any(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false)) Assert.Inconclusive($"{testName} already exists.");
+            if (creditMemoRs.CreditMemos.Any(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false)) Assert.Inconclusive($"{testName} already exists.");
 
-            Random rdm = new();
             HttpResponseMessage custQryRq = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Customer"));
             if (!custQryRq.IsSuccessStatusCode) Assert.Fail($"Error retrieving customers.\n{await custQryRq.Content.ReadAsStringAsync()}");
+
             CustomerOnlineRs custRs = new(await custQryRq.Content.ReadAsStringAsync());
-            CustomerDto cust = custRs.Customers.ElementAt(rdm.Next(0, custRs.TotalCustomers));
+            CustomerDto cust = custRs.Customers.OrderBy(c => Guid.NewGuid()).FirstOrDefault();
 
             HttpResponseMessage itemQryRq = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Item where Type = 'Service'"));
             if (!itemQryRq.IsSuccessStatusCode) Assert.Fail($"Error retrieving items.\n{await itemQryRq.Content.ReadAsStringAsync()}");
             ItemOnlineRs itemRs = new(await itemQryRq.Content.ReadAsStringAsync());
-            ItemDto item = itemRs.Items.ElementAt(rdm.Next(0, itemRs.TotalItems));
+            ItemDto item = itemRs.Items.OrderBy(i => Guid.NewGuid()).FirstOrDefault();
 
             CreditMemoAddRq addRq = new();
             addRq.CustomerRef = new(cust.Id, cust.FullyQualifiedName);
@@ -76,6 +78,7 @@ namespace QbModels.QBOProcessor.TEST
             }};
             addRq.PrivateNote = testName;
             if (!addRq.IsEntityValid()) Assert.Fail($"addRq is invalid: {addRq.GetErrorsAsString()}");
+            
             HttpResponseMessage postRs = await qboe.QBOPost(addRq.ApiParameter(qboe.ClientInfo.RealmId), addRq);
             if (!postRs.IsSuccessStatusCode) Assert.Inconclusive($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
@@ -95,21 +98,24 @@ namespace QbModels.QBOProcessor.TEST
             using QBOProcessor qboe = new();
 
             #region Getting CreditMemo
-            Random rdm = new();
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
+            
             HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from CreditMemo"));
+            
             CreditMemoOnlineRs creditMemoRs = new(await getRs.Content.ReadAsStringAsync());
             #endregion
 
             #region Updating CreditMemo
             if (creditMemoRs.TotalCreditMemos <= 0) Assert.Inconclusive("No CreditMemo to update.");
+            
             CreditMemoDto creditMemo = creditMemoRs.CreditMemos.FirstOrDefault(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false);
             if (creditMemo == null) Assert.Inconclusive($"{testName} does not exist.");
 
             HttpResponseMessage itemQryRq = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Item where Type = 'Inventory'"));
             if (!itemQryRq.IsSuccessStatusCode) Assert.Fail($"Error retrieving items.\n{await itemQryRq.Content.ReadAsStringAsync()}");
+            
             ItemOnlineRs itemRs = new(await itemQryRq.Content.ReadAsStringAsync());
-            ItemDto item = itemRs.Items.ElementAt(rdm.Next(0, itemRs.TotalItems));
+            ItemDto item = itemRs.Items.OrderBy(i => Guid.NewGuid()).FirstOrDefault();
 
             CreditMemoModRq modRq = new();
             modRq.sparse = "true";
@@ -126,6 +132,7 @@ namespace QbModels.QBOProcessor.TEST
             modRq.CustomerRef = creditMemo.CustomerRef;
             modRq.PrivateNote = $"{testName} => {creditMemo.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
+            
             HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
@@ -146,16 +153,19 @@ namespace QbModels.QBOProcessor.TEST
             using QBOProcessor qboe = new();
 
             #region Getting CreditMemo
-            Random rdm = new();
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
+            
             HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from CreditMemo"));
+            
             CreditMemoOnlineRs creditMemoRs = new(await getRs.Content.ReadAsStringAsync());
             #endregion
 
             #region Emailing CreditMemo
             if (creditMemoRs.TotalCreditMemos <= 0) Assert.Inconclusive($"No {testName} to email.");
+
             CreditMemoDto creditMemo = creditMemoRs.CreditMemos.FirstOrDefault(cm => cm.PrivateNote?.StartsWith(testName) ?? false);
             if (creditMemo == null) Assert.Inconclusive($"{testName} does not exist.");
+            
             HttpResponseMessage postRs = await qboe.QBOPost($"/v3/company/{qboe.ClientInfo.RealmId}/creditmemo/{creditMemo.Id}/send?sendTo=sfla_gp@yahoo.com");
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
@@ -176,8 +186,10 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting CreditMemo
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
+
             HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from CreditMemo"));
             if (!getRs.IsSuccessStatusCode) Assert.Inconclusive($"Could not retrieve CreditMemo to delete: {await getRs.Content.ReadAsStringAsync()}");
+            
             CreditMemoOnlineRs creditMemoRs = new(await getRs.Content.ReadAsStringAsync());
             #endregion
 
