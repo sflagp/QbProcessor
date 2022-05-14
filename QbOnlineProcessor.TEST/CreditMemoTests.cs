@@ -135,6 +135,7 @@ namespace QbModels.QBOProcessor.TEST
         }
 
         [TestMethod]
+        [Ignore]
         public async Task Step_4_QBOCreditMemoEmailTest()
         {
             #region Setting access token
