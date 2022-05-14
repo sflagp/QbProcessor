@@ -116,7 +116,7 @@ namespace QbModels.QBOProcessor.TEST
             ItemDto item = itemRs.Items.ElementAt(rdm.Next(0, itemRs.TotalItems));
 
             InvoiceModRq modRq = new();
-            modRq.CopyDto(invoice, "MetaData");
+            modRq.CopyDto(invoice);
             modRq.sparse = "true";
             modRq.Line.Add(new() 
             {

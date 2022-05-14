@@ -118,7 +118,7 @@ namespace QbModels.QBOProcessor.TEST
             ItemDto item = itemRs.Items.OrderBy(i => Guid.NewGuid()).FirstOrDefault();
 
             SalesReceiptModRq modRq = new();
-            modRq.CopyDto(SalesReceipt, "MetaData");
+            modRq.CopyDto(SalesReceipt);
             modRq.sparse = "true";
             modRq.Line.Add(new() 
             {

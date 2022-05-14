@@ -115,7 +115,7 @@ namespace QbModels.QBOProcessor.TEST
             ItemDto item = itemRs.Items.OrderBy(i => Guid.NewGuid()).FirstOrDefault(i => i.Type == ItemType.Inventory);
 
             PurchaseModRq modRq = new();
-            modRq.CopyDto(purchase, "MetaData");
+            modRq.CopyDto(purchase);
             modRq.sparse = "true";
             modRq.Line.Add(new() 
             {

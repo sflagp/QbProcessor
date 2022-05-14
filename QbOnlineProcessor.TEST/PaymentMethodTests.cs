@@ -118,7 +118,7 @@ namespace QbModels.QBOProcessor.TEST
             if (pmtMethod == null) Assert.Fail($"{testName} does not exist.");
 
             PaymentMethodModRq modRq = new();
-            modRq.CopyDto(pmtMethod, "MetaData");
+            modRq.CopyDto(pmtMethod);
             modRq.sparse = "true";
             modRq.Type = modRq.Type == "CREDIT_CARD" ? "NON_CREDIT_CARD" : "CREDIT_CARD";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");

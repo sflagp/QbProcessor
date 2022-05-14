@@ -63,7 +63,7 @@ namespace QbModels.QBOProcessor.TEST
             string subStatement = $"Statement from {company.CompanyName}";
 
             PreferencesModRq modRq = new();
-            modRq.CopyDto(preferences.Preferences, "MetaData");
+            modRq.CopyDto(preferences.Preferences);
             modRq.sparse = "true";
             EmailMessagesPrefsDto emailMsgs = modRq.EmailMessagesPrefs;
             emailMsgs.EstimateMessage.Message = emailMsgs.EstimateMessage.Message.Replace("Craig's Design and Landscaping Services", company.CompanyName);

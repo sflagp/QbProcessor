@@ -113,7 +113,7 @@ namespace QbModels.QBOProcessor.TEST
             ItemDto item = itemRs.Items.OrderBy(i => Guid.NewGuid()).FirstOrDefault();
 
             RefundReceiptModRq modRq = new();
-            modRq.CopyDto(refundReceipt, "MetaData");
+            modRq.CopyDto(refundReceipt);
             modRq.sparse = "true";
             modRq.Line.Add(new() 
             {

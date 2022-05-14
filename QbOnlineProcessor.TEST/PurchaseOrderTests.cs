@@ -122,7 +122,7 @@ namespace QbModels.QBOProcessor.TEST
             ItemDto item = itemRs.Items.OrderBy(i => Guid.NewGuid()).FirstOrDefault(i => i.Type == ItemType.Inventory);
 
             PurchaseOrderModRq modRq = new();
-            modRq.CopyDto(purchaseOrder, "MetaData");
+            modRq.CopyDto(purchaseOrder);
             modRq.sparse = "true";
             modRq.Line.Add(new() 
             {
