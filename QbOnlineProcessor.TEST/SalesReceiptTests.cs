@@ -138,7 +138,6 @@ namespace QbModels.QBOProcessor.TEST
         }
 
         [TestMethod]
-        [Ignore]
         public async Task Step_4_QBOSalesReceiptEmailTest()
         {
             #region Setting access token
@@ -162,7 +161,7 @@ namespace QbModels.QBOProcessor.TEST
             SalesReceiptDto salesReceipt = SalesReceiptRs.SalesReceipts.FirstOrDefault(cm => cm.PrivateNote?.StartsWith(testName) ?? false);
             if (salesReceipt == null) Assert.Inconclusive($"{testName} does not exist.");
             
-            HttpResponseMessage postRs = await qboe.QBOPost($"/v3/company/{qboe.ClientInfo.RealmId}/SalesReceipt/{salesReceipt.Id}/send?sendTo=sfla_gp@yahoo.com");
+            HttpResponseMessage postRs = await qboe.QBOPost($"/v3/company/{qboe.ClientInfo.RealmId}/salesreceipt/{salesReceipt.Id}/send?sendTo=sfla_gp@yahoo.com");
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             SalesReceiptOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
