@@ -5,7 +5,6 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -60,14 +59,14 @@ namespace QbModels.QBOProcessor
                         authListener.Stop();
                         Console.WriteLine("HTTP server stopped.");
                     });
-                    if(authCodeResponse.State != authState)
+                    if (authCodeResponse.State != authState)
                     {
                         return null;
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    Console.WriteLine($"{ex.HResult} {ex.Message}");
+                    throw new AccessViolationException($"Error {ex.HResult} starting HttpListener: {ex.Message}");
                 }
             }
 
@@ -78,7 +77,7 @@ namespace QbModels.QBOProcessor
         {
             AuthCodeResponse response = new();
             string[] codeResp = ctxt.Request.Url.ToString().Replace($"{Settings.RedirectUri}?", string.Empty).Split('?', '&');
-            foreach(string resp in codeResp)
+            foreach (string resp in codeResp)
             {
                 string[] r = resp.Split('=');
                 switch (r[0].ToLower())
@@ -96,7 +95,7 @@ namespace QbModels.QBOProcessor
             }
             return response;
         }
-        
+
         private static string GenAuthRespHtml(string authState, AuthCodeResponse authCodeResponse)
         {
             return $@"
