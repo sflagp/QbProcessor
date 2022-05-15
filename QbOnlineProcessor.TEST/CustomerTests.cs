@@ -87,22 +87,21 @@ namespace QbModels.QBOProcessor.TEST
             #region Updating Customer
             if (acctRs.TotalCustomers <= 0) Assert.Fail($"No {testName} to update.");
 
-            CustomerDto acct = acctRs.Customers.FirstOrDefault(a => a.FullyQualifiedName.Equals(testName));
-            if (acct == null) Assert.Fail($"{testName} does not exist.");
+            CustomerDto cust = acctRs.Customers.FirstOrDefault(a => a.FullyQualifiedName.Equals(testName));
+            if (cust == null) Assert.Fail($"{testName} does not exist.");
 
             CustomerModRq modRq = new();
+            modRq.CopyDto(cust);
             modRq.sparse = "true";
-            modRq.Id = acct.Id;
-            modRq.GivenName = acct.GivenName;
-            modRq.SyncToken = acct.SyncToken;
-            modRq.Notes = $"{testName} Test => {acct.SyncToken}";
+            modRq.Notes = $"{testName} Test => {cust.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
 
             HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             CustomerOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
-            Assert.AreNotEqual(acct.Notes, modRs.Customers?[0]?.Notes);
+            Assert.AreNotEqual(cust.Notes, modRs.Customers?[0]?.Notes);
+            Assert.AreNotEqual(cust.MetaData.LastUpdatedTime, modRs.Customers[0].MetaData.LastUpdatedTime);
             #endregion
         }
 

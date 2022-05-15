@@ -101,13 +101,8 @@ namespace QbModels.QBOProcessor.TEST
             if (ccPmt == null) Assert.Inconclusive($"{testName} does not exist.");
 
             CreditCardPaymentModRq modRq = new();
+            modRq.CopyDto(ccPmt);
             modRq.sparse = "true";
-            modRq.Id = ccPmt.Id;
-            modRq.SyncToken = ccPmt.SyncToken;
-            modRq.TxnDate = ccPmt.TxnDate;
-            modRq.Amount = ccPmt.Amount;
-            modRq.BankAccountRef = ccPmt.BankAccountRef;
-            modRq.CreditCardAccountRef = ccPmt.CreditCardAccountRef;
             modRq.PrivateNote = $"{testName} => {ccPmt.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
 
@@ -116,6 +111,7 @@ namespace QbModels.QBOProcessor.TEST
 
             CreditCardPaymentOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
             Assert.AreNotEqual(ccPmt.PrivateNote, modRs.CreditCardPayments?[0]?.PrivateNote);
+            Assert.AreNotEqual(ccPmt.MetaData.LastUpdatedTime, modRs.CreditCardPayments[0].MetaData.LastUpdatedTime);
             #endregion
         }
 

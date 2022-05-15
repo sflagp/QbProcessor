@@ -123,11 +123,8 @@ namespace QbModels.QBOProcessor.TEST
             if (item == null) Assert.Fail($"{testName} does not exist.");
             
             ItemModRq modRq = new();
+            modRq.CopyDto(item);
             modRq.sparse = "true";
-            modRq.Id = item.Id;
-            modRq.SyncToken = item.SyncToken;
-            modRq.Name = item.Name;
-            modRq.IncomeAccountRef = item.IncomeAccountRef;
             modRq.Description = $"{testName} Test => {item.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
             
@@ -136,6 +133,7 @@ namespace QbModels.QBOProcessor.TEST
 
             ItemOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
             Assert.AreNotEqual(item.Description, modRs.Items?[0]?.Description);
+            Assert.AreNotEqual(item.MetaData.LastUpdatedTime, modRs.Items[0].MetaData.LastUpdatedTime);
             #endregion
         }
     }

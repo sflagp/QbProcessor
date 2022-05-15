@@ -132,6 +132,7 @@ namespace QbModels.QBOProcessor.TEST
 
             JournalEntryOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
             Assert.AreNotEqual(journalEntry.PrivateNote, modRs.JournalEntries?[0]?.PrivateNote);
+            Assert.AreNotEqual(journalEntry.MetaData.LastUpdatedTime, modRs.JournalEntries[0].MetaData.LastUpdatedTime);
             #endregion
         }
 

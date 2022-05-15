@@ -118,18 +118,14 @@ namespace QbModels.QBOProcessor.TEST
             ItemDto item = itemRs.Items.OrderBy(i => Guid.NewGuid()).FirstOrDefault();
 
             CreditMemoModRq modRq = new();
+            modRq.CopyDto(creditMemo);
             modRq.sparse = "true";
-            modRq.Id = creditMemo.Id;
-            modRq.SyncToken = creditMemo.SyncToken;
-            modRq.TotalAmt = creditMemo.TotalAmt;
-            modRq.Line = creditMemo.Line;
             modRq.Line.Add(new() 
             {
                 DetailType = LineDetailType.SalesItemLineDetail,
                 Amount = item.UnitPrice,
                 LineDetail = new SalesItemLineDetailDto() { ItemRef = new(item.Id, item.Name), Qty = 5 },
             });
-            modRq.CustomerRef = creditMemo.CustomerRef;
             modRq.PrivateNote = $"{testName} => {creditMemo.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
             
@@ -138,6 +134,7 @@ namespace QbModels.QBOProcessor.TEST
 
             CreditMemoOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
             Assert.AreNotEqual(creditMemo.PrivateNote, modRs.CreditMemos?[0]?.PrivateNote);
+            Assert.AreNotEqual(creditMemo.MetaData.LastUpdatedTime, modRs.CreditMemos[0].MetaData.LastUpdatedTime);
             #endregion
         }
 

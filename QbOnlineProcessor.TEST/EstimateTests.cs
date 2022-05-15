@@ -113,18 +113,14 @@ namespace QbModels.QBOProcessor.TEST
             ItemDto item = itemRs.Items.ElementAt(rdm.Next(0, itemRs.TotalItems));
 
             EstimateModRq modRq = new();
+            modRq.CopyDto(estimate);
             modRq.sparse = "true";
-            modRq.Id = estimate.Id;
-            modRq.SyncToken = estimate.SyncToken;
-            modRq.TotalAmt = estimate.TotalAmt;
-            modRq.Line = estimate.Line;
             modRq.Line.Add(new() 
             {
                 DetailType = LineDetailType.SalesItemLineDetail,
                 Amount = item.UnitPrice,
                 LineDetail = new SalesItemLineDetailDto() { ItemRef = new(item.Id, item.Name), Qty = 5 },
             });
-            modRq.CustomerRef = estimate.CustomerRef;
             modRq.PrivateNote = $"{testName} => {estimate.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
             
@@ -133,6 +129,7 @@ namespace QbModels.QBOProcessor.TEST
 
             EstimateOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
             Assert.AreNotEqual(estimate.PrivateNote, modRs.Estimates?[0]?.PrivateNote);
+            Assert.AreNotEqual(estimate.MetaData.LastUpdatedTime, modRs.Estimates[0].MetaData.LastUpdatedTime);
             #endregion
         }
 

@@ -47,17 +47,20 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting Classes
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
+
             HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Class"));
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"Error querying Class: {await getRs.Content.ReadAsStringAsync()}");
-            ClassOnlineRs acctRs = new(await getRs.Content.ReadAsStringAsync());
+            
+            ClassOnlineRs clsRs = new(await getRs.Content.ReadAsStringAsync());
             #endregion
 
             #region Adding Class
-            if (acctRs.Classes.Any(c => c.FullyQualifiedName?.StartsWith(testName) ?? false)) Assert.Inconclusive($"{testName} already exists.");
+            if (clsRs.Classes != null && clsRs.Classes.Any(c => c.FullyQualifiedName?.StartsWith(testName) ?? false)) Assert.Inconclusive($"{testName} already exists.");
 
             ClassAddRq addRq = new();
             addRq.Name = testName;
             if (!addRq.IsEntityValid()) Assert.Fail($"addRq is invalid: {addRq.GetErrorsAsString()}");
+
             HttpResponseMessage postRs = await qboe.QBOPost(addRq.ApiParameter(qboe.ClientInfo.RealmId), addRq);
             if (!postRs.IsSuccessStatusCode) Assert.Inconclusive($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
@@ -84,17 +87,15 @@ namespace QbModels.QBOProcessor.TEST
             #endregion
 
             #region Updating Class
-            if (ClassRs.TotalClasses <= 0) Assert.Fail($"No {testName} to update.");
+            if (ClassRs.TotalClasses <= 0) Assert.Inconclusive($"No {testName} to update.");
 
             ClassDto cls = ClassRs.Classes.FirstOrDefault(c => c.FullyQualifiedName.StartsWith(testName));
             if (cls == null) Assert.Inconclusive($"{testName} does not exist.");
             
             ClassModRq modRq = new();
+            modRq.CopyDto(cls);
             modRq.sparse = "true";
-            modRq.Id = cls.Id;
-            modRq.SyncToken = cls.SyncToken;
-            modRq.Name = cls.Name;
-            modRq.FullyQualifiedName = $"IMS Class => {cls.SyncToken}";
+            modRq.SubClass = !modRq.SubClass;
             
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
             HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
@@ -102,6 +103,42 @@ namespace QbModels.QBOProcessor.TEST
 
             ClassOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
             Assert.AreEqual(cls.Name, modRs.Classes?[0]?.Name);
+            #endregion
+        }
+
+        [TestMethod]
+        public async Task Step_4_QBOClassDelTest()
+        {
+            #region Setting access token
+            TestAccessToken accessToken = new();
+            await accessToken.AccessTokenTest();
+            #endregion
+
+            using QBOProcessor qboe = new();
+
+            #region Getting Class
+            if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
+            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Class"));
+            ClassOnlineRs ClassRs = new(await getRs.Content.ReadAsStringAsync());
+            #endregion
+
+            #region Deleting Class
+            if (ClassRs.TotalClasses <= 0) Assert.Inconclusive($"No {testName} to update.");
+
+            ClassDto cls = ClassRs.Classes.FirstOrDefault(c => c.FullyQualifiedName.StartsWith(testName));
+            if (cls == null) Assert.Inconclusive($"{testName} does not exist.");
+
+            ClassModRq modRq = new();
+            modRq.CopyDto(cls);
+            modRq.sparse = "true";
+            modRq.Active = false;
+            if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
+
+            HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
+            if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
+
+            ClassOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
+            Assert.IsTrue(modRs.Classes?[0]?.Name.Contains("deleted"));
             #endregion
         }
     }

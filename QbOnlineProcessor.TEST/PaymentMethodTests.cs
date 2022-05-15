@@ -128,6 +128,7 @@ namespace QbModels.QBOProcessor.TEST
 
             PaymentMethodOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
             Assert.AreNotEqual(pmtMethod.Type, modRs.PaymentMethods[0]?.Type);
+            Assert.AreNotEqual(pmtMethod.MetaData.LastUpdatedTime, modRs.PaymentMethods[0].MetaData.LastUpdatedTime);
             #endregion
         }
     }

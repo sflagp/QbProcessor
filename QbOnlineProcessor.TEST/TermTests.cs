@@ -103,6 +103,7 @@ namespace QbModels.QBOProcessor.TEST
 
             TermOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
             Assert.AreNotEqual(term.DueDays, modRs.Terms?[0]?.DueDays);
+            Assert.AreNotEqual(term.MetaData.LastUpdatedTime, modRs.Terms[0].MetaData.LastUpdatedTime);
             #endregion
         }
     }

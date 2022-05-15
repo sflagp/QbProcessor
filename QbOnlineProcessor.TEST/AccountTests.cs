@@ -105,6 +105,7 @@ namespace QbModels.QBOProcessor.TEST
 
             AccountOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
             Assert.AreNotEqual(acct.Description, modRs.Accounts?[0]?.Description);
+            Assert.AreNotEqual(acct.MetaData.LastUpdatedTime, modRs.Accounts[0].MetaData.LastUpdatedTime);
             #endregion
         }
     }

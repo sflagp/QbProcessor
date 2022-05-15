@@ -73,7 +73,7 @@ namespace QbModels.QBOProcessor.TEST
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             TransferOnlineRs addRs = new(await postRs.Content.ReadAsStringAsync());
-            Assert.AreEqual(fromAcct.Name, addRs.Transfers[0].FromAccountRef.name);
+            Assert.AreEqual(fromAcct.Id, addRs.Transfers[0].FromAccountRef.Value);
             #endregion
         }
 

@@ -132,6 +132,7 @@ namespace QbModels.QBOProcessor.TEST
 
             InvoiceOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
             Assert.AreNotEqual(invoice.PrivateNote, modRs.Invoices?[0]?.PrivateNote);
+            Assert.AreNotEqual(invoice.MetaData.LastUpdatedTime, modRs.Invoices[0].MetaData.LastUpdatedTime);
             #endregion
         }
 

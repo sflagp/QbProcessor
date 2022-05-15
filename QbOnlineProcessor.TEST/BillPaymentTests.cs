@@ -106,20 +106,21 @@ namespace QbModels.QBOProcessor.TEST
             #region Updating Bill
             if (billPaymentRs.TotalBillPayments <= 0) Assert.Fail($"No {testName} to update.");
 
-            BillPaymentDto pmt = billPaymentRs.BillPayments.FirstOrDefault(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false);
-            if (pmt == null) Assert.Inconclusive($"{testName} does not exist.");
+            BillPaymentDto billPmt = billPaymentRs.BillPayments.FirstOrDefault(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false);
+            if (billPmt == null) Assert.Inconclusive($"{testName} does not exist.");
             
             BillPaymentModRq modRq = new();
-            modRq.CopyDto(pmt);
+            modRq.CopyDto(billPmt);
             modRq.sparse = "true";
-            modRq.PrivateNote = $"{testName} => {pmt.SyncToken}";
+            modRq.PrivateNote = $"{testName} => {billPmt.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
             
             HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             BillPaymentOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
-            Assert.AreNotEqual(pmt.PrivateNote, modRs.BillPayments?[0]?.PrivateNote);
+            Assert.AreNotEqual(billPmt.PrivateNote, modRs.BillPayments?[0]?.PrivateNote);
+            Assert.AreNotEqual(billPmt.MetaData.LastUpdatedTime, modRs.BillPayments[0].MetaData.LastUpdatedTime);
             #endregion
         }
 

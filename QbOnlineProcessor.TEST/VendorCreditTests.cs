@@ -122,6 +122,7 @@ namespace QbModels.QBOProcessor.TEST
 
             VendorCreditOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
             Assert.AreNotEqual(vendorCredit.PrivateNote, modRs.VendorCredits?[0]?.PrivateNote);
+            Assert.AreNotEqual(vendorCredit.MetaData.LastUpdatedTime, modRs.VendorCredits[0].MetaData.LastUpdatedTime);
             #endregion
         }
 

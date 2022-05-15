@@ -108,8 +108,8 @@ namespace QbModels.QBOProcessor.TEST
             #region Updating SalesReceipt
             if (salesReceiptRs.TotalSalesReceipts <= 0) Assert.Inconclusive("No SalesReceipt to update.");
 
-            SalesReceiptDto SalesReceipt = salesReceiptRs.SalesReceipts.FirstOrDefault(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false);
-            if (SalesReceipt == null) Assert.Inconclusive($"{testName} does not exist.");
+            SalesReceiptDto salesReceipt = salesReceiptRs.SalesReceipts.FirstOrDefault(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false);
+            if (salesReceipt == null) Assert.Inconclusive($"{testName} does not exist.");
 
             HttpResponseMessage itemQryRq = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Item where Type = 'Inventory'"));
             if (!itemQryRq.IsSuccessStatusCode) Assert.Fail($"Error retrieving items.\n{await itemQryRq.Content.ReadAsStringAsync()}");
@@ -118,7 +118,7 @@ namespace QbModels.QBOProcessor.TEST
             ItemDto item = itemRs.Items.OrderBy(i => Guid.NewGuid()).FirstOrDefault();
 
             SalesReceiptModRq modRq = new();
-            modRq.CopyDto(SalesReceipt);
+            modRq.CopyDto(salesReceipt);
             modRq.sparse = "true";
             modRq.Line.Add(new() 
             {
@@ -126,18 +126,20 @@ namespace QbModels.QBOProcessor.TEST
                 Amount = item.UnitPrice,
                 LineDetail = new SalesItemLineDetailDto() { ItemRef = new(item.Id, item.Name), Qty = 5 },
             });
-            modRq.PrivateNote = $"{testName} => {SalesReceipt.SyncToken}";
+            modRq.PrivateNote = $"{testName} => {salesReceipt.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
             
             HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             SalesReceiptOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
-            Assert.AreNotEqual(SalesReceipt.PrivateNote, modRs.SalesReceipts?[0]?.PrivateNote);
+            Assert.AreNotEqual(salesReceipt.PrivateNote, modRs.SalesReceipts?[0]?.PrivateNote);
+            Assert.AreNotEqual(salesReceipt.MetaData.LastUpdatedTime, modRs.SalesReceipts[0].MetaData.LastUpdatedTime);
             #endregion
         }
 
         [TestMethod]
+        [Ignore]
         public async Task Step_4_QBOSalesReceiptEmailTest()
         {
             #region Setting access token

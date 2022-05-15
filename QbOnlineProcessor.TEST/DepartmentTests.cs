@@ -74,7 +74,9 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting Department
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
+            
             HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, $"select * from Department where Name like '{testName}%'"));
+            
             DepartmentOnlineRs deptRs = new(await getRs.Content.ReadAsStringAsync());
             #endregion
 
@@ -85,10 +87,8 @@ namespace QbModels.QBOProcessor.TEST
             if (dept == null) Assert.Fail($"{testName} does not exist.");
 
             DepartmentModRq modRq = new();
+            modRq.CopyDto(dept);
             modRq.sparse = "true";
-            modRq.Id = dept.Id;
-            modRq.SyncToken = dept.SyncToken;
-            modRq.Name = dept.Name;
             modRq.Address = new() { Line1 = "123 Main St", City = "Hollywood", CountrySubDivisionCode = "FL" };
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
 
@@ -97,6 +97,42 @@ namespace QbModels.QBOProcessor.TEST
 
             DepartmentOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
             Assert.AreNotEqual(0, modRs.TotalDepartments);
+            #endregion
+        }
+
+        [TestMethod]
+        public async Task Step_4_QBODepartmentDelTest()
+        {
+            #region Setting access token
+            TestAccessToken accessToken = new();
+            await accessToken.AccessTokenTest();
+            #endregion
+
+            using QBOProcessor qboe = new();
+
+            #region Getting Class
+            if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
+            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Department"));
+            DepartmentOnlineRs deptRs = new(await getRs.Content.ReadAsStringAsync());
+            #endregion
+
+            #region Deleting Class
+            if (deptRs.TotalDepartments <= 0) Assert.Inconclusive($"No {testName} to update.");
+
+            DepartmentDto dept = deptRs.Departments.FirstOrDefault(c => c.Name.StartsWith(testName));
+            if (dept == null) Assert.Inconclusive($"{testName} does not exist.");
+
+            DepartmentModRq modRq = new();
+            modRq.CopyDto(dept);
+            modRq.sparse = "true";
+            modRq.Active = false;
+            if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
+
+            HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
+            if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
+
+            DepartmentOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
+            Assert.IsTrue(modRs.Departments?[0]?.Name.Contains("deleted"));
             #endregion
         }
     }

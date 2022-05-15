@@ -92,20 +92,17 @@ namespace QbModels.QBOProcessor.TEST
             if (emp == null) Assert.Fail($"{testName} does not exist.");
             
             EmployeeModRq modRq = new();
+            modRq.CopyDto(emp);
             modRq.sparse = "true";
-            modRq.Id = emp.Id;
-            modRq.GivenName = emp.GivenName;
-            modRq.FamilyName = emp.FamilyName;
-            modRq.SyncToken = emp.SyncToken;
-            modRq.GivenName = $"Test => {emp.SyncToken}";
-            modRq.PrimaryAddr = emp.PrimaryAddr;
+            modRq.PrintOnCheckName = $"Test => {emp.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
             
             HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             EmployeeOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
-            Assert.AreNotEqual(emp.GivenName, modRs.Employees?[0]?.GivenName);
+            Assert.AreNotEqual(emp.PrintOnCheckName, modRs.Employees?[0]?.PrintOnCheckName);
+            Assert.AreNotEqual(emp.MetaData.LastUpdatedTime, modRs.Employees[0].MetaData.LastUpdatedTime);
             #endregion
         }
     }

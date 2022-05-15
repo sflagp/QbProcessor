@@ -125,6 +125,7 @@ namespace QbModels.QBOProcessor.TEST
 
             BillOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
             Assert.AreNotEqual(bill.DocNumber, modRs.Bills?[0]?.DocNumber);
+            Assert.AreNotEqual(bill.MetaData.LastUpdatedTime, modRs.Bills[0].MetaData.LastUpdatedTime);
             #endregion
         }
 

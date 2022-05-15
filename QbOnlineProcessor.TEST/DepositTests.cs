@@ -104,22 +104,22 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Updating Deposit
             if (DepositRs.TotalDeposits <= 0) Assert.Inconclusive($"No {testName} to update.");
+
             DepositDto deposit = DepositRs.Deposits.FirstOrDefault(pmt => pmt.PrivateNote?.StartsWith(testName) ?? false);
             if (deposit == null) Assert.Inconclusive($"{testName} does not exist.");
+            
             DepositModRq modRq = new();
+            modRq.CopyDto(deposit);
             modRq.sparse = "true";
-            modRq.Id = deposit.Id;
-            modRq.SyncToken = deposit.SyncToken;
-            modRq.TotalAmt = deposit.TotalAmt;
-            modRq.Line = deposit.Line;
-            modRq.DepositToAccountRef = deposit.DepositToAccountRef;
             modRq.PrivateNote = $"{testName} => {deposit.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
+
             HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             DepositOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
             Assert.AreNotEqual(deposit.PrivateNote, modRs.Deposits?[0]?.PrivateNote);
+            Assert.AreNotEqual(deposit.MetaData.LastUpdatedTime, modRs.Deposits[0].MetaData.LastUpdatedTime);
             #endregion
         }
 

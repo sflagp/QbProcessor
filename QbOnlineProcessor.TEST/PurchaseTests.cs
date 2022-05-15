@@ -131,6 +131,7 @@ namespace QbModels.QBOProcessor.TEST
 
             PurchaseOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
             Assert.AreNotEqual(purchase.PrivateNote, modRs.Purchases?[0]?.PrivateNote);
+            Assert.AreNotEqual(purchase.MetaData.LastUpdatedTime, modRs.Purchases[0].MetaData.LastUpdatedTime);
             #endregion
         }
 

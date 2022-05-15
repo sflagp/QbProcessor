@@ -129,6 +129,7 @@ namespace QbModels.QBOProcessor.TEST
 
             RefundReceiptOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
             Assert.AreNotEqual(refundReceipt.PrivateNote, modRs.RefundReceipts?[0]?.PrivateNote);
+            Assert.AreNotEqual(refundReceipt.MetaData.LastUpdatedTime, modRs.RefundReceipts[0].MetaData.LastUpdatedTime);
             #endregion
         }
 

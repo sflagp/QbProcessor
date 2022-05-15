@@ -121,6 +121,7 @@ namespace QbModels.QBOProcessor.TEST
 
             TimeActivityOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
             Assert.AreNotEqual(timeActivity.Description, modRs.TimeActivities?[0]?.Description);
+            Assert.AreNotEqual(timeActivity.MetaData.LastUpdatedTime, modRs.TimeActivities[0].MetaData.LastUpdatedTime);
             #endregion
         }
 

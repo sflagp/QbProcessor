@@ -55,14 +55,13 @@ namespace QbModels.QBOProcessor.TEST
             ExchangeRateOnlineRs exchgRteRs = new(await getRs.Content.ReadAsStringAsync());
             #endregion
 
-            #region Adding ExchangeRate
+            #region Updating ExchangeRate
             if (!exchgRteRs.ExchangeRates.Any(c => c.SourceCurrencyCode?.Equals("IMS") ?? false)) Assert.Inconclusive($"{testName} already exists.");
             ExchangeRateDto exchgRte = exchgRteRs.ExchangeRates.FirstOrDefault(r => r.SourceCurrencyCode.Equals("IMS"));
 
             ExchangeRateModRq modRq = new();
+            modRq.CopyDto(exchgRte);
             modRq.sparse = "true";
-            modRq.Id = exchgRte.Id;
-            modRq.SyncToken = exchgRte.SyncToken;
             modRq.SourceCurrencyCode = "IMS";
             modRq.AsOfDate = DateTime.Today;
             modRq.Rate = 1.11M;
@@ -71,8 +70,9 @@ namespace QbModels.QBOProcessor.TEST
             HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Inconclusive($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
-            ExchangeRateOnlineRs addRs = new(await postRs.Content.ReadAsStringAsync());
-            Assert.IsTrue(addRs.ParseError == null);
+            ExchangeRateOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());
+            Assert.IsTrue(modRs.ParseError == null);
+            Assert.AreNotEqual(exchgRte.MetaData.LastUpdatedTime, modRs.ExchangeRates[0].MetaData.LastUpdatedTime);
             #endregion
         }
     }
