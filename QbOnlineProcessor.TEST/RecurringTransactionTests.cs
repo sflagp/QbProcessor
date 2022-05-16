@@ -141,7 +141,6 @@ namespace QbModels.QBOProcessor.TEST
         }
 
         [TestMethod]
-        [Ignore]
         public async Task Step_4_QBORecurringTransactionDeleteTest()
         {
             #region Setting access token
@@ -166,9 +165,10 @@ namespace QbModels.QBOProcessor.TEST
             RecurringTransactionDto recurringTransaction = recurringTransactionRs.RecurringTransactions.FirstOrDefault(txn => txn.Bill?.RecurringInfo.Name?.StartsWith(testName) ?? false);
             if (recurringTransaction == null) Assert.Inconclusive($"{testName} does not exist.");
 
-            DeleteRq delRq = new("recurringtransaction", recurringTransaction.Bill.Id, recurringTransaction.Bill.SyncToken);
-
-            HttpResponseMessage postRs = await qboe.QBOPost(delRq.ApiParameter(qboe.ClientInfo.RealmId), delRq);
+            RecurringTransactionDelRq delRq = new("Bill", recurringTransaction.Bill.Id, recurringTransaction.Bill.SyncToken);
+            string tmp = delRq.ToString();
+            
+            HttpResponseMessage postRs = await qboe.QBOPost(delRq.ApiParameter(qboe.ClientInfo.RealmId), delRq.ToString(), true);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             RecurringTransactionOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());

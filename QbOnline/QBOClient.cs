@@ -209,6 +209,26 @@ namespace QbModels.QBOProcessor
             return postRs;
         }
 
+        public static async Task<HttpResponseMessage> PostQBOAsync(string parameter, string data, bool asXml)
+        {
+            HttpResponseMessage postRs;
+            using (var wsQboeWeb = await Config.QBOHttpClientAsync(asXml))
+            {
+                StringContent content = new(data);
+                content.Headers.ContentType = asXml ? new MediaTypeHeaderValue("application/xml") : new MediaTypeHeaderValue("application/json");
+
+                try
+                {
+                    postRs = await wsQboeWeb.PostAsync($"{parameter}", content);
+                }
+                catch (Exception ex)
+                {
+                    throw new HttpRequestException($"Error:  {ex.HResult}\n{ex.Message}");
+                }
+            }
+            return postRs;
+        }
+
         public static async Task<HttpResponseMessage> PostQBOAsync(string parameter)
         {
             HttpResponseMessage postRs;
