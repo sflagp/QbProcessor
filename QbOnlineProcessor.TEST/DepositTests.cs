@@ -25,7 +25,7 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting Deposits
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
-            HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from Deposit", true);
+            HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from Deposit");
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"QBOGet Deposit failed: {await getRs.Content.ReadAsStringAsync()}");
 
             string qryRs = await getRs.Content.ReadAsStringAsync();

@@ -26,7 +26,7 @@ namespace QbModels.QBOProcessor.TEST
             #region Getting JournalEntries
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
 
-            HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from JournalEntry", false);
+            HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from JournalEntry");
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"QBOGet JournalEntry failed: {await getRs.Content.ReadAsStringAsync()}");
 
             string qryRs = await getRs.Content.ReadAsStringAsync();
@@ -127,7 +127,7 @@ namespace QbModels.QBOProcessor.TEST
             modRq.PrivateNote = $"{testName} => {journalEntry.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
 
-            HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq, false);
+            HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             JournalEntryOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());

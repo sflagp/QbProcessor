@@ -71,7 +71,7 @@ namespace QbModels.QBOProcessor.TEST
             modRq.WebAddr = company.CompanyInfo.WebAddr;
             modRq.WebAddr.URI = "https://www.invoicingmadesimple.com";
             
-            HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq, true);
+            HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
             
             CompanyOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());

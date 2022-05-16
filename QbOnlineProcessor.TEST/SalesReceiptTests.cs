@@ -26,7 +26,7 @@ namespace QbModels.QBOProcessor.TEST
             #region Getting SalesReceipts
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
             
-            HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from SalesReceipt", true);
+            HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from SalesReceipt");
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"QBOGet SalesReceipt failed: {await getRs.Content.ReadAsStringAsync()}");
 
             string qryRs = await getRs.Content.ReadAsStringAsync();
@@ -49,7 +49,7 @@ namespace QbModels.QBOProcessor.TEST
             #region Getting SalesReceipts
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
             
-            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from SalesReceipt"), false);
+            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from SalesReceipt"));
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"Error querying SalesReceipt: {await getRs.Content.ReadAsStringAsync()}");
             
             SalesReceiptOnlineRs salesReceiptRs = new(await getRs.Content.ReadAsStringAsync());

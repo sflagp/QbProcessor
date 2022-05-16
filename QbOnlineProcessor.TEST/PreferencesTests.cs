@@ -74,8 +74,10 @@ namespace QbModels.QBOProcessor.TEST
             emailMsgs.SalesReceiptMessage.Subject = subSalesReceipt;
             emailMsgs.StatementMessage.Message = msgStatement;
             emailMsgs.StatementMessage.Subject = subStatement;
+            modRq.EmailMessagesPrefs = emailMsgs;
+            //modRq.OtherPrefs = null;
 
-            HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq, true);
+            HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
             
             PreferencesOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());

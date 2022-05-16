@@ -26,7 +26,7 @@ namespace QbModels.QBOProcessor.TEST
             #region Getting RecurringTransactions
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
 
-            HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from RecurringTransaction", false);
+            HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from RecurringTransaction");
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"QBOGet RecurringTransaction failed: {await getRs.Content.ReadAsStringAsync()}");
 
             string qryRs = await getRs.Content.ReadAsStringAsync();
@@ -127,6 +127,7 @@ namespace QbModels.QBOProcessor.TEST
             modRq.Id = modRq.Bill.Id;
             modRq.SyncToken = modRq.Bill.SyncToken;
             modRq.Bill.MetaData = null;
+            modRq.Bill.sparse = modRq.Bill.sparse.ToLower();
             modRq.sparse = "true";
             modRq.Bill.RecurringInfo.ScheduleInfo.NextDate = DateTime.Today.AddDays(30);
             modRq.Bill.Line[0].Description = $"{testName} => {modRq.SyncToken}";

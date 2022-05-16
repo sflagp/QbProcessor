@@ -25,7 +25,7 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting Estimates
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
-            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Estimate"), false);
+            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Estimate"));
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"Error querying Estimate: {await getRs.Content.ReadAsStringAsync()}");
             EstimateOnlineRs estimateRs = new(await getRs.Content.ReadAsStringAsync());
             #endregion
@@ -75,7 +75,7 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting Estimates
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
-            HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from Estimate", true);
+            HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from Estimate");
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"QBOGet Estimate failed: {await getRs.Content.ReadAsStringAsync()}");
 
             string qryRs = await getRs.Content.ReadAsStringAsync();

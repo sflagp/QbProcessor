@@ -26,7 +26,7 @@ namespace QbModels.QBOProcessor.TEST
             #region Getting PurchaseOrders
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
 
-            HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from PurchaseOrder", false);
+            HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from PurchaseOrder");
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"QBOGet PurchaseOrder failed: {await getRs.Content.ReadAsStringAsync()}");
 
             string qryRs = await getRs.Content.ReadAsStringAsync();
@@ -49,7 +49,7 @@ namespace QbModels.QBOProcessor.TEST
             #region Getting PurchaseOrders
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
             
-            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from PurchaseOrder"), false);
+            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from PurchaseOrder"));
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"Error querying PurchaseOrder: {await getRs.Content.ReadAsStringAsync()}");
             
             PurchaseOrderOnlineRs purchaseOrderRs = new(await getRs.Content.ReadAsStringAsync());
@@ -133,7 +133,7 @@ namespace QbModels.QBOProcessor.TEST
             modRq.PrivateNote = $"{testName} => {purchaseOrder.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
             
-            HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq, true);
+            HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             PurchaseOrderOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());

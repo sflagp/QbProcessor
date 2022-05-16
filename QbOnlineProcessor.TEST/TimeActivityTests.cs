@@ -26,7 +26,7 @@ namespace QbModels.QBOProcessor.TEST
             #region Getting TimeActivities
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
 
-            HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from TimeActivity", false);
+            HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from TimeActivity");
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"QBOGet TimeActivity failed: {await getRs.Content.ReadAsStringAsync()}");
 
             string qryRs = await getRs.Content.ReadAsStringAsync();
@@ -49,7 +49,7 @@ namespace QbModels.QBOProcessor.TEST
             #region Getting TimeActivities
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
 
-            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from TimeActivity"), true);
+            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from TimeActivity"));
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"Error querying TimeActivity: {await getRs.Content.ReadAsStringAsync()}");
 
             TimeActivityOnlineRs timeActivityRs = new(await getRs.Content.ReadAsStringAsync());
@@ -116,7 +116,7 @@ namespace QbModels.QBOProcessor.TEST
             modRq.Description = $"{testName} => {timeActivity.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
 
-            HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq, false);
+            HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             TimeActivityOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());

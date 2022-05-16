@@ -25,7 +25,7 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting Invoices
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
-            HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from Invoice", true);
+            HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from Invoice");
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"QBOGet Invoice failed: {await getRs.Content.ReadAsStringAsync()}");
 
             string qryRs = await getRs.Content.ReadAsStringAsync();
@@ -48,7 +48,7 @@ namespace QbModels.QBOProcessor.TEST
             #region Getting Invoices
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
             
-            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Invoice"), false);
+            HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Invoice"));
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"Error querying Invoice: {await getRs.Content.ReadAsStringAsync()}");
             
             InvoiceOnlineRs InvoiceRs = new(await getRs.Content.ReadAsStringAsync());
@@ -79,7 +79,7 @@ namespace QbModels.QBOProcessor.TEST
             addRq.PrivateNote = testName;
             if (!addRq.IsEntityValid()) Assert.Fail($"addRq is invalid: {addRq.GetErrorsAsString()}");
 
-            HttpResponseMessage postRs = await qboe.QBOPost(addRq.ApiParameter(qboe.ClientInfo.RealmId), addRq, true);
+            HttpResponseMessage postRs = await qboe.QBOPost(addRq.ApiParameter(qboe.ClientInfo.RealmId), addRq);
             if (!postRs.IsSuccessStatusCode) Assert.Inconclusive($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             InvoiceOnlineRs addRs = new(await postRs.Content.ReadAsStringAsync());
@@ -127,7 +127,7 @@ namespace QbModels.QBOProcessor.TEST
             modRq.PrivateNote = $"{testName} => {invoice.SyncToken}";
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
             
-            HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq, false);
+            HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             InvoiceOnlineRs modRs = new(await postRs.Content.ReadAsStringAsync());

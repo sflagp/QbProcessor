@@ -61,7 +61,7 @@ namespace QbModels.QBOProcessor.TEST
             addRq.PrimaryAddr = new("123 Main Street", "Main", "NC", "27601");
             if (!addRq.IsEntityValid()) Assert.Fail($"addRq is invalid: {addRq.GetErrorsAsString()}");
             
-            HttpResponseMessage postRs = await qboe.QBOPost(addRq.ApiParameter(qboe.ClientInfo.RealmId), addRq, false);
+            HttpResponseMessage postRs = await qboe.QBOPost(addRq.ApiParameter(qboe.ClientInfo.RealmId), addRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");
 
             EmployeeOnlineRs addRs = new(await postRs.Content.ReadAsStringAsync());
