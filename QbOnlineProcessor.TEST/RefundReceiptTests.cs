@@ -25,6 +25,7 @@ namespace QbModels.QBOProcessor.TEST
 
             #region Getting RefundReceipts
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
+
             HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from RefundReceipt", true);
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"QBOGet RefundReceipt failed: {await getRs.Content.ReadAsStringAsync()}");
 
@@ -197,7 +198,7 @@ namespace QbModels.QBOProcessor.TEST
         }
 
         [TestMethod]
-        public async Task Step_5_QBORefundReceiptDeleteTest()
+        public async Task Step_6_QBORefundReceiptDeleteTest()
         {
             #region Setting access token
             TestAccessToken accessToken = new();
