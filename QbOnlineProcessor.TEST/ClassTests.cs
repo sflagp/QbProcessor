@@ -1,6 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels.QBO;
-using QbModels.QBO.ENUM;
 using System;
 using System.Linq;
 using System.Net.Http;
@@ -31,6 +30,7 @@ namespace QbModels.QBOProcessor.TEST
             string qryRs = await getRs.Content.ReadAsStringAsync();
             ClassOnlineRs ClassRs = new(qryRs);
             Assert.IsNull(ClassRs.ParseError);
+            if (ClassRs.TotalClasses <= 0) Assert.Inconclusive("No classes found");
             Assert.AreNotEqual(0, ClassRs.TotalClasses);
             #endregion
         }
@@ -50,7 +50,7 @@ namespace QbModels.QBOProcessor.TEST
 
             HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Class"));
             if (!getRs.IsSuccessStatusCode) Assert.Fail($"Error querying Class: {await getRs.Content.ReadAsStringAsync()}");
-            
+
             ClassOnlineRs clsRs = new(await getRs.Content.ReadAsStringAsync());
             #endregion
 
@@ -91,12 +91,12 @@ namespace QbModels.QBOProcessor.TEST
 
             ClassDto cls = ClassRs.Classes.FirstOrDefault(c => c.FullyQualifiedName.StartsWith(testName));
             if (cls == null) Assert.Inconclusive($"{testName} does not exist.");
-            
+
             ClassModRq modRq = new();
             modRq.CopyDto(cls);
             modRq.sparse = "true";
             modRq.SubClass = !modRq.SubClass;
-            
+
             if (!modRq.IsEntityValid()) Assert.Fail($"modRq is invalid: {modRq.GetErrorsAsString()}");
             HttpResponseMessage postRs = await qboe.QBOPost(modRq.ApiParameter(qboe.ClientInfo.RealmId), modRq);
             if (!postRs.IsSuccessStatusCode) Assert.Fail($"QBOPost failed: {await postRs.Content.ReadAsStringAsync()}");

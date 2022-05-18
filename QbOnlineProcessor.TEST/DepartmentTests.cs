@@ -29,6 +29,7 @@ namespace QbModels.QBOProcessor.TEST
             string qryRsStr = await getRs.Content.ReadAsStringAsync();
             DepartmentOnlineRs qryRs = new(qryRsStr);
             Assert.IsNull(qryRs.ParseError, $"Department query parsing error: {qryRs.ParseError}");
+            if (qryRs.TotalDepartments <= 0) Assert.Inconclusive("No departments found in results");
             Assert.AreNotEqual(0, qryRs.TotalDepartments, "No Departments found.");
             #endregion
         }
