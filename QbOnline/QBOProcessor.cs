@@ -36,11 +36,11 @@ namespace QbModels.QBOProcessor
 
         public async Task<bool> RefreshAccessTokenAsync() => await QBOClient.RefreshAccessTokenAsync();
 
-        public async Task<HttpResponseMessage> QBOGet(string parameter, bool asXml = true) => await QBOClient.GetQBOAsync(parameter, asXml);
+        public async Task<HttpResponseMessage> QBOGet(string parameter, bool asXml = false) => await QBOClient.GetQBOAsync(parameter, asXml);
 
-        public async Task<HttpResponseMessage> QBOPost<T>(string parameter, T data, bool asXml = true) where T : QBO.IQbRq => await QBOClient.PostQBOAsync<T>(parameter, data, asXml);
+        public async Task<HttpResponseMessage> QBOPost<T>(string parameter, T data, bool asXml = false) where T : QBO.IQbRq => await QBOClient.PostQBOAsync<T>(parameter, data, asXml);
 
-        public async Task<HttpResponseMessage> QBOPost(string parameter, string data, bool asXml = true) => await QBOClient.PostQBOAsync(parameter, data, asXml);
+        public async Task<HttpResponseMessage> QBOPost(string parameter, string data, bool asXml = false) => await QBOClient.PostQBOAsync(parameter, data, asXml);
 
         public async Task<HttpResponseMessage> QBOPost(string parameter) => await QBOClient.PostQBOAsync(parameter);
 
