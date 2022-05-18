@@ -15,16 +15,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="QbModels.QBO" Version="0.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\QbOnline\QbOnline.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="QbModels.QBO">
-      <HintPath>..\..\QbModels\QbOnlineModels\bin\Release\netstandard2.0\QbModels.QBO.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>
