@@ -2,6 +2,8 @@
 
 Below are the steps I performed to implement the RedirectUri with https on my local computer using self-signed certificates. I did this to be able to call Quickbooks Online APIs in a Windows application. Currently, I have only verified this works with the Sandbox API (not [http://localhost](http://localhost/)). I use qbo.qbmodels.com as my redirect domain. You can substitute that with whatever domain you want to use.
 
+> Credit to https://stackoverflow.com/questions/11403333/httplistener-with-https-support/11457719#11457719 for helping me figure this out.  Refer to this posting if the steps I have outlined are confusing or don't make sense.
+
 Step 1: The first step to implement https locally is to generate certificates that will allow https to run locally. If you already have valid certificates for your computer, you can skip this step. To generate self signed certificates, load &quot;Developer Command Prompt for Visual Studio&quot; in Administrator mode. From the developer command prompt. Run the following commands in order:
 
 > makecert -n &quot;CN=QbModelsCA&quot; -r -sv QbModelsCA.pvk QbModelsCA.cer
