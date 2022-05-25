@@ -6,6 +6,9 @@ Simple QuickBooks requests processor.  Used to send QBXML requests to Quickbooks
  - Only works with a running Quickbooks Desktop with an open company data file.  
  - Requires the QBXMLRP2Installer.exe be installed from the Quickbooks SDK.
 
+UPDATE: 5/25/2022
+ - Confirmed that instructions running https locally works with production client.
+
 UPDATE: 5/23/2022
  - Uploaded first draft on how to implement https running locally without needing Administrator priveleges.
 
