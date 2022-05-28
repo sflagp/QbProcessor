@@ -11,7 +11,6 @@ namespace QbModels.QBOProcessor.TEST
         public async Task AccessTokenTest()
         {
             #region Get QBO Access Info
-
             QBOProcessor.SetClientInfo();
             #endregion
 
