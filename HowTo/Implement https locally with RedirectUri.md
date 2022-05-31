@@ -4,16 +4,17 @@ Below are the steps I performed to implement the RedirectUri with https on my lo
 
 > Credit to https://stackoverflow.com/questions/11403333/httplistener-with-https-support/11457719#11457719 for helping me figure this out.  Refer to this posting if the steps I have outlined are confusing or don't make sense.
 
-Step 1: The first step to implement https locally is to generate certificates that will allow https to run locally. If you already have valid certificates for your computer, you can skip this step. To generate self signed certificates, load &quot;Developer Command Prompt for Visual Studio&quot; in Administrator mode. From the developer command prompt. Run the following commands in order:
+**Step 1:** The first step to implement https locally is to generate certificates that will allow https to run locally. If you already have valid certificates for your computer, you can skip this step. To generate self signed certificates, load &quot;Developer Command Prompt for Visual Studio&quot; in Administrator mode. From the developer command prompt. Run the following commands in order:
 
 > makecert -n &quot;CN=QbModelsCA&quot; -r -sv QbModelsCA.pvk QbModelsCA.cer
+> 
 > makecert -sk QbModelsSignedByCA -iv QbModelsCA.pvk -n &quot;CN=QbModels.QBO&quot; -ic QbModelsCA.cer QbModelsSigned.cer -sr localmachine -ss My
 
 The preceding commands will generate three files. QbModelsCA.pvk, QbModelsCA.cer and QbModelsSigned.cer. The QbModelsCA.cer file is your self-signed certificate authority certificate with the QbModelsCA.pvk being the private key for the CA. The QbModelsSigned.cer is your personal self-signed certificate.
 
 At the end of Step 1, you should have successfully generated your self-signed certificates.
 
-Step 2: Import certificates into the Windows certificate store (LocalComputer…not User).
+**Step 2:** Import certificates into the Windows certificate store (LocalComputer…not User).
 
 - Run Microsoft Management Console (Start|MMC)
 - From MMC, select File menu and then Add/Remove Snap-In (or Ctrl+M)
@@ -28,9 +29,9 @@ Step 2: Import certificates into the Windows certificate store (LocalComputer…
 - After completing the prompts to import the CA certificate, repeat the process for QbModelsSigned.cer certificate.
 - Now expand the Personal tree and go to the Certificates sub-tree. If the QbModels.QBO certificate is not listed, right click Certificates and select All Tasks|Import and follow the prompts to import the QbModelsSigned.cer certificate.
 
-At the completion of Step 2, you should imported your valid certificates (self-signed or valid) them into the Windows certificate store for the Local Computer.
+At the completion of Step 2, you should have imported your valid certificates (self-signed or valid) into the Windows certificate store for the Local Computer.
 
-Step 3: Get the certificate hash id to bind to SSL.
+**Step 3:** Get the certificate hash id to bind to SSL.
 
 - While still in MMC Personal tree, double click the QbModels.QBO certificate to view the certificate.
 - From the pop-up, select the Details tab.
@@ -41,24 +42,24 @@ Step 3: Get the certificate hash id to bind to SSL.
 
 At the completion of Step 3, you should have recorded the certificate hash id that will be needed in the next step.
 
-Step 4: This step will bind the certificate to SSL to be able to run HttpListener locally without administrator privileges.
+**Step 4:** This step will bind the certificate to SSL to be able to run HttpListener locally without administrator privileges.
 
 - From the Developer Command Prompt, run the following command
-netsh http add sslcert ipport=0.0.0.0:5778 certhash=[certificate hash id] appid={[Your app id]}
+> netsh http add sslcert ipport=0.0.0.0:5778 certhash=[certificate hash id] appid={[Your app id]}
 - [certificate hash id] = Certificate hash id from step 3 (Do not type the square brackets)
 - [Your app id] = I get this from the .sln file of my Visual Studio project (Do not type the square brackets)
 - NOTE: If you get an error from this command, you will need to delete the certificates from the certificate store and start over and try again. If you are receiving an error here, it is most like an issue with the private key not being generated correctly. The only way I got around this is by starting all over again.
 
 At the end of this step, you should have binded the generated certificates to SSL.
 
-Step 5: Open the SSL port for all users so that the Windows app can run HttpListener locally without the need for Administrator privileges. I am using port 5778 but you can use whatever port over 1024 you like.
+**Step 5:** Open the SSL port for all users so that the Windows app can run HttpListener locally without the need for Administrator privileges. I am using port 5778 but you can use whatever port over 1024 you like.
 
 - From the Developer Command Prompt, run the following command:
 > netsh http add urlacl url=&quot;https://qbo.qbmodels.com:5778/callback/&quot; user=everyone
 
 At the end of this step, you now have a valid SSL port that can run locally without needing Administrator privileges.
 
-Step 6: Add a local computer entry to route the https domain back to the local computer.
+**Step 6:** Add a local computer entry to route the https domain back to the local computer.
 
 - Run Command Prompt (Admin) by pressing Alt-X and selecting Command Prompt (Admin)
 - From the command prompt, type _cd\windows\system32\drivers\etc_ to change the directory.
