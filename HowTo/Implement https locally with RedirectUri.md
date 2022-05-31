@@ -18,7 +18,8 @@ Step 2: Import certificates into the Windows certificate store (LocalComputer…
 - Run Microsoft Management Console (Start|MMC)
 - From MMC, select File menu and then Add/Remove Snap-In (or Ctrl+M)
 - From Available Snap-Ins, select Certificates and click the Add button. From the pop-up, select Computer and then Local Computer. Click OK when complete.
- ![](RackMultipart20220523-1-ve4frg_html_ce5d3c58fd7c4883.png)
+
+ ![image](https://user-images.githubusercontent.com/56395390/171184224-66fc990f-f45d-460e-ad78-6db3c9daa107.png)
 
 
 - Expand the _Certificates (Local Computer)_ tree view and then _Trusted Root Certification Authorities_
@@ -34,7 +35,9 @@ Step 3: Get the certificate hash id to bind to SSL.
 - While still in MMC Personal tree, double click the QbModels.QBO certificate to view the certificate.
 - From the pop-up, select the Details tab.
 - Scroll down to Thumbprint and copy the Value.
- ![](RackMultipart20220523-1-ve4frg_html_94db05dd00d5394b.png)
+
+ ![image](https://user-images.githubusercontent.com/56395390/171184297-218f7658-df76-4150-bb3d-ea775d5bda6e.png)
+
 
 At the completion of Step 3, you should have recorded the certificate hash id that will be needed in the next step.
 
