@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using QbHelpers;
 
@@ -18,7 +19,7 @@ namespace QbModels.QbProcessor
 
         /// <summary>Gets the date the license expires.</summary>
         /// <value>The license expiration date.</value>
-        public DateTime LicenseExpires => new DateTime(2022, 12, 31);
+        public DateTime LicenseExpires => new DateTime(2023, 1, 31);
 
         /// <summary>Gets a value indicating whether [license valid].</summary>
         /// <value>
@@ -102,6 +103,8 @@ namespace QbModels.QbProcessor
 
             return rpResponse;
         }
+
+        internal delegate string QbRequestAsync(string ticket, string xml);
 
         /// <summary>Execute QB request and return result asyncronously</summary>
         /// <param name="xmlRequest"></param>

@@ -89,6 +89,19 @@
             <param name="requesterId">User provided GUID by requester to track sender requests.</param>
             <returns>String result from Quickbooks processor</returns>
         </member>
+        <member name="M:QbModels.QbProcessor.RequestProcessor.ExecuteQbRequestAsync``1(``0)">
+            <summary>Executes the qb request and returns XML string from Quickbooks processor.</summary>
+            <typeparam name="T">Source request object to read from</typeparam>
+            <param name="request">The request.</param>
+            <returns>Fully formed XML response from Quickbooks processor</returns>
+        </member>
+        <member name="M:QbModels.QbProcessor.RequestProcessor.QbObjectProcessorAsync``1(``0,System.Guid)">
+            <summary>Build and run a request to add a Quickbooks object</summary>
+            <typeparam name="T">Dto object of type T with the source data to add to Quickbooks.</typeparam>
+            <param name="qbRequest">Model object of type T with the source data to add to Quickbooks.</param>
+            <param name="requesterId">User provided GUID by requester to track sender requests.</param>
+            <returns>String result from Quickbooks processor</returns>
+        </member>
         <member name="E:QbModels.QbProcessor.RequestProcessor.OnRequestEvent">
             <summary>Occurs when [on request event].</summary>
         </member>
