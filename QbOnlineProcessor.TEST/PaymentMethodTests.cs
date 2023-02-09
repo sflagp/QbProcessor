@@ -32,7 +32,7 @@ namespace QbModels.QBOProcessor.TEST
             string qryRs = await getRs.Content.ReadAsStringAsync();
             PaymentMethodOnlineRs paymentMethodRs = new(qryRs);
             Assert.IsNull(paymentMethodRs.ParseError);
-            Assert.AreNotEqual(0, paymentMethodRs);
+            Assert.AreNotEqual(0, paymentMethodRs.TotalPaymentMethods);
             #endregion
         }
 
