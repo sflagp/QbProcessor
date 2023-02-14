@@ -24,7 +24,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="QbModels" Version="1.2.2" />
+    <PackageReference Include="QbModels" Version="1.2.3" />
     <PackageReference Include="System.Text.Encodings.Web" Version="7.0.0" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
@@ -38,7 +38,7 @@
     </None>
   </ItemGroup>
   <PropertyGroup>
-	<Version>2.2023.12.2</Version>
+	<Version>2.2023.12.3</Version>
 	<Description>Quickbooks Processor Integration DLL using QbModels</Description>
 	<Authors>sflagp</Authors>
 	<PackageProjectUrl>https://github.com/sflagp/QbProcessor</PackageProjectUrl>
