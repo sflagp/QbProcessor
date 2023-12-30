@@ -19,7 +19,7 @@ namespace QbModels.QbProcessor
 
         /// <summary>Gets the date the license expires.</summary>
         /// <value>The license expiration date.</value>
-        public DateTime LicenseExpires => new DateTime(2023, 12, 31);
+        public DateTime LicenseExpires => new DateTime(2024, 12, 31);
 
         /// <summary>Gets a value indicating whether [license valid].</summary>
         /// <value>

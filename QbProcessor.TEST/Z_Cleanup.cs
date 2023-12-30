@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace QbModels.QbProcessor.TEST
 {
     [TestClass]
-    public class ZCustomerCleanupTests
+    public class ZCleanupTests
     {
         [TestMethod]
         //[Ignore("Do not cleanup transactions")]
@@ -37,7 +37,7 @@ namespace QbModels.QbProcessor.TEST
                 qryRq.TxnModifiedDateRangeFilter = new()
                 {
                     FromModifiedDate = DateTime.Today.AddDays(-7),
-                    ToModifiedDate = DateTime.Today
+                    ToModifiedDate = DateTime.Today.AddDays(1)
                 };
                 Assert.IsTrue(qryRq.IsEntityValid());
 

@@ -86,7 +86,7 @@ namespace QbModels.QbProcessor.TEST
                 modRq.CreditCardInfo = new();
                 modRq.CreditCardInfo.CreditCardNumber = "xxxx-xxxx-xxxx-9651";
                 modRq.CreditCardInfo.ExpirationMonth = 11;
-                modRq.CreditCardInfo.ExpirationYear = 22;
+                modRq.CreditCardInfo.ExpirationYear = 27;
                 modRq.CreditCardInfo.NameOnCard = "Greg Prieto";
                 modRq.CreditCardInfo.CreditCardAddress = "3648 Kapalua Way, Raleigh NC";
                 modRq.CreditCardInfo.CreditCardPostalCode = "27610";
@@ -177,7 +177,7 @@ namespace QbModels.QbProcessor.TEST
                 modRq.CreditCardInfo = new();
                 modRq.CreditCardInfo.CreditCardNumber = "xxxx-xxxx-xxxx-9651";
                 modRq.CreditCardInfo.ExpirationMonth = 11;
-                modRq.CreditCardInfo.ExpirationYear = 22;
+                modRq.CreditCardInfo.ExpirationYear = 27;
                 modRq.CreditCardInfo.NameOnCard = "Greg Prieto";
                 modRq.CreditCardInfo.CreditCardAddress = "3648 Kapalua Way, Raleigh NC";
                 modRq.CreditCardInfo.CreditCardPostalCode = "27610";
