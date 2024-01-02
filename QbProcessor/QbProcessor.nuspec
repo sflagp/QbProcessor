@@ -10,7 +10,7 @@
     <!-- <icon>icon.png</icon> -->
     <projectUrl>https://mydc.kapalua.mydc</projectUrl>
     <description>Quickbooks RP Processor</description>
-    <releaseNotes>Quickbooks RP Processor.</releaseNotes>
+    <releaseNotes>Quickbooks RP Processor 2024 using QbModels v1.2.7.</releaseNotes>
     <copyright>$copyright$</copyright>
     <tags>Quickbooks RP QBXML</tags>
   </metadata>
