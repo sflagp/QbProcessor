@@ -12,17 +12,27 @@ namespace QbModels.QBOProcessor.TEST
     public class TestVendorCreditModels
     {
         readonly string testName = "IMS VendorCredit";
+        private QBOProcessor qboe;
+
+        [TestInitialize]
+        public async Task InitializeTest()
+        {
+            TestAccessToken accessToken = new();
+            await accessToken.AccessTokenTest();
+
+            qboe = new();
+        }
+
+        [TestCleanup]
+        public Task CleanupTest()
+        {
+            qboe.Dispose();
+            return Task.CompletedTask;
+        }
 
         [TestMethod]
         public async Task Step_1_QBOVendorCreditQueryTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting VendorCredits
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
             
@@ -38,13 +48,6 @@ namespace QbModels.QBOProcessor.TEST
         [TestMethod]
         public async Task Step_2_QBOVendorCreditAddTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting VendorCredits
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
             
@@ -79,13 +82,6 @@ namespace QbModels.QBOProcessor.TEST
         [TestMethod]
         public async Task Step_3_QBOVendorCreditModTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting VendorCredit
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
             
@@ -129,13 +125,6 @@ namespace QbModels.QBOProcessor.TEST
         [TestMethod]
         public async Task Step_4_QBOVendorCreditDeleteTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting VendorCredit
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
             

@@ -8,16 +8,27 @@ namespace QbModels.QBOProcessor.TEST
     [TestClass]
     public class TestCompanyModels
     {
+        private QBOProcessor qboe;
+
+        [TestInitialize]
+        public async Task InitializeTest()
+        {
+            TestAccessToken accessToken = new();
+            await accessToken.AccessTokenTest();
+
+            qboe = new();
+        }
+
+        [TestCleanup]
+        public Task CleanupTest()
+        {
+            qboe.Dispose();
+            return Task.CompletedTask;
+        }
+
         [TestMethod]
         public async Task Step_1_QBOCompanyQueryTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting company info
             Assert.IsFalse(string.IsNullOrEmpty(qboe.AccessToken.AccessToken));
             HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.CompanyInfo(qboe.ClientInfo.RealmId));
@@ -35,13 +46,6 @@ namespace QbModels.QBOProcessor.TEST
         [TestMethod]
         public async Task Step_2_QBOCompanyModTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Updating company
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("AccessToken not valid.");
 

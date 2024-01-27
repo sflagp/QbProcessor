@@ -12,17 +12,27 @@ namespace QbModels.QBOProcessor.TEST
     public class TestEstimateModels
     {
         readonly string testName = "IMS Estimate";
+        private QBOProcessor qboe;
+
+        [TestInitialize]
+        public async Task InitializeTest()
+        {
+            TestAccessToken accessToken = new();
+            await accessToken.AccessTokenTest();
+
+            qboe = new();
+        }
+
+        [TestCleanup]
+        public Task CleanupTest()
+        {
+            qboe.Dispose();
+            return Task.CompletedTask;
+        }
 
         [TestMethod]
         public async Task Step_2_QBOEstimateAddTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting Estimates
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
             HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Estimate"));
@@ -66,13 +76,6 @@ namespace QbModels.QBOProcessor.TEST
         [TestMethod]
         public async Task Step_1_QBOEstimateQueryTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting Estimates
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
             HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from Estimate");
@@ -88,13 +91,6 @@ namespace QbModels.QBOProcessor.TEST
         [TestMethod]
         public async Task Step_3_QBOEstimateModTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting Estimate
             Random rdm = new();
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
@@ -137,13 +133,6 @@ namespace QbModels.QBOProcessor.TEST
         [Ignore]
         public async Task Step_4_QBOEstimateEmailTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting Estimate
             Random rdm = new();
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
@@ -168,13 +157,6 @@ namespace QbModels.QBOProcessor.TEST
         [TestMethod]
         public async Task Step_5_QBOEstimateDeleteTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting Estimate
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
             HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from Estimate"));

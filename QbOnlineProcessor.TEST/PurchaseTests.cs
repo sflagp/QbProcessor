@@ -12,17 +12,27 @@ namespace QbModels.QBOProcessor.TEST
     public class TestPurchaseModels
     {
         readonly string testName = "IMS Purchase";
+        private QBOProcessor qboe;
+
+        [TestInitialize]
+        public async Task InitializeTest()
+        {
+            TestAccessToken accessToken = new();
+            await accessToken.AccessTokenTest();
+
+            qboe = new();
+        }
+
+        [TestCleanup]
+        public Task CleanupTest()
+        {
+            qboe.Dispose();
+            return Task.CompletedTask;
+        }
 
         [TestMethod]
         public async Task Step_1_QBOPurchaseQueryTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting Purchases
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
 
@@ -39,13 +49,6 @@ namespace QbModels.QBOProcessor.TEST
         [TestMethod]
         public async Task Step_2_QBOPurchaseAddTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting Purchases
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
 
@@ -89,13 +92,6 @@ namespace QbModels.QBOProcessor.TEST
         [TestMethod]
         public async Task Step_3_QBOPurchaseModTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting Purchase
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
 
@@ -138,13 +134,6 @@ namespace QbModels.QBOProcessor.TEST
         [TestMethod]
         public async Task Step_4_QBOPurchaseDeleteTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting Purchase
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
 

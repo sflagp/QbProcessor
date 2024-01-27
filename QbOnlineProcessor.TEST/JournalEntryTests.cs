@@ -12,17 +12,27 @@ namespace QbModels.QBOProcessor.TEST
     public class TestJournalEntryModels
     {
         readonly string testName = "IMS JournalEntry";
+        private QBOProcessor qboe;
+
+        [TestInitialize]
+        public async Task InitializeTest()
+        {
+            TestAccessToken accessToken = new();
+            await accessToken.AccessTokenTest();
+
+            qboe = new();
+        }
+
+        [TestCleanup]
+        public Task CleanupTest()
+        {
+            qboe.Dispose();
+            return Task.CompletedTask;
+        }
 
         [TestMethod]
         public async Task Step_1_QBOJournalEntryQueryTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting JournalEntries
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
 
@@ -39,13 +49,6 @@ namespace QbModels.QBOProcessor.TEST
         [TestMethod]
         public async Task Step_2_QBOJournalEntryAddTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting JournalEntries
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
 
@@ -98,13 +101,6 @@ namespace QbModels.QBOProcessor.TEST
         [TestMethod]
         public async Task Step_3_QBOJournalEntryModTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting JournalEntry
             Random rdm = new();
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
@@ -139,13 +135,6 @@ namespace QbModels.QBOProcessor.TEST
         [TestMethod]
         public async Task Step_4_QBOJournalEntryDeleteTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting JournalEntry
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
             HttpResponseMessage getRs = await qboe.QBOGet(QueryRq.QueryParameter(qboe.ClientInfo.RealmId, "select * from JournalEntry"));

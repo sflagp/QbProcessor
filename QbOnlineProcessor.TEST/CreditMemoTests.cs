@@ -12,17 +12,27 @@ namespace QbModels.QBOProcessor.TEST
     public class TestCreditMemoModels
     {
         readonly string testName = "IMS Credit Memo";
+        private QBOProcessor qboe;
+
+        [TestInitialize]
+        public async Task InitializeTest()
+        {
+            TestAccessToken accessToken = new();
+            await accessToken.AccessTokenTest();
+
+            qboe = new();
+        }
+
+        [TestCleanup]
+        public Task CleanupTest()
+        {
+            qboe.Dispose();
+            return Task.CompletedTask;
+        }
 
         [TestMethod]
         public async Task Step_1_QBOCreditMemoQueryTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting CreditMemos
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
             HttpResponseMessage getRs = await qboe.QBOGet($"/v3/company/{qboe.ClientInfo.RealmId}/query?query=select * from CreditMemo");
@@ -38,13 +48,6 @@ namespace QbModels.QBOProcessor.TEST
         [TestMethod]
         public async Task Step_2_QBOCreditMemoAddTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting CreditMemos
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
             
@@ -90,13 +93,6 @@ namespace QbModels.QBOProcessor.TEST
         [TestMethod]
         public async Task Step_3_QBOCreditMemoModTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting CreditMemo
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
             
@@ -142,13 +138,6 @@ namespace QbModels.QBOProcessor.TEST
         [Ignore]
         public async Task Step_4_QBOCreditMemoEmailTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting CreditMemo
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
             
@@ -174,13 +163,6 @@ namespace QbModels.QBOProcessor.TEST
         [TestMethod]
         public async Task Step_5_QBOCreditMemoDeleteTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Getting CreditMemo
             if (string.IsNullOrEmpty(qboe.AccessToken.AccessToken)) Assert.Fail("Token not valid.");
 

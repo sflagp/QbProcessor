@@ -1,7 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QbModels.QBO;
 using QbModels.QBO.ENUM;
-using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -12,17 +11,27 @@ namespace QbModels.QBOProcessor.TEST
     public class TestBatchRequestModels
     {
         readonly string testName = "IMS BatchRequest";
+        private QBOProcessor qboe;
+
+        [TestInitialize]
+        public async Task InitializeTest()
+        {
+            TestAccessToken accessToken = new();
+            await accessToken.AccessTokenTest();
+
+            qboe = new();
+        }
+
+        [TestCleanup]
+        public Task CleanupTest()
+        {
+            qboe.Dispose();
+            return Task.CompletedTask;
+        }
 
         [TestMethod]
         public async Task Step_1_QBOBatchRequestTest()
         {
-            #region Setting access token
-            TestAccessToken accessToken = new();
-            await accessToken.AccessTokenTest();
-            #endregion
-
-            using QBOProcessor qboe = new();
-
             #region Creating Batch Query Request
             BatchRequestsRq batchQueryRq = new();
             batchQueryRq.AddQuery("select * from Account");
